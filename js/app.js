@@ -96,6 +96,14 @@ async function syncAndSaveTickets() {
   await jsonbinPut(BIN_IDS.tickets, cache.tickets);
 }
 
+async function syncAndSaveCounter() {
+  const latest = await jsonbinGet(BIN_IDS.counter);
+  if (latest && typeof latest.counter === 'number') {
+    cache.counter = latest.counter;
+  }
+  await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
+}
+
 async function initCache() {
   if (cache.initialized) return;
   
@@ -136,8 +144,6 @@ async function ensureAdminExists() {
 }
 
 async function register(email, password, name) {
-  console.log('Registering:', email);
-  
   if (cache.users[email]) {
     throw new Error('El usuario ya existe');
   }
@@ -156,8 +162,6 @@ async function register(email, password, name) {
 }
 
 async function login(email, password) {
-  console.log('Login attempt:', email);
-  
   const user = cache.users[email];
   if (!user) {
     throw new Error('Usuario no encontrado');
@@ -180,7 +184,6 @@ async function login(email, password) {
   localStorage.setItem('wticket_token', token);
   localStorage.setItem('wticket_session', JSON.stringify(sessionData));
   
-  console.log('Login success!');
   return { token, user: { email: user.email, name: user.name, role: user.role } };
 }
 
@@ -210,8 +213,12 @@ async function logout() {
 }
 
 async function createTicket(title, description, userEmail) {
+  await syncAndSaveCounter();
+  await syncAndSaveTickets();
+  
   cache.counter++;
   const id = cache.counter;
+  
   await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
   
   cache.tickets[id] = {
@@ -240,6 +247,20 @@ function getTicket(id) {
   };
 }
 
+async function refreshData() {
+  const [users, tickets, counterData] = await Promise.all([
+    jsonbinGet(BIN_IDS.users),
+    jsonbinGet(BIN_IDS.tickets),
+    jsonbinGet(BIN_IDS.counter)
+  ]);
+  
+  cache.users = users || cache.users;
+  cache.tickets = tickets || cache.tickets;
+  cache.counter = (counterData && typeof counterData.counter === 'number') 
+    ? counterData.counter 
+    : cache.counter;
+}
+
 function getOpenTickets() {
   return Object.values(cache.tickets)
     .filter(t => t.status === 'open')
@@ -265,6 +286,8 @@ function getUserClosedTickets(email) {
 }
 
 async function closeTicket(id, response) {
+  await syncAndSaveTickets();
+  
   const ticket = cache.tickets[id];
   if (!ticket) throw new Error('Ticket no encontrado');
   
@@ -296,6 +319,7 @@ function searchTickets(tickets, query) {
 
 function requireAuth(allowedRoles = ['user', 'admin']) {
   return async () => {
+    await refreshData();
     const session = await validateSession();
     if (!session) {
       window.location.href = 'login.html';
@@ -330,7 +354,8 @@ const API = {
   closeTicket,
   getStats,
   searchTickets,
-  requireAuth
+  requireAuth,
+  refreshData
 };
 
 export default API;
