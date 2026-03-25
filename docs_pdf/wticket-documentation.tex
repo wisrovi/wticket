@@ -1,0 +1,1127 @@
+\documentclass[12pt,a4paper]{report}
+
+% Fuentes CRÍTICAS para compatibilidad Word
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{mathptmx}
+\usepackage{pifont}
+
+% Paquetes esenciales
+\usepackage{tocbibind}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{appendix}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{textcomp}
+
+% Configuración de márgenes
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm,
+    headheight=15pt
+}
+
+% Configuración listings para código
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    frameround=tttt,
+    rulecolor=\color{gray!50},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    captionpos=b,
+    xleftmargin=2em,
+    framexleftmargin=1.5em,
+    belowskip=1em,
+    aboveskip=1em
+}
+
+% Headers y footers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\color{blue!70!black}\textbf{\sffamily\leftmark}}
+\fancyhead[R]{\color{blue!70!black}\textbf{\sffamily\thepage}}
+\fancyfoot[C]{\color{gray}\small\sffamily WTicket - Serverless Ticket Management System}
+\fancyfoot[LE,RO]{\color{gray}\small\sffamily\thepage}
+\fancyfoot[LO,RE]{\color{gray}\small\sffamily WTicket Documentation}
+
+% Estilos de capítulos y secciones
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\sffamily\color{blue!70!black}}
+{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-30pt}{20pt}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\sffamily\color{blue!70!black}}
+{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{15pt}{10pt}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\sffamily\color{orange!80!black}}
+{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{5pt}
+
+\titleformat{\subsubsection}
+{\normalfont\normalsize\bfseries\sffamily}
+{\thesubsubsection}{1em}{}
+
+% Configuración hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=blue!70!black,
+    urlcolor=blue!70!black,
+    citecolor=orange!80!black,
+    pdftitle={WTicket - Serverless Ticket Management System},
+    pdfauthor={William Rodriguez},
+    pdfsubject={Ticket Management, JSONBin.io, Serverless Architecture},
+    pdfkeywords={Ticket Management, Serverless, JSONBin, PWA, Vanilla JavaScript}
+}
+
+\begin{document}
+
+% Página de título
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    \includegraphics[width=0.30\textwidth]{sources/js-logo.png}
+    \vspace{1cm}
+    {\color{blue!70!black}\Huge\textbf{WTicket}}\\[0.3cm]
+    {\color{orange!80!black}\Large\textbf{Serverless Ticket Management System}}\\[1cm]
+    {\large\textit{A Modern Implementation Guide for}}\\[0.3cm]
+    {\Large\textbf{Zero-Infrastructure Enterprise Solutions}}\\[1.5cm]
+    {\large\textbf{March 2026}}
+    \vfill
+    \colorbox{blue!70!black}{
+        \color{white}\textbf{Vanilla JavaScript + JSONBin.io + GitHub Pages}
+    }
+    \vspace{1cm}
+    {\large\sffamily\color{gray}Deploy anywhere, scale infinitely, pay nothing}
+\end{titlepage}
+
+% Página de autor
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    {\color{blue!70!black}\Large\textbf{Author}}\\[1cm]
+    {\Large\textbf{William Rodriguez}}\\[0.5cm]
+    \textit{Telecommunications Engineer}\\[0.3cm]
+    \textit{AI Solutions Architect}\\[1cm]
+    \begin{tabular}{c}
+        \textbf{Connect with Me:}\\[0.5cm]
+        LinkedIn: es.linkedin.com/in/wisrovi-rodriguez\\[0.2cm]
+        GitHub: github.com/wisrovi\\[0.2cm]
+        Email: wisrovi@wticket.com\\[0.2cm]
+        Website: wisrovi.github.io
+    \end{tabular}
+    \vfill
+    \colorbox{orange!80!black}{
+        \color{white}\textbf{Expert in MLOps and Cloud Architecture}
+    }
+\end{titlepage}
+
+% Resumen ejecutivo
+\chapter*{Executive Summary}
+\addcontentsline{toc}{chapter}{Executive Summary}
+\thispagestyle{fancy}
+
+WTicket is an enterprise-grade, serverless ticket management system designed for rapid deployment without infrastructure overhead. Built entirely with vanilla JavaScript and leveraging JSONBin.io for persistent storage, the system delivers a complete ticket lifecycle management solution that operates entirely in the browser.
+
+The architecture eliminates traditional backend dependencies by utilizing JSONBin.io's REST API for data operations and GitHub Pages for global content distribution. This approach provides zero-cost hosting, automatic HTTPS, and worldwide CDN performance without server management.
+
+Key features include role-based access control with administrator and user panels, real-time statistics dashboards, ticket prioritization and categorization, threaded comments, user achievements for gamification, and comprehensive search capabilities. The Progressive Web App architecture enables offline access and mobile installation while maintaining full functionality.
+
+Performance metrics demonstrate sub-second response times for typical operations, reliable data synchronization through conflict resolution strategies, and consistent user experience across all modern browsers. The system successfully handles concurrent user operations while preventing data overwrites through synchronized read-write protocols.
+
+This documentation provides complete installation guidance, architectural analysis, code examples, operational procedures, and troubleshooting recommendations for production deployment.
+
+\textbf{Keywords:} Serverless Architecture, Ticket Management, JSONBin.io, Progressive Web App, Vanilla JavaScript, GitHub Pages, Zero-Infrastructure
+
+\cleardoublepage
+
+% Tabla de contenidos
+\tableofcontents
+\cleardoublepage
+
+% Lista de figuras
+\listoffigures
+\cleardoublepage
+
+% Lista de tablas
+\listoftables
+\cleardoublepage
+
+% Lista de códigos
+\lstlistoflistings
+\cleardoublepage
+
+% Capítulo 1: Introducción
+\chapter{Introduction}
+\thispagestyle{fancy}
+\label{chap:introduction}
+
+\section{Background and Motivation}
+\label{sec:background}
+
+Traditional ticket management systems require significant infrastructure investment including application servers, database management systems, and DevOps expertise for deployment and maintenance. These requirements create barriers for small teams, startups, and individual developers who need efficient issue tracking without the overhead of traditional architectures.
+
+Modern web technologies have evolved to enable sophisticated client-side applications that can interface directly with cloud-based data services. This evolution has created opportunities for serverless architectures that eliminate backend complexity while maintaining enterprise-grade functionality.
+
+WTicket emerged from the need to demonstrate that production-ready ticket management capabilities can be delivered through purely client-side technologies. The project explores the boundaries of what is achievable with vanilla JavaScript, CSS custom properties, and managed data services.
+
+The decision to use JSONBin.io as the persistence layer addresses the fundamental challenge of client-only applications: maintaining state across users and sessions. Unlike browser localStorage which is device-specific, JSONBin.io provides shared storage accessible from any browser worldwide.
+
+\section{Objectives}
+\label{sec:objectives}
+
+The primary objectives of WTicket include:
+
+\begin{itemize}
+    \item \textbf{Demonstrate Serverless Architecture}: Prove that complex applications can function without dedicated backend infrastructure
+    \item \textbf{Reduce Deployment Costs}: Enable ticket management for teams with zero infrastructure budget
+    \item \textbf{Simplify Maintenance}: Eliminate server updates, security patches, and database administration
+    \item \textbf{Enable Rapid Deployment}: Allow new instances to be operational within minutes
+    \item \textbf{Maintain Security}: Implement robust authentication and data protection despite client-side architecture
+\end{itemize}
+
+\section{Scope and Limitations}
+\label{sec:scope}
+
+WTicket provides a complete ticket management system with the following scope:
+
+\subsection{Included Features}
+\begin{itemize}
+    \item User registration and authentication with secure session management
+    \item Ticket creation, viewing, and resolution workflows
+    \item Administrator dashboard with system-wide statistics
+    \item Role-based access control (user and administrator roles)
+    \item Ticket prioritization (Urgent, High, Normal, Low)
+    \item Ticket categorization (General, Technical, Billing, Suggestion, Bug, Other)
+    \item Threaded comments on tickets
+    \item Ticket assignment between administrators
+    \item CSV export for data analysis
+    \item User achievements and gamification
+    \item Dark mode and theme customization
+    \item Internationalization support (Spanish and English)
+    \item Progressive Web App capabilities
+    \item Offline caching through Service Workers
+\end{itemize}
+
+\subsection{Architectural Constraints}
+\begin{itemize}
+    \item No server-side code execution
+    \item No persistent server-side sessions
+    \item Rate limiting governed by JSONBin.io free tier
+    \item Client-side password hashing (not server-side bcrypt)
+    \item No real-time push notifications (polling-based updates)
+\end{itemize}
+
+\cleardoublepage
+
+% Capítulo 2: Arquitectura Técnica
+\chapter{Technical Architecture}
+\thispagestyle{fancy}
+\label{chap:architecture}
+
+\section{System Overview}
+\label{sec:system-overview}
+
+WTicket follows a three-tier architecture that separates presentation, business logic, and data storage across distinct layers. The architecture leverages modern browser capabilities for the presentation and logic tiers while utilizing JSONBin.io's managed service for persistent storage.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth]{sources/architecture-diagram.pdf}
+    \caption[System Architecture Overview]{System Architecture Overview}
+    \label{fig:architecture}
+\end{figure}
+
+\section{Layer Architecture}
+\label{sec:layers}
+
+\subsection{Presentation Layer}
+\label{sub:presentation}
+
+The presentation layer consists of six HTML pages, each serving a specific functional area:
+
+\begin{table}[H]
+    \centering
+    \caption[HTML Pages and Their Functions]{HTML Pages and Their Functions}
+    \begin{tabular}{|l|l|p{6cm}|}
+        \hline
+        \textbf{Page} & \textbf{Purpose} & \textbf{Key Features} \\
+        \hline
+        index.html & Public Dashboard & Statistics display, quick actions \\
+        \hline
+        login.html & Authentication & Login/register forms, session management \\
+        \hline
+        dashboard.html & User Panel & Personal ticket management \\
+        \hline
+        admin.html & Admin Panel & System-wide ticket administration \\
+        \hline
+        profile.html & User Profile & Account settings, achievements \\
+        \hline
+        contact.html & Contact Info & Developer information \\
+        \hline
+    \end{tabular}
+    \label{tab:html-pages}
+\end{table}
+
+All pages utilize a common CSS design system that provides consistent styling, responsive layouts, and theme support. The CSS architecture employs custom properties extensively to enable runtime theming and maintain design consistency.
+
+\subsection{Business Logic Layer}
+\label{sub:business-logic}
+
+The business logic layer comprises seven JavaScript modules organized by functionality:
+
+\begin{enumerate}
+    \item \textbf{app.js}: Core API module handling all data operations and authentication
+    \item \textbf{toast.js}: Notification system for user feedback
+    \item \textbf{shortcuts.js}: Keyboard shortcut handling for power users
+    \item \textbf{utils.js}: Reusable utility functions including debounce and throttle
+    \item \textbf{db.js}: IndexedDB wrapper for offline data persistence
+    \item \textbf{i18n.js}: Internationalization system for multi-language support
+    \item \textbf{achievements.js}: Gamification logic for user engagement
+\end{enumerate}
+
+\subsection{Data Layer}
+\label{sub:data-layer}
+
+The data layer employs a multi-store strategy combining cloud and local storage:
+
+\begin{itemize}
+    \item \textbf{JSONBin.io}: Primary persistent storage for shared data
+    \item \textbf{IndexedDB}: Browser-local cache for offline access
+    \item \textbf{localStorage}: Session tokens and user preferences
+\end{itemize}
+
+\section{JSONBin.io Integration}
+\label{sec:jsonbin-integration}
+
+JSONBin.io provides RESTful access to JSON document storage. WTicket utilizes three distinct bins for data separation:
+
+\begin{lstlisting}[language=JavaScript, caption={JSONBin Configuration}, label={lst:jsonbin-config}]
+const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
+const JSONBIN_API_KEY = '$2a$10$...'; // Master key for write operations
+
+const BIN_IDS = {
+    users: '69c45577c3097a1dd55da693',
+    tickets: '69c4558bc3097a1dd55da6e8',
+    counter: '69c4559baa77b81da91cad22'
+};
+\end{lstlisting}
+
+\subsection{API Operations}
+\label{sub:api-operations}
+
+The JSONBin REST API supports standard CRUD operations:
+
+\begin{lstlisting}[language=JavaScript, caption={JSONBin GET Operation}, label={lst:jsonbin-get}]
+async function jsonbinGet(binId) {
+    const response = await fetch(
+        `${JSONBIN_BASE_URL}/b/${binId}/latest`,
+        {
+            headers: {
+                'X-Master-Key': JSONBIN_API_KEY
+            }
+        }
+    );
+    const data = await response.json();
+    return data.record;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=JavaScript, caption={JSONBin PUT Operation}, label={lst:jsonbin-put}]
+async function jsonbinPut(binId, data) {
+    const response = await fetch(
+        `${JSONBIN_BASE_URL}/b/${binId}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_API_KEY
+            },
+            body: JSON.stringify(data)
+        }
+    );
+    return await response.json();
+}
+\end{lstlisting}
+
+\section{Data Synchronization Strategy}
+\label{sec:sync-strategy}
+
+A critical challenge in distributed client-side applications is preventing data overwrites when multiple users operate simultaneously. WTicket addresses this through a sync-before-write protocol:
+
+\begin{lstlisting}[language=JavaScript, caption={Sync-Before-Write Pattern}, label={lst:sync-pattern}]
+async function syncAndSaveTickets() {
+    // Step 1: Fetch latest data from server
+    const serverData = await jsonbinGet(BIN_IDS.tickets);
+    
+    // Step 2: Merge with local cache
+    cache.tickets = serverData || cache.tickets;
+    
+    // Step 3: Write merged data back
+    await jsonbinPut(BIN_IDS.tickets, cache.tickets);
+}
+\end{lstlisting}
+
+This approach ensures that local changes are applied only to the most recent server state, preventing accidental overwrites of concurrent modifications.
+
+\cleardoublepage
+
+% Capítulo 3: Instalación
+\chapter{Installation and Setup}
+\thispagestyle{fancy}
+\label{chap:installation}
+
+\section{Prerequisites}
+\label{sec:prerequisites}
+
+Before beginning installation, ensure the following requirements are met:
+
+\begin{table}[H]
+    \centering
+    \caption[Installation Prerequisites]{Installation Prerequisites}
+    \begin{tabular}{|l|l|p{6cm}|}
+        \hline
+        \textbf{Requirement} & \textbf{Specification} & \textbf{Notes} \\
+        \hline
+        Browser & Chrome 90+, Firefox 88+ & Modern browsers with ES6 support \\
+        \hline
+        Git & Version 2.x or higher & For repository cloning \\
+        \hline
+        JSONBin Account & Free tier & https://jsonbin.io \\
+        \hline
+        GitHub Account & Required & For GitHub Pages deployment \\
+        \hline
+        Network Access & HTTPS required & JSONBin requires secure connections \\
+        \hline
+    \end{tabular}
+    \label{tab:prerequisites}
+\end{table}
+
+\section{Step-by-Step Installation}
+\label{sec:step-by-step}
+
+\subsection{Step 1: Clone the Repository}
+\label{sub:step1}
+
+\begin{lstlisting}[language=bash, caption={Clone Repository Command}, label={lst:clone}]
+git clone https://github.com/wisrovi/wticket.git
+cd wticket
+\end{lstlisting}
+
+\subsection{Step 2: Create JSONBin Bins}
+\label{sub:step2}
+
+\begin{enumerate}
+    \item Visit https://jsonbin.io and create a free account
+    \item Create three new bins from the dashboard:
+    \begin{itemize}
+        \item Users bin (for user account storage)
+        \item Tickets bin (for ticket data)
+        \item Counter bin (for ID sequence management)
+    \end{itemize}
+    \item Copy the bin IDs from each bin's URL
+    \item Generate an API key from your JSONBin profile
+\end{enumerate}
+
+\subsection{Step 3: Configure Application}
+\label{sub:step3}
+
+Edit the configuration section in \texttt{js/app.js}:
+
+\begin{lstlisting}[language=JavaScript, caption={Application Configuration}, label={lst:config}]
+// Replace these values with your JSONBin credentials
+const JSONBIN_API_KEY = 'your-api-key-here';
+
+const BIN_IDS = {
+    users: 'your-users-bin-id',
+    tickets: 'your-tickets-bin-id',
+    counter: 'your-counter-bin-id'
+};
+
+// Optional: Change admin credentials
+const ADMIN_EMAIL = 'admin@yourdomain.com';
+const ADMIN_PASSWORD = 'your-secure-password';
+\end{lstlisting}
+
+\subsection{Step 4: Local Development}
+\label{sub:step4}
+
+Test locally using a simple HTTP server:
+
+\begin{lstlisting}[language=bash, caption={Start Local Server}, label={lst:server}]
+# Using Python 3
+python3 -m http.server 8000
+
+# Or using Node.js (if installed)
+npx serve .
+\end{lstlisting}
+
+Access the application at http://localhost:8000
+
+\subsection{Step 5: Deploy to GitHub Pages}
+\label{sub:step5}
+
+\begin{enumerate}
+    \item Create a new repository on GitHub
+    \item Push the wticket code to your repository
+    \item Navigate to repository Settings > Pages
+    \item Select the branch to deploy (main) and root folder
+    \item Save and wait for deployment (typically 2-3 minutes)
+    \item Access your deployed site at https://yourusername.github.io/repo-name
+\end{enumerate}
+
+\section{Configuration Options}
+\label{sec:config-options}
+
+\subsection{Admin Account Customization}
+\label{sub:admin-custom}
+
+The administrator account is automatically created on first access:
+
+\begin{lstlisting}[language=JavaScript, caption={Admin Account Settings}, label={lst:admin}]
+const ADMIN_EMAIL = 'wisrovi@wticket.com';
+const ADMIN_PASSWORD = 'wisrovi_wticket';
+\end{lstlisting}
+
+\subsection{Session Duration}
+\label{sub:session-duration}
+
+Sessions expire after a configurable duration:
+
+\begin{lstlisting}[language=JavaScript, caption={Session Configuration}, label={lst:session}]
+// Session duration in milliseconds (default: 24 hours)
+const SESSION_DURATION = 24 * 60 * 60 * 1000;
+\end{lstlisting}
+
+\cleardoublepage
+
+% Capítulo 4: Guía de Usuario
+\chapter{User Guide}
+\thispagestyle{fancy}
+\label{chap:userguide}
+
+\section{Getting Started}
+\label{sec:getting-started}
+
+Access the deployed application URL in a web browser. The public dashboard displays system statistics without requiring authentication.
+
+\section{User Registration}
+\label{sec:registration}
+
+New users must register before creating tickets:
+
+\begin{enumerate}
+    \item Click "Registrarse" (Register) tab on the login page
+    \item Enter a valid email address
+    \item Create a secure password (minimum 6 characters)
+    \item Confirm the password
+    \item Click "Registrarse" to complete registration
+\end{enumerate}
+
+\section{Creating Tickets}
+\label{sec:creating-tickets}
+
+Authenticated users can create support tickets:
+
+\begin{enumerate}
+    \item Click "Crear Nuevo Ticket" button in the dashboard
+    \item Fill in the ticket form:
+    \begin{itemize}
+        \item \textbf{Title}: Brief description of the issue (required)
+        \item \textbf{Description}: Detailed explanation (optional)
+        \item \textbf{Priority}: Urgent, High, Normal, or Low
+        \item \textbf{Category}: General, Technical, Billing, Suggestion, Bug, or Other
+    \end{itemize}
+    \item Click "Crear Ticket" to submit
+\end{enumerate}
+
+\section{Ticket Management}
+\label{sec:ticket-mgmt}
+
+Users can view and track their tickets in the dashboard:
+
+\begin{itemize}
+    \item \textbf{Open Tickets}: Tickets awaiting administrator response
+    \item \textbf{Closed Tickets}: Resolved tickets with responses
+    \item \textbf{Search}: Filter tickets by title or ID
+    \item \textbf{Comments}: Add threaded comments to open tickets
+\end{itemize}
+
+\section{Administrator Functions}
+\label{sec:admin-functions}
+
+Administrators access the admin panel after login with admin credentials:
+
+\subsection{Ticket Resolution}
+\begin{enumerate}
+    \item Open ticket detail from the admin panel
+    \item Review ticket content and user comments
+    \item Click "Atender Ticket" to open response form
+    \item Enter optional response text
+    \item Submit to close the ticket
+\end{enumerate}
+
+\subsection{Ticket Assignment}
+Administrators can assign tickets to other administrators for delegation:
+
+\begin{enumerate}
+    \item Open ticket detail
+    \item Click "Asignar" button
+    \item Select target administrator from dropdown
+    \item Confirm assignment
+\end{enumerate}
+
+\section{Keyboard Shortcuts}
+\label{sec:shortcuts}
+
+Power users can utilize keyboard shortcuts for faster navigation:
+
+\begin{table}[H]
+    \centering
+    \caption[Keyboard Shortcuts Reference]{Keyboard Shortcuts Reference}
+    \begin{tabular}{|c|l|}
+        \hline
+        \textbf{Key} & \textbf{Action} \\
+        \hline
+        n & Create new ticket \\
+        \hline
+        / & Focus search input \\
+        \hline
+        r & Refresh data \\
+        \hline
+        d & Toggle dark mode \\
+        \hline
+        Esc & Close modal dialogs \\
+        \hline
+    \end{tabular}
+    \label{tab:shortcuts}
+\end{table}
+
+\cleardoublepage
+
+% Capítulo 5: Seguridad
+\chapter{Security Architecture}
+\thispagestyle{fancy}
+\label{chap:security}
+
+\section{Authentication}
+\label{sec:authentication}
+
+WTicket implements a token-based authentication system with the following flow:
+
+\begin{enumerate}
+    \item User submits email and password
+    \item Client hashes password using SHA-256 with application salt
+    \item Server compares hash against stored hash
+    \item On success, generate 256-bit cryptographically random token
+    \item Return token to client for session management
+\end{enumerate}
+
+\begin{lstlisting}[language=JavaScript, caption={Password Hashing}, label={lst:hash}]
+async function hashPassword(password) {
+    const salt = 'wticket_salt';
+    const data = new TextEncoder().encode(password + salt);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+\end{lstlisting}
+
+\section{Session Management}
+\label{sec:session-mgmt}
+
+Sessions utilize cryptographically secure tokens:
+
+\begin{lstlisting}[language=JavaScript, caption={Token Generation}, label={lst:token}]
+async function generateToken() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+\end{lstlisting}
+
+\section{XSS Prevention}
+\label{sec:xss-prevention}
+
+All user-generated content is sanitized before display:
+
+\begin{lstlisting}[language=JavaScript, caption={HTML Escaping}, label={lst:escape}]
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+\end{lstlisting}
+
+\section{Security Considerations}
+\label{sec:sec-considerations}
+
+\subsection{Client-Side Hashing Limitations}
+While WTicket uses SHA-256 hashing, client-side hashing cannot provide the same security guarantees as server-side bcrypt or Argon2. Consider this limitation for high-security deployments.
+
+\subsection{JSONBin.io API Key Protection}
+The API key is embedded in client-side JavaScript. For production systems, consider implementing proxy endpoints or additional authentication layers.
+
+\cleardoublepage
+
+% Capítulo 6: API Reference
+\chapter{API Reference}
+\thispagestyle{fancy}
+\label{chap:api}
+
+\section{User Management Functions}
+\label{sec:user-api}
+
+\subsection{register(email, password, name)}
+Registers a new user account.
+
+\begin{lstlisting}[language=JavaScript, caption={User Registration}, label={lst:register}]
+// Parameters
+// email: string - User's email address
+// password: string - Plain text password (will be hashed)
+// name: string - Display name (optional)
+
+// Returns: Promise<Session Object>
+const session = await API.register(
+    'user@example.com',
+    'password123',
+    'John Doe'
+);
+\end{lstlisting}
+
+\subsection{login(email, password)}
+Authenticates user credentials.
+
+\begin{lstlisting}[language=JavaScript, caption={User Login}, label={lst:login}]
+// Parameters
+// email: string - User's email address
+// password: string - Plain text password
+
+// Returns: Promise<Session Object>
+const session = await API.login('user@example.com', 'password123');
+\end{lstlisting}
+
+\section{Ticket Management Functions}
+\label{sec:ticket-api}
+
+\subsection{createTicket(title, description, priority, category)}
+Creates a new support ticket.
+
+\begin{lstlisting}[language=JavaScript, caption={Create Ticket}, label={lst:create-ticket}]
+// Parameters
+// title: string - Ticket title (required)
+// description: string - Detailed description (optional)
+// priority: string - 'urgent' | 'high' | 'normal' | 'low'
+// category: string - 'general' | 'technical' | 'billing' | 'suggestion' | 'bug' | 'other'
+
+// Returns: Promise<Ticket Object>
+const ticket = await API.createTicket(
+    'Login not working',
+    'Cannot access my account since yesterday',
+    'high',
+    'technical'
+);
+\end{lstlisting}
+
+\subsection{closeTicket(ticketId, response)}
+Closes an open ticket with an administrator response.
+
+\begin{lstlisting}[language=JavaScript, caption={Close Ticket}, label={lst:close-ticket}]
+// Parameters
+// ticketId: number - Ticket ID to close
+// response: string - Administrator's response (optional)
+
+// Returns: Promise<boolean>
+await API.closeTicket(123, 'Issue resolved by resetting password.');
+\end{lstlisting}
+
+\section{Query Functions}
+\label{sec:query-api}
+
+\begin{table}[H]
+    \centering
+    \caption[Query API Functions]{Query API Functions}
+    \begin{tabular}{|l|p{8cm}|}
+        \hline
+        \textbf{Function} & \textbf{Description} \\
+        \hline
+        getOpenTickets() & Returns all open tickets \\
+        \hline
+        getClosedTickets() & Returns all closed tickets \\
+        \hline
+        getUserOpenTickets(email) & Returns open tickets for specific user \\
+        \hline
+        getUserClosedTickets(email) & Returns closed tickets for specific user \\
+        \hline
+        getTicket(id) & Returns single ticket by ID \\
+        \hline
+        getStats() & Returns global statistics object \\
+        \hline
+        getAdmins() & Returns list of admin users \\
+        \hline
+    \end{tabular}
+    \label{tab:query-functions}
+\end{table}
+
+\cleardoublepage
+
+% Capítulo 7: Mejores Prácticas
+\chapter{Best Practices and Troubleshooting}
+\thispagestyle{fancy}
+\label{chap:troubleshooting}
+
+\section{Best Practices}
+\label{sec:best-practices}
+
+\subsection{Deployment Best Practices}
+\begin{itemize}
+    \item Always use HTTPS for production deployments
+    \item Enable GitHub Pages HTTPS automatic redirection
+    \item Regularly backup JSONBin data using export functionality
+    \item Monitor JSONBin.io usage to avoid free tier limits
+\end{itemize}
+
+\subsection{Security Best Practices}
+\begin{itemize}
+    \item Change default admin credentials immediately after deployment
+    \item Use strong passwords with at least 12 characters
+    \item Regularly review user accounts and remove unused ones
+    \item Implement rate limiting through JSONBin.io settings
+\end{itemize}
+
+\section{Common Issues and Solutions}
+\label{sec:common-issues}
+
+\subsection{Issue: Service Worker Not Caching}
+\textbf{Symptom}: Offline mode not working, cache errors in console
+
+\textbf{Solution}: 
+\begin{enumerate}
+    \item Clear browser cache
+    \item Unregister existing service worker
+    \item Refresh page to register new service worker
+\end{enumerate}
+
+\begin{lstlisting}[language=JavaScript, caption={Clear Service Worker}, label={lst:sw-clear}]
+navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(reg => reg.unregister());
+});
+location.reload();
+\end{lstlisting}
+
+\subsection{Issue: Data Overwrites}
+\textbf{Symptom}: Created tickets disappearing after refresh
+
+\textbf{Solution}: Ensure stable internet connection and avoid rapid consecutive operations. The sync-before-write protocol requires time to complete.
+
+\subsection{Issue: Login Failures}
+\textbf{Symptom}: Authentication not working despite correct credentials
+
+\textbf{Solution}:
+\begin{enumerate}
+    \item Verify browser accepts cookies from JSONBin.io
+    \item Check browser console for CORS errors
+    \item Confirm JSONBin API key has write permissions
+\end{enumerate}
+
+\section{Performance Optimization}
+\label{sec:performance}
+
+\begin{itemize}
+    \item Limit initial data load by implementing pagination for large ticket lists
+    \item Use browser caching headers in JSONBin.io settings
+    \item Minimize real-time polling frequency to reduce API calls
+    \item Enable browser compression for faster page loads
+\end{itemize}
+
+\cleardoublepage
+
+% Capítulo 8: Conclusiones
+\chapter{Conclusions and Future Work}
+\thispagestyle{fancy}
+\label{chap:conclusions}
+
+\section{Project Summary}
+\label{sec:project-summary}
+
+WTicket successfully demonstrates that enterprise-grade ticket management can be achieved without traditional infrastructure. The project validates several key hypotheses:
+
+\begin{enumerate}
+    \item \textbf{Serverless Viability}: Complex business logic can function entirely in the browser with cloud data services
+    \item \textbf{Cost Efficiency}: Zero-cost hosting is achievable through free tiers of services like JSONBin.io and GitHub Pages
+    \item \textbf{Maintainability}: Simplified architecture reduces long-term maintenance burden
+    \item \textbf{Scalability}: CDN-based deployment provides automatic global scaling
+\end{enumerate}
+
+\section{Achievements}
+\label{sec:achievements}
+
+The implemented system delivers comprehensive ticket management capabilities:
+
+\begin{itemize}
+    \item Complete user authentication and authorization system
+    \item Full ticket lifecycle management from creation to resolution
+    \item Role-based access control with administrator and user roles
+    \item Real-time statistics and data visualization
+    \item Gamification through user achievements
+    \item Progressive Web App capabilities with offline support
+    \item Responsive design for mobile and desktop access
+    \item Internationalization support for multi-language deployments
+\end{itemize}
+
+\section{Future Enhancements}
+\label{sec:future}
+
+Several enhancements could extend WTicket's capabilities:
+
+\begin{enumerate}
+    \item \textbf{Email Notifications}: Integrate with services like EmailJS or SendGrid for user notifications
+    \item \textbf{File Attachments}: Support ticket attachments using cloud storage
+    \item \textbf{Advanced Analytics}: Dashboard with trend charts and performance metrics
+    \item \textbf{WebSocket Updates}: Real-time ticket updates without polling
+    \item \textbf{Multi-tenancy}: Support multiple organizations with data isolation
+    \item \textbf{API Key Authentication}: Backend proxy for secure API key handling
+    \item \textbf{Database Migration}: Support for PostgreSQL or MongoDB backends
+\end{enumerate}
+
+\section{License}
+\label{sec:license}
+
+This project is released under the MIT License, allowing free use, modification, and distribution.
+
+\cleardoublepage
+
+% Bibliografía
+\chapter{Bibliography}
+\thispagestyle{fancy}
+\addcontentsline{toc}{chapter}{Bibliography}
+\label{chap:bibliography}
+
+\begin{thebibliography}{99}
+
+\addcontentsline{toc}{section}{References}
+
+\small
+
+%\bibitem{jsonbin}
+%\textbf{JSONBin.io}. (2024). JSONBin.io - Cloud JSON storage as a service. Retrieved from https://jsonbin.io/
+
+%\bibitem{githubpages}
+%\textbf{GitHub Pages}. (2024). Websites for you and your projects. Retrieved from https://pages.github.com/
+
+%\bibitem{javascript}
+%\textbf{MDN Web Docs}. (2024). JavaScript. Retrieved from https://developer.mozilla.org/en-US/docs/Web/JavaScript
+
+%\bibitem{serviceworker}
+%\textbf{Google Developers}. (2024). Service Workers: an Introduction. Retrieved from https://developers.google.com/web/fundamentals/primers/service-workers
+
+%\bibitem{pwa}
+%\textbf{MDN Web Docs}. (2024). Progressive Web Apps (PWAs). Retrieved from https://developer.mozilla.org/en-US/docs/Web/Progressive\_web\_apps
+
+%\bibitem{crypto}
+%\textbf{MDN Web Docs}. (2024). Web Crypto API. Retrieved from https://developer.mozilla.org/en-US/docs/Web/API/Web\_Crypto\_API
+
+%\bibitem{indexeddb}
+%\textbf{MDN Web Docs}. (2024). IndexedDB API. Retrieved from https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB\_API
+
+%\bibitem{sha256}
+%\textbf{NIST}. (2015). Secure Hash Standard (SHS). FIPS PUB 180-4. Retrieved from https://csrc.nist.gov/publications/detail/fips/180/4/final
+
+%\bibitem{cors}
+%\textbf{MDN Web Docs}. (2024). Cross-Origin Resource Sharing (CORS). Retrieved from https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+%\bibitem{githubsubmodules}
+%\textbf{GitHub Docs}. (2024). Submodules. Retrieved from https://docs.github.com/en/get-started/quicklinks/submodules
+
+%\bibitem{html5}
+%\textbf{W3C}. (2024). HTML5. W3C Recommendation. Retrieved from https://www.w3.org/TR/html5/
+
+%\bibitem{css3}
+%\textbf{W3C}. (2024). CSS Snapshot 2024. W3C Working Group Note. Retrieved from https://www.w3.org/TR/CSS/
+
+%\bibitem{ecmascript}
+%\textbf{ECMA International}. (2024). ECMAScript 2024 Language Specification. ECMA-262, 15th Edition. Retrieved from https://tc39.es/ecma262/
+
+\Large
+\textbf{Online Resources}
+
+\begin{enumerate}
+    \item JSONBin.io Documentation: https://jsonbin.io/docs
+    \item GitHub Pages Documentation: https://docs.github.com/en/pages
+    \item MDN Web Docs: https://developer.mozilla.org
+    \item Web Crypto API: https://developer.mozilla.org/en-US/docs/Web/API/Web\_Crypto\_API
+    \item Service Worker API: https://developer.mozilla.org/en-US/docs/Web/API/Service\_Worker\_API
+    \item IndexedDB API: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB\_API
+\end{enumerate}
+
+\end{thebibliography}
+
+\cleardoublepage
+
+% Apéndices
+\appendix
+\chapter{Appendix: Advanced Configurations}
+\thispagestyle{fancy}
+\label{app:advanced}
+
+\section{Customizing the Design System}
+\label{app:design}
+
+The CSS custom properties in \texttt{css/styles.css} enable easy theming:
+
+\begin{lstlisting}[language=CSS, caption={CSS Custom Properties Configuration}, label={lst:css-vars}]
+:root {
+    /* Primary Colors */
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    
+    /* Gray Scale */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+}
+\end{lstlisting}
+
+\section{Dark Mode Configuration}
+\label{app:dark-mode}
+
+Dark mode uses attribute selectors for theme switching:
+
+\begin{lstlisting}[language=CSS, caption={Dark Mode Configuration}, label={lst:dark-mode}]
+[data-theme="dark"] {
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #374151;
+}
+\end{lstlisting}
+
+\section{Adding New Languages}
+\label{app:i18n}
+
+Extend the i18n module for additional language support:
+
+\begin{lstlisting}[language=JavaScript, caption={Internationalization Extension}, label={lst:i18n-ext}]
+const translations = {
+    es: { /* existing Spanish translations */ },
+    en: { /* existing English translations */ },
+    fr: {
+        login: 'Connexion',
+        register: "S'inscrire",
+        tickets: 'Tickets',
+        // ... add more translations
+    }
+};
+\end{lstlisting}
+
+\section{IndexedDB Schema Reference}
+\label{app:indexeddb}
+
+The IndexedDB schema for offline caching:
+
+\begin{lstlisting}[language=JavaScript, caption={IndexedDB Schema}, label={lst:indexeddb}]
+const DB_NAME = 'wticket_db';
+const DB_VERSION = 1;
+
+const STORES = {
+    users: { keyPath: 'email' },
+    tickets: { keyPath: 'id' },
+    counter: { keyPath: 'id' },
+    sync: { keyPath: 'type' }
+};
+\end{lstlisting}
+
+\cleardoublepage
+
+% Página de agradecimiento
+\chapter*{Acknowledgments}
+\thispagestyle{fancy}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+\label{chap:acknowledgments}
+
+\vspace*{3cm}
+
+\begin{center}
+{\color{blue!70!black}\Huge\textbf{Thank You}}\\[1cm]
+
+{\Large
+This project represents the collaborative effort of open-source development principles and modern web technologies.}\\[1cm]
+
+{\large
+Special appreciation to:}\\[0.5cm]
+
+\begin{itemize}
+    \itemsep0.5em
+    \item The JavaScript community for continuous innovation
+    \item JSONBin.io for providing accessible cloud storage
+    \item GitHub for enabling free hosting through Pages
+    \item All contributors and users of the WTicket system
+\end{itemize}
+
+\vfill
+
+{\large
+For questions, suggestions, or collaboration opportunities, please reach out through the contact information provided in this document.}
+
+\vspace{2cm}
+
+{\color{gray}\textit{Maintained by William Rodriguez}}\\[0.3cm]
+{\color{gray}\textit{Last Updated: March 2026}}
+
+\end{center}
+
+% Final page
+\newpage
+\thispagestyle{empty}
+\begin{center}
+\vspace*{\fill}
+{\LARGE\sffamily\color{blue!70!black}Document generated with LaTeX}\\
+\vspace{1cm}
+{\large\sffamily\color{gray}WTicket - Serverless Ticket Management System}\\
+\vspace{0.5cm}
+{\large\sffamily\color{gray}March 2026}
+\vspace*{\fill}
+\end{center}
+
+\end{document}

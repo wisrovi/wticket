@@ -1,0 +1,49 @@
+% Simple architecture diagram placeholder
+% This creates a basic architecture diagram in pure LaTeX
+
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit, shadows.blur}
+
+\begin{document}
+\begin{tikzpicture}[
+    >=latex,
+    box/.style={rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!10},
+    arrow/.style={->, thick},
+    layer/.style={rectangle, rounded corners, draw=gray, fill=gray!5, minimum width=7cm, minimum height=4cm}
+]
+
+% Client Layer
+\node[layer, label={90:Client Layer}] (client) at (0,0) {
+    \begin{tabular}{c}
+        \node[box, fill=green!10] (index) {index.html}; \\
+        \node[box, fill=green!10] (login) {login.html}; \\
+        \node[box, fill=green!10] (dashboard) {dashboard.html}; \\
+        \node[box, fill=orange!10] (app) {js/app.js};
+    \end{tabular}
+};
+
+% Data Layer
+\node[layer, label={90:Data Layer}] (data) at (8,0) {
+    \begin{tabular}{c}
+        \node[box, fill=yellow!10] (users) {users.json}; \\
+        \node[box, fill=yellow!10] (tickets) {tickets.json}; \\
+        \node[box, fill=yellow!10] (counter) {counter.json};
+    \end{tabular}
+};
+
+% JSONBin.io Cloud
+\node[cloud, cloud puffs=3, cloud puff arc=140, draw, aspect=2, 
+      fill=purple!10, minimum height=2cm, minimum width=3cm] (jsonbin) at (14,0) 
+      {JSONBin.io};
+
+% Arrows
+\draw[arrow] (app) -- (users) node[midway, above] {GET/PUT};
+\draw[arrow] (app) -- (tickets) node[midway, above] {GET/PUT};
+\draw[arrow] (app) -- (counter) node[midway, above] {GET/PUT};
+
+% Client to Cloud
+\draw[arrow, dashed] (data) -- (jsonbin) node[midway, above] {REST API};
+
+\end{tikzpicture}
+\end{document}
