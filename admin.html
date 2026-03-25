@@ -71,6 +71,74 @@
       </div>
     </div>
 
+    <div class="charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 32px;">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">📊 Por Prioridad</h3>
+        </div>
+        <div class="card-body">
+          <div class="chart-bar">
+            <div class="chart-label">🔴 Urgente</div>
+            <div class="chart-track"><div class="chart-fill urgent" id="chart-urgent" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-urgent-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">🟠 Alta</div>
+            <div class="chart-track"><div class="chart-fill high" id="chart-high" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-high-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">🟡 Normal</div>
+            <div class="chart-track"><div class="chart-fill normal" id="chart-normal" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-normal-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">🟢 Baja</div>
+            <div class="chart-track"><div class="chart-fill low" id="chart-low" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-low-value">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">🏷️ Por Categoría</h3>
+        </div>
+        <div class="card-body">
+          <div class="chart-bar">
+            <div class="chart-label">📋 General</div>
+            <div class="chart-track"><div class="chart-fill general" id="chart-general" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-general-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">🔧 Técnico</div>
+            <div class="chart-track"><div class="chart-fill technical" id="chart-technical" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-technical-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">💰 Facturación</div>
+            <div class="chart-track"><div class="chart-fill billing" id="chart-billing" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-billing-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">💡 Sugerencia</div>
+            <div class="chart-track"><div class="chart-fill suggestion" id="chart-suggestion" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-suggestion-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">🐛 Bug</div>
+            <div class="chart-track"><div class="chart-fill bug" id="chart-bug" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-bug-value">0</div>
+          </div>
+          <div class="chart-bar">
+            <div class="chart-label">❓ Otro</div>
+            <div class="chart-track"><div class="chart-fill other" id="chart-other" style="width: 0%"></div></div>
+            <div class="chart-value" id="chart-other-value">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="admin-tabs">
       <button class="admin-tab active" data-tab="open" onclick="switchTab('open')">
         📂 Tickets Abiertos (<span id="tab-open-count">0</span>)
@@ -186,6 +254,34 @@
         document.getElementById('tab-closed-count').textContent = stats.closedCount;
         document.getElementById('banner-open').textContent = stats.openCount;
         document.getElementById('banner-closed').textContent = stats.closedCount;
+        
+        const allTickets = [...allOpenTickets, ...allClosedTickets];
+        const priorities = { urgent: 0, high: 0, normal: 0, low: 0 };
+        const categories = { general: 0, technical: 0, billing: 0, suggestion: 0, bug: 0, other: 0 };
+        
+        allTickets.forEach(t => {
+          priorities[t.priority] = (priorities[t.priority] || 0) + 1;
+          categories[t.category] = (categories[t.category] || 0) + 1;
+        });
+        
+        const maxPriority = Math.max(...Object.values(priorities), 1);
+        const maxCategory = Math.max(...Object.values(categories), 1);
+        
+        Object.keys(priorities).forEach(p => {
+          const pct = (priorities[p] / maxPriority) * 100;
+          const el = document.getElementById(`chart-${p}`);
+          const val = document.getElementById(`chart-${p}-value`);
+          if (el) el.style.width = `${pct}%`;
+          if (val) val.textContent = priorities[p];
+        });
+        
+        Object.keys(categories).forEach(c => {
+          const pct = (categories[c] / maxCategory) * 100;
+          const el = document.getElementById(`chart-${c}`);
+          const val = document.getElementById(`chart-${c}-value`);
+          if (el) el.style.width = `${pct}%`;
+          if (val) val.textContent = categories[c];
+        });
       } catch (error) {
         console.error('Error loading stats:', error);
       }

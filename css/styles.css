@@ -471,6 +471,50 @@ textarea.form-input {
   font-weight: 500;
 }
 
+.chart-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.chart-label {
+  min-width: 80px;
+  font-size: 13px;
+}
+
+.chart-track {
+  flex: 1;
+  height: 20px;
+  background: var(--gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.chart-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease-out;
+}
+
+.chart-fill.urgent { background: linear-gradient(90deg, #ef4444, #dc2626); }
+.chart-fill.high { background: linear-gradient(90deg, #f97316, #ea580c); }
+.chart-fill.normal { background: linear-gradient(90deg, #eab308, #ca8a04); }
+.chart-fill.low { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.chart-fill.general { background: linear-gradient(90deg, #6366f1, #4f46e5); }
+.chart-fill.technical { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+.chart-fill.billing { background: linear-gradient(90deg, #10b981, #059669); }
+.chart-fill.suggestion { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.chart-fill.bug { background: linear-gradient(90deg, #ec4899, #db2777); }
+.chart-fill.other { background: linear-gradient(90deg, #6b7280, #4b5563); }
+
+.chart-value {
+  min-width: 30px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 14px;
+}
+
 .ticket-list {
   display: flex;
   flex-direction: column;
