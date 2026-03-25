@@ -56,7 +56,7 @@ function formatDate(timestamp) {
 async function jsonbinGet(binId) {
   try {
     const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}/latest`, {
-      headers: { 'X-Access-Key': JSONBIN_API_KEY }
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
     if (!res.ok) {
       console.log('GET failed for', binId, 'status:', res.status);
@@ -76,7 +76,7 @@ async function jsonbinPut(binId, data) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Access-Key': JSONBIN_API_KEY
+        'X-Master-Key': JSONBIN_API_KEY
       },
       body: JSON.stringify(data)
     });
