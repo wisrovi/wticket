@@ -12,15 +12,20 @@
 </head>
 <body>
   <nav class="navbar">
-    <div class="container">
+    <div class="container navbar-container">
       <a href="index.html" class="navbar-brand">🎫 WTicket</a>
-      <ul class="navbar-nav">
-        <li><a href="index.html" class="nav-link">Inicio</a></li>
+      <button class="hamburger" onclick="toggleMenu()" id="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="navbar-nav" id="navbar-nav">
         <li class="nav-user" id="nav-user"></li>
         <li id="last-update" style="font-size: 12px; color: var(--gray-500);">-</li>
-        <li><button onclick="manualRefresh()" class="btn btn-outline btn-sm" style="margin-left: 8px;">🔄 Actualizar</button></li>
-        <li><a href="contact.html" class="nav-link" style="margin-left: 8px;">Contacto</a></li>
-        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm" style="margin-left: 8px;">Cerrar Sesión</button></li>
+        <li><a href="index.html" class="nav-link">Inicio</a></li>
+        <li><a href="contact.html" class="nav-link">Contacto</a></li>
+        <li><button onclick="manualRefresh()" class="btn btn-outline btn-sm">🔄 Actualizar</button></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
       </ul>
     </div>
   </nav>
@@ -311,6 +316,13 @@
       await API.logout();
       Toast.success('Sesión cerrada correctamente');
       setTimeout(() => window.location.href = 'login.html', 1000);
+    };
+
+    window.toggleMenu = () => {
+      const nav = document.getElementById('navbar-nav');
+      const btn = document.getElementById('hamburger-btn');
+      nav.classList.toggle('active');
+      btn.classList.toggle('active');
     };
 
     function updateLastUpdate() {
