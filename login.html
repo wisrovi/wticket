@@ -97,10 +97,26 @@
 
     initTheme();
 
+    function animateValue(element, start, end, duration) {
+      if (start === end) return;
+      const range = end - start;
+      const startTime = performance.now();
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = Math.round(start + range * eased);
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
     async function loadStats() {
       try {
         const stats = await API.getStats();
-        document.getElementById('resolved-count').textContent = stats.closedCount;
+        const el = document.getElementById('resolved-count');
+        const current = parseInt(el.textContent) || 0;
+        animateValue(el, current, stats.closedCount, 1000);
       } catch (error) {
         console.error('Error loading stats:', error);
       }
