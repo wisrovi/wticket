@@ -18,6 +18,7 @@
         <li><a href="index.html" class="nav-link">Inicio</a></li>
         <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
         <li><a href="login.html?tab=register" class="btn btn-primary btn-sm">Crear Ticket</a></li>
+        <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button></li>
       </ul>
     </div>
   </nav>
@@ -67,6 +68,29 @@
 
   <script type="module">
     import API from './js/app.js';
+
+    function initTheme() {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    window.toggleTheme = () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    };
+
+    initTheme();
+
     API.init();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');

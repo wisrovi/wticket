@@ -24,6 +24,7 @@
         <li id="last-update" style="font-size: 12px; color: var(--gray-500);">-</li>
         <li><a href="index.html" class="nav-link">Inicio</a></li>
         <li><a href="contact.html" class="nav-link">Contacto</a></li>
+        <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button></li>
         <li><button onclick="manualRefresh()" class="btn btn-outline btn-sm">🔄 Actualizar</button></li>
         <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
       </ul>
@@ -132,6 +133,28 @@
   <script type="module">
     import API from './js/app.js';
     import Toast from './js/toast.js';
+
+    function initTheme() {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    window.toggleTheme = () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    };
+
+    initTheme();
 
     let currentUser = null;
     let openTickets = [];
@@ -313,9 +336,11 @@
     };
 
     window.handleLogout = async () => {
-      await API.logout();
-      Toast.success('Sesión cerrada correctamente');
-      setTimeout(() => window.location.href = 'login.html', 1000);
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        await API.logout();
+        Toast.success('Sesión cerrada correctamente');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+      }
     };
 
     window.toggleMenu = () => {
