@@ -161,6 +161,45 @@ async function register(email, password, name) {
   return login(email, password);
 }
 
+async function updateUserName(email, newName) {
+  await syncAndSaveUsers();
+  
+  if (!cache.users[email]) {
+    throw new Error('Usuario no encontrado');
+  }
+  
+  cache.users[email].name = newName;
+  await syncAndSaveUsers();
+  
+  const session = JSON.parse(localStorage.getItem('wticket_session'));
+  if (session && session.email === email) {
+    session.name = newName;
+    localStorage.setItem('wticket_session', JSON.stringify(session));
+  }
+  
+  return true;
+}
+
+async function updateUserPassword(email, currentPassword, newPassword) {
+  await syncAndSaveUsers();
+  
+  const user = cache.users[email];
+  if (!user) {
+    throw new Error('Usuario no encontrado');
+  }
+  
+  const hashedCurrent = await hashPassword(currentPassword);
+  if (user.passwordHash !== hashedCurrent) {
+    throw new Error('Contraseña actual incorrecta');
+  }
+  
+  const hashedNew = await hashPassword(newPassword);
+  cache.users[email].passwordHash = hashedNew;
+  await syncAndSaveUsers();
+  
+  return true;
+}
+
 async function login(email, password) {
   await refreshData();
   
@@ -350,6 +389,8 @@ const API = {
   login,
   logout,
   validateSession,
+  updateUserName,
+  updateUserPassword,
   createTicket,
   getTicket,
   getOpenTickets,

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mi Perfil - WTicket">
+  <meta name="theme-color" content="#6366f1">
+  <title>Mi Perfil - WTicket</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">🎫 WTicket</a>
+      <button class="hamburger" onclick="toggleMenu()" id="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="navbar-nav" id="navbar-nav">
+        <li class="nav-user" id="nav-user"></li>
+        <li><a href="index.html" class="nav-link">Inicio</a></li>
+        <li><a href="contact.html" class="nav-link">Contacto</a></li>
+        <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container" style="padding: 40px 20px;">
+    <div class="page-header">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h1 class="page-title">Mi Perfil</h1>
+          <p class="page-subtitle">Gestiona tu información personal</p>
+        </div>
+        <a href="dashboard.html" class="btn btn-secondary">← Volver al Panel</a>
+      </div>
+    </div>
+
+    <div style="max-width: 600px; margin: 0 auto;">
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+          <h2 class="card-title">📝 Cambiar Nombre</h2>
+        </div>
+        <div class="card-body">
+          <form id="name-form" onsubmit="handleUpdateName(event)">
+            <div class="form-group">
+              <label class="form-label" for="profile-name">Nombre</label>
+              <input type="text" id="profile-name" class="form-input" placeholder="Tu nombre" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="name-btn">Actualizar Nombre</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🔐 Cambiar Contraseña</h2>
+        </div>
+        <div class="card-body">
+          <form id="password-form" onsubmit="handleUpdatePassword(event)">
+            <div class="form-group">
+              <label class="form-label" for="current-password">Contraseña Actual</label>
+              <input type="password" id="current-password" class="form-input" placeholder="••••••••" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="new-password">Nueva Contraseña</label>
+              <input type="password" id="new-password" class="form-input" placeholder="••••••••" minlength="4" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="confirm-password">Confirmar Nueva Contraseña</label>
+              <input type="password" id="confirm-password" class="form-input" placeholder="••••••••" minlength="4" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="password-btn">Actualizar Contraseña</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Wisrovi Rodriguez. Todos los derechos reservados.</p>
+    <p>WTicket - Sistema de Gestión de Tickets</p>
+  </footer>
+
+  <script type="module">
+    import API from './js/app.js';
+    import Toast from './js/toast.js';
+    import { initKeyboardShortcuts } from './js/shortcuts.js';
+
+    function initTheme() {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    window.toggleTheme = () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    };
+
+    initTheme();
+
+    initKeyboardShortcuts({
+      onToggleTheme: () => toggleTheme()
+    });
+
+    async function init() {
+      const session = await API.requireAuth(['user'])();
+      if (!session) return;
+      
+      document.getElementById('nav-user').innerHTML = `<span>👤 ${session.name}</span>`;
+      document.getElementById('profile-name').value = session.name;
+    }
+
+    window.toggleMenu = () => {
+      const nav = document.getElementById('navbar-nav');
+      const btn = document.getElementById('hamburger-btn');
+      nav.classList.toggle('active');
+      btn.classList.toggle('active');
+    };
+
+    window.handleUpdateName = async (event) => {
+      event.preventDefault();
+      const btn = document.getElementById('name-btn');
+      const name = document.getElementById('profile-name').value.trim();
+
+      btn.disabled = true;
+      btn.innerHTML = 'Actualizando...';
+
+      try {
+        const session = await API.validateSession();
+        if (!session) throw new Error('No hay sesión activa');
+
+        const success = await API.updateUserName(session.email, name);
+        if (success) {
+          Toast.success('Nombre actualizado exitosamente');
+          document.getElementById('nav-user').innerHTML = `<span>👤 ${name}</span>`;
+        }
+      } catch (error) {
+        Toast.error('Error al actualizar el nombre');
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Actualizar Nombre';
+      }
+    };
+
+    window.handleUpdatePassword = async (event) => {
+      event.preventDefault();
+      const btn = document.getElementById('password-btn');
+      const currentPass = document.getElementById('current-password').value;
+      const newPass = document.getElementById('new-password').value;
+      const confirmPass = document.getElementById('confirm-password').value;
+
+      if (newPass !== confirmPass) {
+        Toast.error('Las contraseñas no coinciden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = 'Actualizando...';
+
+      try {
+        const session = await API.validateSession();
+        if (!session) throw new Error('No hay sesión activa');
+
+        const success = await API.updateUserPassword(session.email, currentPass, newPass);
+        if (success) {
+          Toast.success('Contraseña actualizada exitosamente');
+          document.getElementById('password-form').reset();
+        }
+      } catch (error) {
+        Toast.error('Error al actualizar la contraseña');
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Actualizar Contraseña';
+      }
+    };
+
+    window.handleLogout = async () => {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        await API.logout();
+        Toast.success('Sesión cerrada correctamente');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+      }
+    };
+
+    init();
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
