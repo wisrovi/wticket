@@ -67,6 +67,16 @@ body {
   padding-bottom: 80px;
 }
 
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

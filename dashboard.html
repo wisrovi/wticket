@@ -11,36 +11,36 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
 </head>
 <body>
-  <nav class="navbar">
+  <nav class="navbar" role="navigation" aria-label="Navegación principal">
     <div class="container navbar-container">
-      <a href="index.html" class="navbar-brand">🎫 WTicket</a>
-      <button class="hamburger" onclick="toggleMenu()" id="hamburger-btn">
+      <a href="index.html" class="navbar-brand" aria-label="WTicket inicio">🎫 WTicket</a>
+      <button class="hamburger" onclick="toggleMenu()" id="hamburger-btn" aria-label="Abrir menú" aria-expanded="false">
         <span></span>
         <span></span>
         <span></span>
       </button>
-      <ul class="navbar-nav" id="navbar-nav">
-        <li class="nav-user" id="nav-user"></li>
-        <li id="last-update" style="font-size: 12px; color: var(--gray-500);">-</li>
-        <li><a href="index.html" class="nav-link">Inicio</a></li>
-        <li><a href="contact.html" class="nav-link">Contacto</a></li>
-        <li><a href="profile.html" class="nav-link">👤 Perfil</a></li>
-        <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button></li>
-        <li><button onclick="manualRefresh()" class="btn btn-outline btn-sm">🔄 Actualizar</button></li>
-        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
+      <ul class="navbar-nav" id="navbar-nav" role="menubar">
+        <li class="nav-user" id="nav-user" role="status"></li>
+        <li id="last-update" style="font-size: 12px; color: var(--gray-500);" aria-live="polite">-</li>
+        <li><a href="index.html" class="nav-link" role="menuitem">Inicio</a></li>
+        <li><a href="contact.html" class="nav-link" role="menuitem">Contacto</a></li>
+        <li><a href="profile.html" class="nav-link" role="menuitem">👤 Perfil</a></li>
+        <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema" aria-label="Cambiar tema">🌙</button></li>
+        <li><button onclick="manualRefresh()" class="btn btn-outline btn-sm" aria-label="Actualizar datos">🔄 Actualizar</button></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm" aria-label="Cerrar sesión">Cerrar Sesión</button></li>
       </ul>
     </div>
   </nav>
 
-  <div class="global-stats-banner">
+  <div class="global-stats-banner" role="region" aria-label="Estadísticas globales">
     <div class="container" style="display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: var(--warning);">📂</span>
-        <span><strong id="banner-open">-</strong> tickets abiertos (total)</span>
+        <span style="color: var(--warning);" aria-hidden="true">📂</span>
+        <span><strong id="banner-open" aria-label="Tickets abiertos">-</strong> tickets abiertos (total)</span>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: var(--success);">✅</span>
-        <span><strong id="banner-closed">-</strong> tickets resueltos (total)</span>
+        <span style="color: var(--success);" aria-hidden="true">✅</span>
+        <span><strong id="banner-closed" aria-label="Tickets resueltos">-</strong> tickets resueltos (total)</span>
       </div>
     </div>
   </div>
