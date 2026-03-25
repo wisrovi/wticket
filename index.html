@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de Tickets - Gestiona tus solicitudes de soporte">
+  <meta name="theme-color" content="#6366f1">
+  <title>WTicket - Sistema de Tickets</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">🎫 WTicket</a>
+      <ul class="navbar-nav">
+        <li><a href="index.html" class="nav-link">Inicio</a></li>
+        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
+        <li><a href="login.html?tab=register" class="btn btn-primary btn-sm">Crear Ticket</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">Dashboard de Tickets</h1>
+      <p class="page-subtitle">Resumen general del sistema de soporte</p>
+    </div>
+
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-open">-</div>
+        <div class="stat-label">Tickets Abiertos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value success" id="stat-closed">-</div>
+        <div class="stat-label">Tickets Atendidos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value warning" id="stat-total">-</div>
+        <div class="stat-label">Total de Tickets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-users">-</div>
+        <div class="stat-label">Usuarios Registrados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Acciones Rápidas</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <a href="login.html?tab=register" class="btn btn-primary">
+            <span>🎫</span> Crear Nuevo Ticket
+          </a>
+          <a href="login.html" class="btn btn-outline">
+            <span>🔐</span> Iniciar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">¿Cómo funciona?</h2>
+        </div>
+        <div class="card-body">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+            <div style="text-align: center; padding: 20px;">
+              <div style="font-size: 2.5rem; margin-bottom: 12px;">📝</div>
+              <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 8px;">1. Crea tu cuenta</h3>
+              <p style="font-size: 14px; color: var(--gray-500);">Regístrate con tu email y contraseña para acceder al sistema.</p>
+            </div>
+            <div style="text-align: center; padding: 20px;">
+              <div style="font-size: 2.5rem; margin-bottom: 12px;">🎫</div>
+              <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 8px;">2. Crea un ticket</h3>
+              <p style="font-size: 14px; color: var(--gray-500);">Describe tu solicitud con un título y descripción opcional.</p>
+            </div>
+            <div style="text-align: center; padding: 20px;">
+              <div style="font-size: 2.5rem; margin-bottom: 12px;">✅</div>
+              <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 8px;">3. Recibe atención</h3>
+              <p style="font-size: 14px; color: var(--gray-500);">Un administrador revisará tu ticket y te dará una respuesta.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align: center; padding: 40px 20px; color: var(--gray-500); font-size: 14px;">
+    <p>WTicket - Sistema de Gestión de Tickets</p>
+  </footer>
+
+  <script type="module">
+    import API from './js/app.js';
+    import Toast from './js/toast.js';
+
+    async function loadStats() {
+      try {
+        const stats = await API.getStats();
+        document.getElementById('stat-open').textContent = stats.openCount;
+        document.getElementById('stat-closed').textContent = stats.closedCount;
+        document.getElementById('stat-total').textContent = stats.totalCount;
+        document.getElementById('stat-users').textContent = stats.userCount;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+        Toast.error('Error al cargar las estadísticas');
+      }
+    }
+
+    async function checkSession() {
+      const session = await API.validateSession();
+      const nav = document.querySelector('.navbar-nav');
+      if (session) {
+        nav.innerHTML = `
+          <li><a href="index.html" class="nav-link">Inicio</a></li>
+          <li class="nav-user">
+            <span>👤 ${session.name}</span>
+            ${session.role === 'admin' ? '<span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">ADMIN</span>' : ''}
+          </li>
+          <li><a href="${session.role === 'admin' ? 'admin.html' : 'dashboard.html'}" class="btn btn-primary btn-sm">Mi Panel</a></li>
+          <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
+        `;
+      }
+    }
+
+    window.handleLogout = async () => {
+      await API.logout();
+      Toast.success('Sesión cerrada correctamente');
+      setTimeout(() => window.location.reload(), 1000);
+    };
+
+    API.init().then(() => {
+      checkSession();
+      loadStats();
+    });
+
+    setInterval(loadStats, 30000);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
