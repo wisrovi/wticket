@@ -133,6 +133,7 @@
   <script type="module">
     import API from './js/app.js';
     import Toast from './js/toast.js';
+    import { initKeyboardShortcuts } from './js/shortcuts.js';
 
     function initTheme() {
       const theme = localStorage.getItem('theme') || 'light';
@@ -155,6 +156,16 @@
     };
 
     initTheme();
+
+    initKeyboardShortcuts({
+      onNewTicket: () => openCreateModal(),
+      onSearch: () => {
+        const input = document.getElementById('search-open');
+        if (input) { input.focus(); input.select(); }
+      },
+      onRefresh: () => manualRefresh(),
+      onToggleTheme: () => toggleTheme()
+    });
 
     let currentUser = null;
     let openTickets = [];
