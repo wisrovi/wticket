@@ -126,18 +126,19 @@
         return;
       }
 
-      setButtonLoading(btn, true, 'Crear Cuenta');
+      setButtonLoading(btn, true, 'Creando Cuenta...');
 
       try {
+        console.log('Starting registration for:', email);
         const result = await API.register(email, password, name);
-        localStorage.setItem('wticket_token', result.token);
-        localStorage.setItem('wticket_user', JSON.stringify(result.user));
+        console.log('Registration successful:', result);
         Toast.success('¡Cuenta creada exitosamente!');
         
         setTimeout(() => {
           window.location.href = 'dashboard.html';
         }, 1000);
       } catch (error) {
+        console.error('Registration error:', error);
         Toast.error(error.message || 'Error al crear la cuenta');
         setButtonLoading(btn, false, 'Crear Cuenta');
       }
