@@ -676,6 +676,27 @@ textarea.form-input {
   font-size: 14px;
 }
 
+.stats-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 50px;
+  margin-top: 16px;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.stats-badge-icon {
+  font-size: 18px;
+}
+
+.stats-badge strong {
+  font-size: 18px;
+}
+
 .auth-footer {
   text-align: center;
   margin-top: 24px;

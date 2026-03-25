@@ -17,6 +17,10 @@
         <div class="auth-logo">🎫</div>
         <h1 class="auth-title">WTicket</h1>
         <p class="auth-subtitle">Sistema de Gestión de Tickets</p>
+        <div class="stats-badge" id="stats-badge">
+          <span class="stats-badge-icon">✅</span>
+          <span><strong id="resolved-count">0</strong> peticiones resueltas</span>
+        </div>
       </div>
 
       <div class="tabs">
@@ -69,6 +73,15 @@
   <script type="module">
     import API from './js/app.js';
     import Toast from './js/toast.js';
+
+    async function loadStats() {
+      try {
+        const stats = await API.getStats();
+        document.getElementById('resolved-count').textContent = stats.closedCount;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
@@ -153,7 +166,10 @@
         window.location.href = session.role === 'admin' ? 'admin.html' : 'dashboard.html';
       }
     }
-    checkSession();
+    API.init().then(() => {
+      checkSession();
+      loadStats();
+    });
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
