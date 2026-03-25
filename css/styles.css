@@ -166,6 +166,22 @@ body {
   background: var(--gray-100);
 }
 
+.lang-toggle {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  color: var(--gray-700);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-toggle:hover {
+  background: var(--gray-200);
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: flex;

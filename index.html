@@ -20,6 +20,7 @@
         <li><a href="login.html?tab=register" class="btn btn-primary btn-sm">Crear Ticket</a></li>
         <li><a href="contact.html" class="nav-link">Contacto</a></li>
         <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button></li>
+        <li><button onclick="toggleLang()" class="lang-toggle" id="lang-toggle" title="Cambiar idioma">ES</button></li>
         <li id="last-update" style="font-size: 12px; color: var(--gray-500);"></li>
       </ul>
     </div>
@@ -128,6 +129,27 @@
       if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
+    function initLang() {
+      const lang = localStorage.getItem('lang') || 'es';
+      document.documentElement.lang = lang;
+      updateLangIcon();
+    }
+
+    function updateLangIcon() {
+      const lang = localStorage.getItem('lang') || 'es';
+      const btn = document.getElementById('lang-toggle');
+      if (btn) btn.textContent = lang.toUpperCase();
+    }
+
+    window.toggleLang = () => {
+      const current = localStorage.getItem('lang') || 'es';
+      const newLang = current === 'es' ? 'en' : 'es';
+      localStorage.setItem('lang', newLang);
+      document.documentElement.lang = newLang;
+      updateLangIcon();
+      location.reload();
+    };
+
     window.toggleTheme = () => {
       const current = document.documentElement.getAttribute('data-theme');
       const newTheme = current === 'dark' ? 'light' : 'dark';
@@ -137,6 +159,7 @@
     };
 
     initTheme();
+    initLang();
 
     async function loadStats() {
       try {
