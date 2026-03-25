@@ -18,9 +18,24 @@
         <li><a href="index.html" class="nav-link">Inicio</a></li>
         <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
         <li><a href="login.html?tab=register" class="btn btn-primary btn-sm">Crear Ticket</a></li>
+        <li><a href="contact.html" class="nav-link">Contacto</a></li>
+        <li id="last-update" style="font-size: 12px; color: var(--gray-500);"></li>
       </ul>
     </div>
   </nav>
+
+  <div class="global-stats-banner">
+    <div class="container" style="display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: var(--warning);">📂</span>
+        <span><strong id="banner-open">-</strong> tickets abiertos</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: var(--success);">✅</span>
+        <span><strong id="banner-closed">-</strong> tickets resueltos</span>
+      </div>
+    </div>
+  </div>
 
   <main class="container">
     <div class="page-header">
@@ -91,7 +106,8 @@
     </div>
   </main>
 
-  <footer style="text-align: center; padding: 40px 20px; color: var(--gray-500); font-size: 14px;">
+  <footer class="site-footer">
+    <p>© 2026 Wisrovi Rodriguez. Todos los derechos reservados.</p>
     <p>WTicket - Sistema de Gestión de Tickets</p>
   </footer>
 
@@ -106,6 +122,8 @@
         document.getElementById('stat-closed').textContent = stats.closedCount;
         document.getElementById('stat-total').textContent = stats.totalCount;
         document.getElementById('stat-users').textContent = stats.userCount;
+        document.getElementById('banner-open').textContent = stats.openCount;
+        document.getElementById('banner-closed').textContent = stats.closedCount;
       } catch (error) {
         console.error('Error loading stats:', error);
         Toast.error('Error al cargar las estadísticas');
@@ -134,12 +152,23 @@
       setTimeout(() => window.location.reload(), 1000);
     };
 
+    function updateLastUpdate() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const el = document.getElementById('last-update');
+      if (el) el.textContent = `Actualizado: ${time}`;
+    }
+
     API.init().then(() => {
       checkSession();
       loadStats();
+      updateLastUpdate();
     });
 
-    setInterval(loadStats, 30000);
+    setInterval(async () => {
+      await loadStats();
+      updateLastUpdate();
+    }, 10000);
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');

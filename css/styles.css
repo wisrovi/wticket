@@ -97,6 +97,30 @@ body {
   font-weight: 500;
 }
 
+.global-stats-banner {
+  background: var(--gray-800);
+  color: white;
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.global-stats-banner strong {
+  color: white;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 24px 20px;
+  color: var(--gray-500);
+  font-size: 13px;
+  background: var(--gray-800);
+  color: var(--gray-400);
+}
+
+.site-footer p {
+  margin: 4px 0;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

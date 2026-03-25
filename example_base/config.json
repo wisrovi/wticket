@@ -1,5 +1,8 @@
 {
-    "user": "wisrovi@wticket.com",
+  "admin": {
+    "email": "wisrovi@wticket.com",
     "password": "wisrovi_wticket",
-    "redis_url": "https://console.upstash.com/redis/154ca4be-ff0f-4c21-9c40-a3daa2d9ad7c/details?teamid=0"
+    "passwordHash": "733b31a774d7c3e99851270b4aaaf53f8e91df5cc982fb441a38e489e9c5e2b4"
+  },
+  "instructions": "Para crear el admin en JSONBin manualmente, copia este JSON en el bin de users:"
 }

@@ -17,10 +17,26 @@
       <ul class="navbar-nav">
         <li><a href="index.html" class="nav-link">Inicio</a></li>
         <li class="nav-user" id="nav-user"></li>
-        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
+        <li id="last-update" style="font-size: 12px; color: var(--gray-500);">-</li>
+        <li><button onclick="manualRefresh()" class="btn btn-outline btn-sm" style="margin-left: 8px;">🔄 Actualizar</button></li>
+        <li><a href="contact.html" class="nav-link" style="margin-left: 8px;">Contacto</a></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm" style="margin-left: 8px;">Cerrar Sesión</button></li>
       </ul>
     </div>
   </nav>
+
+  <div class="global-stats-banner">
+    <div class="container" style="display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: var(--warning);">📂</span>
+        <span><strong id="banner-open">-</strong> tickets abiertos</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: var(--success);">✅</span>
+        <span><strong id="banner-closed">-</strong> tickets resueltos</span>
+      </div>
+    </div>
+  </div>
 
   <main class="container">
     <div class="page-header">
@@ -110,6 +126,8 @@
         document.getElementById('stat-total').textContent = stats.totalCount;
         document.getElementById('tab-open-count').textContent = stats.openCount;
         document.getElementById('tab-closed-count').textContent = stats.closedCount;
+        document.getElementById('banner-open').textContent = stats.openCount;
+        document.getElementById('banner-closed').textContent = stats.closedCount;
       } catch (error) {
         console.error('Error loading stats:', error);
       }
@@ -295,12 +313,27 @@
       setTimeout(() => window.location.href = 'login.html', 1000);
     };
 
+    function updateLastUpdate() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('last-update').textContent = `Actualizado: ${time}`;
+    }
+
+    window.manualRefresh = async () => {
+      await loadTickets();
+      await updateStats();
+      updateLastUpdate();
+      Toast.info('Datos actualizados');
+    };
+
     init();
+    updateLastUpdate();
 
     setInterval(async () => {
       await loadTickets();
       await updateStats();
-    }, 30000);
+      updateLastUpdate();
+    }, 10000);
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -314,5 +347,10 @@
       navigator.serviceWorker.register('service-worker.js');
     }
   </script>
+
+  <footer class="site-footer">
+    <p>© 2026 Wisrovi Rodriguez. Todos los derechos reservados.</p>
+    <p>WTicket - Sistema de Gestión de Tickets</p>
+  </footer>
 </body>
 </html>
