@@ -58,40 +58,42 @@ async function jsonbinGet(binId) {
     const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}/latest`, {
       headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
-    if (!res.ok) {
-      console.log('GET failed for', binId, 'status:', res.status);
-      return null;
-    }
+    if (!res.ok) return null;
     const data = await res.json();
     return data.record;
   } catch (e) {
-    console.error('GET error for', binId, e);
+    console.error('GET error:', e);
     return null;
   }
 }
 
 async function jsonbinPut(binId, data) {
-  try {
-    const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      console.error('PUT failed for', binId, 'status:', res.status, 'response:', text);
-      throw new Error(`Error guardando datos: ${res.status}`);
-    }
-    const result = await res.json();
-    console.log('PUT success for', binId, result);
-    return result;
-  } catch (e) {
-    console.error('PUT error for', binId, e);
-    throw e;
+  const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_API_KEY
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
+async function syncAndSaveUsers() {
+  const latest = await jsonbinGet(BIN_IDS.users);
+  if (latest) {
+    cache.users = { ...latest, ...cache.users };
   }
+  await jsonbinPut(BIN_IDS.users, cache.users);
+}
+
+async function syncAndSaveTickets() {
+  const latest = await jsonbinGet(BIN_IDS.tickets);
+  if (latest) {
+    cache.tickets = { ...latest, ...cache.tickets };
+  }
+  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
 }
 
 async function initCache() {
@@ -99,16 +101,18 @@ async function initCache() {
   
   console.log('Loading data from JSONBin...');
   
-  let users = await jsonbinGet(BIN_IDS.users);
-  let tickets = await jsonbinGet(BIN_IDS.tickets);
-  let counterData = await jsonbinGet(BIN_IDS.counter);
+  const [users, tickets, counterData] = await Promise.all([
+    jsonbinGet(BIN_IDS.users),
+    jsonbinGet(BIN_IDS.tickets),
+    jsonbinGet(BIN_IDS.counter)
+  ]);
 
   cache.users = users || {};
   cache.tickets = tickets || {};
   cache.counter = (counterData && typeof counterData.counter === 'number') ? counterData.counter : 0;
   cache.initialized = true;
 
-  console.log('Loaded from JSONBin:', { 
+  console.log('Loaded:', { 
     users: Object.keys(cache.users).length, 
     tickets: Object.keys(cache.tickets).length,
     counter: cache.counter 
@@ -119,7 +123,6 @@ async function initCache() {
 
 async function ensureAdminExists() {
   if (!cache.users[ADMIN_EMAIL]) {
-    console.log('Creating admin...');
     const hashedPassword = await hashPassword(ADMIN_PASSWORD);
     cache.users[ADMIN_EMAIL] = {
       email: ADMIN_EMAIL,
@@ -128,14 +131,7 @@ async function ensureAdminExists() {
       role: 'admin',
       createdAt: Date.now()
     };
-    try {
-      await jsonbinPut(BIN_IDS.users, cache.users);
-      console.log('Admin saved!');
-    } catch (e) {
-      console.error('Failed to save admin:', e);
-    }
-  } else {
-    console.log('Admin exists');
+    await syncAndSaveUsers();
   }
 }
 
@@ -147,7 +143,7 @@ async function register(email, password, name) {
   }
   
   const hashedPassword = await hashPassword(password);
-  const userData = {
+  cache.users[email] = {
     email,
     passwordHash: hashedPassword,
     name: name || email.split('@')[0],
@@ -155,37 +151,16 @@ async function register(email, password, name) {
     createdAt: Date.now()
   };
   
-  cache.users[email] = userData;
-  console.log('Saving user to JSONBin...');
-  
-  try {
-    await jsonbinPut(BIN_IDS.users, cache.users);
-    console.log('User saved successfully!');
-  } catch (e) {
-    delete cache.users[email];
-    throw new Error('Error al guardar. Verifica tu conexión e intenta de nuevo.');
-  }
-  
+  await syncAndSaveUsers();
   return login(email, password);
-}
-
-async function updateUser(email, updates) {
-  if (!cache.users[email]) {
-    throw new Error('Usuario no encontrado');
-  }
-  
-  cache.users[email] = { ...cache.users[email], ...updates };
-  await jsonbinPut(BIN_IDS.users, cache.users);
-  return cache.users[email];
 }
 
 async function login(email, password) {
   console.log('Login attempt:', email);
-  console.log('Available users:', Object.keys(cache.users));
   
   const user = cache.users[email];
   if (!user) {
-    throw new Error('Usuario no encontrado. Verifica el email o regístrate.');
+    throw new Error('Usuario no encontrado');
   }
   
   const hashedPassword = await hashPassword(password);
@@ -249,7 +224,8 @@ async function createTicket(title, description, userEmail) {
     response: '',
     responseAt: 0
   };
-  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
+  
+  await syncAndSaveTickets();
   return id;
 }
 
@@ -296,7 +272,7 @@ async function closeTicket(id, response) {
   ticket.response = escapeHtml(response || '');
   ticket.responseAt = Date.now();
   
-  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
+  await syncAndSaveTickets();
 }
 
 function getStats() {
@@ -354,8 +330,7 @@ const API = {
   closeTicket,
   getStats,
   searchTickets,
-  requireAuth,
-  updateUser
+  requireAuth
 };
 
 export default API;
