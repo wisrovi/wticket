@@ -104,8 +104,8 @@ async function syncAndSaveCounter() {
   await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
 }
 
-async function initCache() {
-  if (cache.initialized) return;
+async function initCache(force = false) {
+  if (cache.initialized && !force) return;
   
   console.log('Loading data from JSONBin...');
   
@@ -162,6 +162,8 @@ async function register(email, password, name) {
 }
 
 async function login(email, password) {
+  await refreshData();
+  
   const user = cache.users[email];
   if (!user) {
     throw new Error('Usuario no encontrado');
@@ -188,6 +190,8 @@ async function login(email, password) {
 }
 
 async function validateSession() {
+  await refreshData();
+  
   const token = localStorage.getItem('wticket_token');
   const sessionStr = localStorage.getItem('wticket_session');
   if (!token || !sessionStr) return null;
