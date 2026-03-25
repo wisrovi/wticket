@@ -45,36 +45,56 @@ function formatDate(timestamp) {
 }
 
 async function redisGet(key) {
-  const data = await REDIS.get(key);
-  if (typeof data === 'string') {
-    try {
-      return JSON.parse(data);
-    } catch {
-      return data;
+  try {
+    const data = await REDIS.get(key);
+    if (data === null) return null;
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
     }
+    return data;
+  } catch (e) {
+    console.error('Redis GET error:', e);
+    return null;
   }
-  return data;
 }
 
 async function redisSet(key, value) {
-  return await REDIS.set(key, JSON.stringify(value));
+  try {
+    return await REDIS.set(key, JSON.stringify(value));
+  } catch (e) {
+    console.error('Redis SET error:', e);
+    throw e;
+  }
 }
 
 async function redisSetWithExpire(key, value, seconds) {
-  return await REDIS.set(key, JSON.stringify(value), { EX: seconds });
+  try {
+    return await REDIS.set(key, JSON.stringify(value), { EX: seconds });
+  } catch (e) {
+    console.error('Redis SET error:', e);
+    throw e;
+  }
 }
 
 async function ensureAdminExists() {
-  const adminData = await redisGet(`user:${ADMIN_EMAIL}`);
-  if (!adminData || !adminData.email) {
-    const hashedPassword = await hashPassword(ADMIN_PASSWORD);
-    await redisSet(`user:${ADMIN_EMAIL}`, {
-      email: ADMIN_EMAIL,
-      passwordHash: hashedPassword,
-      name: 'Administrador',
-      role: 'admin',
-      createdAt: Date.now()
-    });
+  try {
+    const adminData = await redisGet(`user:${ADMIN_EMAIL}`);
+    if (!adminData || !adminData.email) {
+      const hashedPassword = await hashPassword(ADMIN_PASSWORD);
+      await redisSet(`user:${ADMIN_EMAIL}`, {
+        email: ADMIN_EMAIL,
+        passwordHash: hashedPassword,
+        name: 'Administrador',
+        role: 'admin',
+        createdAt: Date.now()
+      });
+    }
+  } catch (e) {
+    console.error('Error ensuring admin exists:', e);
   }
 }
 
@@ -91,6 +111,7 @@ async function register(email, password, name) {
     role: 'user',
     createdAt: Date.now()
   });
+  await incrementUserCount();
   return login(email, password);
 }
 
@@ -124,7 +145,11 @@ async function validateSession() {
     return null;
   }
   if (Date.now() > parseInt(session.expiresAt)) {
-    await REDIS.del(`session:${token}`);
+    try {
+      await REDIS.del(`session:${token}`);
+    } catch (e) {
+      console.error('Error deleting session:', e);
+    }
     localStorage.removeItem('wticket_token');
     return null;
   }
@@ -134,7 +159,11 @@ async function validateSession() {
 async function logout() {
   const token = localStorage.getItem('wticket_token');
   if (token) {
-    await REDIS.del(`session:${token}`);
+    try {
+      await REDIS.del(`session:${token}`);
+    } catch (e) {
+      console.error('Error deleting session:', e);
+    }
     localStorage.removeItem('wticket_token');
   }
 }
@@ -233,9 +262,20 @@ async function getStats() {
   const openCount = await REDIS.zcard('tickets:open');
   const closedCount = await REDIS.zcard('tickets:closed');
   const totalCount = openCount + closedCount;
-  const userKeys = await REDIS.keys('user:*');
-  const userCount = userKeys.filter(k => !k.includes('session:') && !k.includes('tickets:')).length;
+  
+  const userCount = await redisGet('users:count') || 0;
+  
   return { openCount, closedCount, totalCount, userCount };
+}
+
+async function incrementUserCount() {
+  try {
+    const count = await REDIS.incr('users:count');
+    return count;
+  } catch (e) {
+    console.error('Error incrementing user count:', e);
+    return 1;
+  }
 }
 
 function searchTickets(tickets, query) {
@@ -284,7 +324,8 @@ const API = {
   closeTicket,
   getStats,
   searchTickets,
-  requireAuth
+  requireAuth,
+  incrementUserCount
 };
 
 export default API;
