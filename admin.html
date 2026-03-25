@@ -85,9 +85,26 @@
     </div>
 
     <div id="tickets-container">
-      <div class="empty-state">
+      <div id="tickets-skeleton">
+        <div class="ticket-list">
+          <div class="ticket-item">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-text short"></div>
+            <div class="skeleton skeleton-text medium"></div>
+          </div>
+          <div class="ticket-item">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-text short"></div>
+          </div>
+          <div class="ticket-item">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-text"></div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" id="tickets-empty" style="display: none;">
         <div class="empty-state-icon">📭</div>
-        <p class="empty-state-text">Cargando tickets...</p>
+        <p class="empty-state-text">No hay tickets</p>
       </div>
     </div>
   </main>
@@ -109,6 +126,7 @@
     import API from './js/app.js';
     import Toast from './js/toast.js';
     import { initKeyboardShortcuts } from './js/shortcuts.js';
+    import { debounce } from './js/utils.js';
 
     function initTheme() {
       const theme = localStorage.getItem('theme') || 'light';
@@ -224,21 +242,18 @@
 
     function renderTickets() {
       const container = document.getElementById('tickets-container');
+      const skeleton = document.getElementById('tickets-skeleton');
+      const empty = document.getElementById('tickets-empty');
       const tickets = currentTab === 'open' ? allOpenTickets : allClosedTickets;
       const query = document.getElementById('search-tickets').value.trim();
       const filtered = API.searchTickets(tickets, query);
 
+      if (skeleton) skeleton.style.display = 'none';
+
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">${currentTab === 'open' ? '📭' : '📋'}</div>
-            <p class="empty-state-text">
-              ${tickets.length === 0 
-                ? `No hay tickets ${currentTab === 'open' ? 'abiertos' : 'atendidos'}`
-                : 'No hay tickets que coincidan con la búsqueda'}
-            </p>
-          </div>
-        `;
+        if (empty) empty.style.display = 'block';
+        container.innerHTML = '';
+        container.appendChild(empty.cloneNode(true));
         return;
       }
 
@@ -264,9 +279,8 @@
       `;
     }
 
-    window.filterTickets = () => {
-      renderTickets();
-    };
+    const debouncedFilter = debounce(() => renderTickets(), 300);
+    window.filterTickets = () => debouncedFilter();
 
     window.openDetailModal = async (id) => {
       const ticket = await API.getTicket(id);

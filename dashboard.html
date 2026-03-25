@@ -68,7 +68,18 @@
           <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-open" oninput="filterOpenTickets()">
         </div>
         <div class="ticket-list" id="open-tickets">
-          <div class="empty-state">
+          <div class="skeleton-list" id="open-skeleton">
+            <div class="ticket-item">
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-text short"></div>
+              <div class="skeleton skeleton-text medium"></div>
+            </div>
+            <div class="ticket-item">
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-text short"></div>
+            </div>
+          </div>
+          <div class="empty-state" id="open-empty" style="display: none;">
             <div class="empty-state-icon">📭</div>
             <p class="empty-state-text">No tienes tickets abiertos</p>
           </div>
@@ -84,7 +95,13 @@
           <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-closed" oninput="filterClosedTickets()">
         </div>
         <div class="ticket-list" id="closed-tickets">
-          <div class="empty-state">
+          <div class="skeleton-list" id="closed-skeleton">
+            <div class="ticket-item">
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-text short"></div>
+            </div>
+          </div>
+          <div class="empty-state" id="closed-empty" style="display: none;">
             <div class="empty-state-icon">📭</div>
             <p class="empty-state-text">No tienes tickets atendidos</p>
           </div>
@@ -144,6 +161,7 @@
     import API from './js/app.js';
     import Toast from './js/toast.js';
     import { initKeyboardShortcuts } from './js/shortcuts.js';
+    import { debounce } from './js/utils.js';
 
     function initTheme() {
       const theme = localStorage.getItem('theme') || 'light';
@@ -218,15 +236,17 @@
 
     function renderOpenTickets(tickets = openTickets) {
       const container = document.getElementById('open-tickets');
+      const skeleton = document.getElementById('open-skeleton');
+      const empty = document.getElementById('open-empty');
+      
+      if (skeleton) skeleton.style.display = 'none';
+      
       document.getElementById('open-count').textContent = tickets.length;
       
       if (tickets.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
-            <p class="empty-state-text">No hay tickets${openTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
-          </div>
-        `;
+        if (empty) empty.style.display = 'block';
+        container.innerHTML = '';
+        container.appendChild(empty.cloneNode(true));
         return;
       }
 
@@ -246,15 +266,17 @@
 
     function renderClosedTickets(tickets = closedTickets) {
       const container = document.getElementById('closed-tickets');
+      const skeleton = document.getElementById('closed-skeleton');
+      const empty = document.getElementById('closed-empty');
+      
+      if (skeleton) skeleton.style.display = 'none';
+      
       document.getElementById('closed-count').textContent = tickets.length;
       
       if (tickets.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
-            <p class="empty-state-text">No hay tickets${closedTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
-          </div>
-        `;
+        if (empty) empty.style.display = 'block';
+        container.innerHTML = '';
+        container.appendChild(empty.cloneNode(true));
         return;
       }
 
@@ -270,17 +292,20 @@
       `).join('');
     }
 
-    window.filterOpenTickets = () => {
+    const debouncedFilterOpen = debounce(() => {
       const query = document.getElementById('search-open').value.trim();
       const filtered = API.searchTickets(openTickets, query);
       renderOpenTickets(filtered);
-    };
+    }, 300);
 
-    window.filterClosedTickets = () => {
+    const debouncedFilterClosed = debounce(() => {
       const query = document.getElementById('search-closed').value.trim();
       const filtered = API.searchTickets(closedTickets, query);
       renderClosedTickets(filtered);
-    };
+    }, 300);
+
+    window.filterOpenTickets = () => debouncedFilterOpen();
+    window.filterClosedTickets = () => debouncedFilterClosed();
 
     window.openCreateModal = () => {
       document.getElementById('create-modal').classList.add('active');
