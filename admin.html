@@ -290,6 +290,16 @@
       }
       
       const priorityLabels = { urgent: '🔴 Urgente', high: '🟠 Alta', normal: '🟡 Normal', low: '🟢 Baja' };
+      const categoryLabels = { general: '📋 General', technical: '🔧 Técnico', billing: '💰 Facturación', suggestion: '💡 Sugerencia', bug: '🐛 Error', other: '❓ Otro' };
+      
+      const commentsHtml = ticket.comments && ticket.comments.length > 0 
+        ? ticket.comments.map(c => `
+            <div style="background: var(--gray-100); padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+              <div style="font-weight: 600; font-size: 12px; margin-bottom: 4px;">${c.authorName} <span style="color: var(--gray-500);">• ${API.formatDate(c.createdAt)}</span></div>
+              <p style="margin: 0; white-space: pre-wrap;">${c.text}</p>
+            </div>
+          `).join('')
+        : '<p style="color: var(--gray-500); font-size: 14px;">No hay comentarios aún</p>';
       
       document.getElementById('detail-title').textContent = `Ticket #${ticket.id}`;
       
@@ -309,7 +319,8 @@
       document.getElementById('detail-body').innerHTML = `
         <div style="margin-bottom: 16px;">
           <span class="ticket-status ${ticket.status}" style="margin-left: 8px;">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
-          <span style="margin-left: 8px; font-weight: 500;">${priorityLabels[ticket.priority] || '🟡 Normal'}</span>
+          <span style="margin-left: 8px;">${priorityLabels[ticket.priority] || '🟡 Normal'}</span>
+          <span style="margin-left: 8px;">${categoryLabels[ticket.category] || '📋 General'}</span>
         </div>
         <div style="margin-bottom: 16px;">
           <strong style="display: block; margin-bottom: 4px;">Título:</strong>
@@ -338,8 +349,43 @@
             </div>
           </div>
         ` : ''}
+        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--gray-200);">
+          <strong style="display: block; margin-bottom: 12px;">💬 Comentarios</strong>
+          <div style="margin-bottom: 16px;">${commentsHtml}</div>
+          <form onsubmit="handleAddComment(event, ${ticket.id})">
+            <div class="form-group">
+              <textarea id="comment-text" class="form-input" placeholder="Agregar un comentario..." rows="2" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm" id="comment-btn">Comentar</button>
+          </form>
+        </div>
       `;
       document.getElementById('detail-modal').classList.add('active');
+    };
+
+    window.handleAddComment = async (event, ticketId) => {
+      event.preventDefault();
+      const btn = document.getElementById('comment-btn');
+      const text = document.getElementById('comment-text').value.trim();
+      const session = await API.validateSession();
+      
+      if (!text || !session) return;
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span>';
+      
+      try {
+        await API.addComment(ticketId, text, session.email, session.name);
+        Toast.success('Comentario agregado');
+        document.getElementById('comment-text').value = '';
+        await openDetailModal(ticketId);
+      } catch (error) {
+        Toast.error('Error al agregar comentario');
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Comentar';
+      }
     };
 
     window.closeDetailModal = () => {

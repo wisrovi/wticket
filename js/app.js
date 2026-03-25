@@ -326,8 +326,29 @@ function getTicket(id) {
     ...ticket,
     id: parseInt(ticket.id),
     createdAt: parseInt(ticket.createdAt),
-    responseAt: parseInt(ticket.responseAt) || 0
+    responseAt: parseInt(ticket.responseAt) || 0,
+    comments: ticket.comments || []
   };
+}
+
+async function addComment(ticketId, text, authorEmail, authorName) {
+  await syncAndSaveTickets();
+  
+  const ticket = cache.tickets[ticketId];
+  if (!ticket) throw new Error('Ticket no encontrado');
+  
+  if (!ticket.comments) ticket.comments = [];
+  
+  ticket.comments.push({
+    id: Date.now(),
+    text: escapeHtml(text),
+    authorEmail,
+    authorName,
+    createdAt: Date.now()
+  });
+  
+  await syncAndSaveTickets();
+  return true;
 }
 
 async function refreshData() {
@@ -432,6 +453,7 @@ const API = {
   updateUserPassword,
   createTicket,
   getTicket,
+  addComment,
   getOpenTickets,
   getClosedTickets,
   getUserOpenTickets,
