@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de usuario - Mis Tickets">
+  <meta name="theme-color" content="#6366f1">
+  <title>Mi Panel - WTicket</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">🎫 WTicket</a>
+      <ul class="navbar-nav">
+        <li><a href="index.html" class="nav-link">Inicio</a></li>
+        <li class="nav-user" id="nav-user"></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h1 class="page-title">Mi Panel</h1>
+          <p class="page-subtitle">Gestiona tus tickets de soporte</p>
+        </div>
+        <button class="btn btn-primary" onclick="openCreateModal()">
+          <span>🎫</span> Crear Nuevo Ticket
+        </button>
+      </div>
+    </div>
+
+    <div class="two-columns">
+      <div>
+        <h2 class="section-title">
+          📂 Tickets Abiertos
+          <span class="count" id="open-count">0</span>
+        </h2>
+        <div class="search-box" style="margin-bottom: 16px;">
+          <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-open" oninput="filterOpenTickets()">
+        </div>
+        <div class="ticket-list" id="open-tickets">
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No tienes tickets abiertos</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="section-title">
+          ✅ Tickets Atendidos
+          <span class="count" id="closed-count">0</span>
+        </h2>
+        <div class="search-box" style="margin-bottom: 16px;">
+          <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-closed" oninput="filterClosedTickets()">
+        </div>
+        <div class="ticket-list" id="closed-tickets">
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No tienes tickets atendidos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Crear Nuevo Ticket</h3>
+        <button class="modal-close" onclick="closeCreateModal()">×</button>
+      </div>
+      <form onsubmit="handleCreateTicket(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="ticket-title">Título *</label>
+            <input type="text" id="ticket-title" class="form-input" placeholder="Resumen de tu solicitud" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ticket-description">Descripción</label>
+            <textarea id="ticket-description" class="form-input" placeholder="Describe detalladamente tu solicitud (opcional)"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="create-btn">Crear Ticket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detail-title">Detalle del Ticket</h3>
+        <button class="modal-close" onclick="closeDetailModal()">×</button>
+      </div>
+      <div class="modal-body" id="detail-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDetailModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import API from './js/app.js';
+    import Toast from './js/toast.js';
+
+    let currentUser = null;
+    let openTickets = [];
+    let closedTickets = [];
+
+    async function init() {
+      const session = await API.requireAuth(['user'])();
+      if (!session) return;
+      currentUser = session;
+      
+      document.getElementById('nav-user').innerHTML = `
+        <span>👤 ${session.name}</span>
+      `;
+      
+      await loadTickets();
+    }
+
+    async function loadTickets() {
+      try {
+        openTickets = await API.getUserOpenTickets(currentUser.email);
+        closedTickets = await API.getUserClosedTickets(currentUser.email);
+        renderOpenTickets();
+        renderClosedTickets();
+      } catch (error) {
+        Toast.error('Error al cargar los tickets');
+        console.error(error);
+      }
+    }
+
+    function renderOpenTickets(tickets = openTickets) {
+      const container = document.getElementById('open-tickets');
+      document.getElementById('open-count').textContent = tickets.length;
+      
+      if (tickets.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No hay tickets${openTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tickets.map(ticket => `
+        <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
+          <div class="ticket-header">
+            <span class="ticket-id">#${ticket.id}</span>
+            <span class="ticket-status open">Abierto</span>
+          </div>
+          <div class="ticket-title">${ticket.title}</div>
+          <div class="ticket-meta">Creado: ${API.formatDate(ticket.createdAt)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderClosedTickets(tickets = closedTickets) {
+      const container = document.getElementById('closed-tickets');
+      document.getElementById('closed-count').textContent = tickets.length;
+      
+      if (tickets.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No hay tickets${closedTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tickets.map(ticket => `
+        <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
+          <div class="ticket-header">
+            <span class="ticket-id">#${ticket.id}</span>
+            <span class="ticket-status closed">Atendido</span>
+          </div>
+          <div class="ticket-title">${ticket.title}</div>
+          <div class="ticket-meta">Creado: ${API.formatDate(ticket.createdAt)} • Atendido: ${API.formatDate(ticket.responseAt)}</div>
+        </div>
+      `).join('');
+    }
+
+    window.filterOpenTickets = () => {
+      const query = document.getElementById('search-open').value.trim();
+      const filtered = API.searchTickets(openTickets, query);
+      renderOpenTickets(filtered);
+    };
+
+    window.filterClosedTickets = () => {
+      const query = document.getElementById('search-closed').value.trim();
+      const filtered = API.searchTickets(closedTickets, query);
+      renderClosedTickets(filtered);
+    };
+
+    window.openCreateModal = () => {
+      document.getElementById('create-modal').classList.add('active');
+    };
+
+    window.closeCreateModal = () => {
+      document.getElementById('create-modal').classList.remove('active');
+      document.getElementById('ticket-title').value = '';
+      document.getElementById('ticket-description').value = '';
+    };
+
+    window.openDetailModal = async (id) => {
+      const ticket = await API.getTicket(id);
+      if (!ticket) {
+        Toast.error('Ticket no encontrado');
+        return;
+      }
+      
+      document.getElementById('detail-title').textContent = `Ticket #${ticket.id}`;
+      document.getElementById('detail-body').innerHTML = `
+        <div style="margin-bottom: 16px;">
+          <strong style="color: var(--primary);">#${ticket.id}</strong>
+          <span class="ticket-status ${ticket.status}" style="margin-left: 8px;">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <strong style="display: block; margin-bottom: 4px;">Título:</strong>
+          <p>${ticket.title}</p>
+        </div>
+        ${ticket.description ? `
+          <div style="margin-bottom: 16px;">
+            <strong style="display: block; margin-bottom: 4px;">Descripción:</strong>
+            <p style="color: var(--gray-600); white-space: pre-wrap;">${ticket.description}</p>
+          </div>
+        ` : ''}
+        <div style="margin-bottom: 16px;">
+          <strong style="display: block; margin-bottom: 4px;">Fecha de creación:</strong>
+          <p style="color: var(--gray-500); font-size: 14px;">${API.formatDate(ticket.createdAt)}</p>
+        </div>
+        ${ticket.response ? `
+          <div class="ticket-response">
+            <div class="ticket-response-label">Respuesta del administrador</div>
+            <div class="ticket-response-text">${ticket.response}</div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--gray-500);">
+              Respondido: ${API.formatDate(ticket.responseAt)}
+            </div>
+          </div>
+        ` : ''}
+      `;
+      document.getElementById('detail-modal').classList.add('active');
+    };
+
+    window.closeDetailModal = () => {
+      document.getElementById('detail-modal').classList.remove('active');
+    };
+
+    window.handleCreateTicket = async (event) => {
+      event.preventDefault();
+      const btn = document.getElementById('create-btn');
+      const title = document.getElementById('ticket-title').value.trim();
+      const description = document.getElementById('ticket-description').value.trim();
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Creando...';
+
+      try {
+        const id = await API.createTicket(title, description, currentUser.email);
+        Toast.success(`Ticket #${id} creado exitosamente`);
+        closeCreateModal();
+        await loadTickets();
+      } catch (error) {
+        Toast.error('Error al crear el ticket');
+        console.error(error);
+        btn.disabled = false;
+        btn.innerHTML = 'Crear Ticket';
+      }
+    };
+
+    window.handleLogout = async () => {
+      await API.logout();
+      Toast.success('Sesión cerrada correctamente');
+      setTimeout(() => window.location.href = 'login.html', 1000);
+    };
+
+    init();
+
+    setInterval(loadTickets, 30000);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCreateModal();
+        closeDetailModal();
+      }
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
