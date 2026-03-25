@@ -12,14 +12,21 @@
 </head>
 <body>
   <nav class="navbar">
-    <div class="container">
-      <a href="index.html" class="navbar-brand">🎫 WTicket</a>
-      <ul class="navbar-nav">
-        <li><a href="index.html" class="nav-link">Inicio</a></li>
-        <li><a href="login.html" class="nav-link">Iniciar Sesión</a></li>
-        <li><a href="login.html?tab=register" class="btn btn-primary btn-sm">Crear Ticket</a></li>
-        <li><button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button></li>
-      </ul>
+    <div class="container navbar-container">
+      <div class="navbar-left">
+        <a href="index.html" class="navbar-brand">🎫 WTicket</a>
+        <div class="navbar-divider"></div>
+        <div class="navbar-links">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="contact.html" class="nav-link">Contacto</a>
+          <a href="login.html" class="nav-link">Iniciar Sesión</a>
+        </div>
+      </div>
+      <div class="navbar-right">
+        <a href="login.html?tab=register" class="btn btn-primary btn-sm">Crear Ticket</a>
+        <div class="navbar-divider"></div>
+        <button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Cambiar tema">🌙</button>
+      </div>
     </div>
   </nav>
 

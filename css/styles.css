@@ -122,6 +122,32 @@ a:focus:not(:focus-visible) {
   width: 100%;
 }
 
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--gray-200);
+}
+
+.navbar-user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
 .hamburger {
   display: none;
   flex-direction: column;
@@ -194,42 +220,51 @@ a:focus:not(:focus-visible) {
 @media (max-width: 768px) {
   .hamburger {
     display: flex;
-    order: -1;
   }
 
-  .navbar-brand {
-    order: 1;
+  .navbar-left,
+  .navbar-right {
+    display: none;
   }
 
   .navbar-container {
     justify-content: flex-start;
-    gap: 12px;
+  }
+
+  .nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+  }
+
+  .nav-overlay.active {
+    display: block;
   }
 
   .navbar-nav {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
     background: var(--bg-secondary, white);
     flex-direction: column;
-    padding: 16px 20px;
-    gap: 12px;
-    box-shadow: var(--shadow);
+    padding: 60px 20px 20px;
+    gap: 8px;
     z-index: 99;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
   }
 
   .navbar-nav.active {
+    left: 0;
     display: flex;
-  }
-
-  .navbar-nav > li:not(.nav-user):not(#last-update) {
-    display: none;
-  }
-
-  .navbar-nav.active > li {
-    display: block;
   }
 
   .navbar-nav li {
@@ -242,13 +277,35 @@ a:focus:not(:focus-visible) {
     justify-content: center;
   }
 
-  .nav-user, #last-update {
-    display: none !important;
+  .nav-user {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
   }
 
-  .navbar-nav.active .nav-user,
-  .navbar-nav.active #last-update {
-    display: flex !important;
+  #last-update {
+    font-size: 11px;
+    color: var(--gray-500);
+    padding: 4px 0;
+  }
+
+  .nav-link {
+    padding: 12px 16px;
+    border-radius: var(--radius);
+  }
+
+  .nav-link:hover {
+    background: var(--gray-100);
+  }
+
+  .theme-toggle {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
   }
 }
 
