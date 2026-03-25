@@ -209,12 +209,14 @@
         return;
       }
 
+      const priorityIcons = { urgent: '🔴', high: '🟠', normal: '🟡', low: '🟢' };
       container.innerHTML = `
         <div class="ticket-list">
           ${filtered.map(ticket => `
             <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
               <div class="ticket-header">
                 <span class="ticket-id">#${ticket.id}</span>
+                <span>${priorityIcons[ticket.priority] || '🟡'} ${ticket.priority}</span>
                 <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
               </div>
               <div class="ticket-title">${ticket.title}</div>
@@ -240,6 +242,8 @@
         return;
       }
       
+      const priorityLabels = { urgent: '🔴 Urgente', high: '🟠 Alta', normal: '🟡 Normal', low: '🟢 Baja' };
+      
       document.getElementById('detail-title').textContent = `Ticket #${ticket.id}`;
       
       let footerHtml = '<button class="btn btn-secondary" onclick="closeDetailModal()">Cerrar</button>';
@@ -258,6 +262,7 @@
       document.getElementById('detail-body').innerHTML = `
         <div style="margin-bottom: 16px;">
           <span class="ticket-status ${ticket.status}" style="margin-left: 8px;">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
+          <span style="margin-left: 8px; font-weight: 500;">${priorityLabels[ticket.priority] || '🟡 Normal'}</span>
         </div>
         <div style="margin-bottom: 16px;">
           <strong style="display: block; margin-bottom: 4px;">Título:</strong>

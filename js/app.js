@@ -216,7 +216,7 @@ async function logout() {
   localStorage.removeItem('wticket_session');
 }
 
-async function createTicket(title, description, userEmail) {
+async function createTicket(title, description, userEmail, priority = 'normal') {
   await syncAndSaveCounter();
   await syncAndSaveTickets();
   
@@ -230,6 +230,7 @@ async function createTicket(title, description, userEmail) {
     title: escapeHtml(title),
     description: escapeHtml(description || ''),
     userEmail,
+    priority,
     status: 'open',
     createdAt: Date.now(),
     response: '',

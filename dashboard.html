@@ -105,6 +105,15 @@
             <input type="text" id="ticket-title" class="form-input" placeholder="Resumen de tu solicitud" required>
           </div>
           <div class="form-group">
+            <label class="form-label" for="ticket-priority">Prioridad</label>
+            <select id="ticket-priority" class="form-input">
+              <option value="low">🟢 Baja</option>
+              <option value="normal" selected>🟡 Normal</option>
+              <option value="high">🟠 Alta</option>
+              <option value="urgent">🔴 Urgente</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label class="form-label" for="ticket-description">Descripción</label>
             <textarea id="ticket-description" class="form-input" placeholder="Describe detalladamente tu solicitud (opcional)"></textarea>
           </div>
@@ -220,10 +229,12 @@
         return;
       }
 
+      const priorityIcons = { urgent: '🔴', high: '🟠', normal: '🟡', low: '🟢' };
       container.innerHTML = tickets.map(ticket => `
         <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
           <div class="ticket-header">
             <span class="ticket-id">#${ticket.id}</span>
+            <span>${priorityIcons[ticket.priority] || '🟡'} ${ticket.priority}</span>
             <span class="ticket-status open">Abierto</span>
           </div>
           <div class="ticket-title">${ticket.title}</div>
@@ -287,11 +298,14 @@
         return;
       }
       
+      const priorityLabels = { urgent: '🔴 Urgente', high: '🟠 Alta', normal: '🟡 Normal', low: '🟢 Baja' };
+      
       document.getElementById('detail-title').textContent = `Ticket #${ticket.id}`;
       document.getElementById('detail-body').innerHTML = `
         <div style="margin-bottom: 16px;">
           <strong style="color: var(--primary);">#${ticket.id}</strong>
           <span class="ticket-status ${ticket.status}" style="margin-left: 8px;">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
+          <span style="margin-left: 8px; font-weight: 500;">${priorityLabels[ticket.priority] || '🟡 Normal'}</span>
         </div>
         <div style="margin-bottom: 16px;">
           <strong style="display: block; margin-bottom: 4px;">Título:</strong>
@@ -328,13 +342,14 @@
       event.preventDefault();
       const btn = document.getElementById('create-btn');
       const title = document.getElementById('ticket-title').value.trim();
+      const priority = document.getElementById('ticket-priority').value;
       const description = document.getElementById('ticket-description').value.trim();
 
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-spinner"></span> Creando...';
 
       try {
-        const id = await API.createTicket(title, description, currentUser.email);
+        const id = await API.createTicket(title, description, currentUser.email, priority);
         Toast.success(`Ticket #${id} creado exitosamente`);
         closeCreateModal();
         await loadTickets();
