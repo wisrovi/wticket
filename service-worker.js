@@ -1,13 +1,15 @@
-const CACHE_NAME = 'wticket-v1';
+const CACHE_NAME = 'wticket-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/login.html',
   '/dashboard.html',
   '/admin.html',
+  '/contact.html',
   '/css/styles.css',
   '/js/app.js',
   '/js/toast.js',
+  '/js/shortcuts.js',
   '/manifest.json'
 ];
 
@@ -37,7 +39,9 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('upstash.io')) return;
+  if (event.request.url.includes('jsonbin.io')) return;
+  if (event.request.url.includes('fonts.googleapis.com')) return;
+  if (event.request.url.includes('fonts.gstatic.com')) return;
 
   event.respondWith(
     caches.match(event.request)
@@ -61,6 +65,7 @@ self.addEventListener('fetch', (event) => {
             if (event.request.mode === 'navigate') {
               return caches.match('/index.html');
             }
+            return new Response('Offline', { status: 503 });
           });
       })
   );

@@ -1,12 +1,16 @@
 {
   "name": "WTicket - Sistema de Tickets",
   "short_name": "WTicket",
-  "description": "Sistema de gestión de tickets de soporte",
+  "description": "Sistema de gestión de tickets de soporte - Crea, gestiona y resuelve tickets fácilmente",
   "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f9fafb",
+  "background_color": "#f3f4f6",
   "theme_color": "#6366f1",
   "orientation": "portrait-primary",
+  "categories": ["productivity", "business"],
+  "lang": "es",
+  "dir": "ltr",
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text x='50' y='65' text-anchor='middle' font-size='50'>🎫</text></svg>",
@@ -15,7 +19,35 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "business"],
-  "lang": "es",
-  "dir": "ltr"
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Crear Ticket",
+      "short_name": "Nuevo",
+      "description": "Crear un nuevo ticket de soporte",
+      "url": "/login.html?tab=register",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2310b981'/><text x='50' y='65' text-anchor='middle' font-size='50'>+</text></svg>",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Iniciar Sesión",
+      "short_name": "Login",
+      "description": "Iniciar sesión en el sistema",
+      "url": "/login.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%233b82f6'/><text x='50' y='65' text-anchor='middle' font-size='50'>🔑</text></svg>",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }
