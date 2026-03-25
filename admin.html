@@ -345,13 +345,15 @@
         return;
       }
       
-      const headers = ['ID', 'Título', 'Usuario', 'Prioridad', 'Estado', 'Descripción', 'Respuesta', 'Fecha Creación', 'Fecha Respuesta'];
+      const headers = ['ID', 'Título', 'Usuario', 'Prioridad', 'Categoría', 'Estado', 'Asignado a', 'Descripción', 'Respuesta', 'Fecha Creación', 'Fecha Respuesta'];
       const rows = allTickets.map(t => [
         t.id,
         `"${(t.title || '').replace(/"/g, '""')}"`,
         t.userEmail,
         t.priority || 'normal',
+        t.category || 'general',
         t.status,
+        t.assignedTo || '',
         `"${(t.description || '').replace(/"/g, '""')}"`,
         `"${(t.response || '').replace(/"/g, '""')}"`,
         new Date(t.createdAt).toISOString(),
@@ -379,7 +381,6 @@
     function renderTickets() {
       const container = document.getElementById('tickets-container');
       const skeleton = document.getElementById('tickets-skeleton');
-      const empty = document.getElementById('tickets-empty');
       const tickets = currentTab === 'open' ? allOpenTickets : allClosedTickets;
       const query = document.getElementById('search-tickets').value.trim();
       const filtered = API.searchTickets(tickets, query);
@@ -387,9 +388,16 @@
       if (skeleton) skeleton.style.display = 'none';
 
       if (filtered.length === 0) {
-        if (empty) empty.style.display = 'block';
-        container.innerHTML = '';
-        container.appendChild(empty.cloneNode(true));
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">${currentTab === 'open' ? '📭' : '📋'}</div>
+            <p class="empty-state-text">
+              ${tickets.length === 0 
+                ? `No hay tickets ${currentTab === 'open' ? 'abiertos' : 'atendidos'}`
+                : 'No hay tickets que coincidan con la búsqueda'}
+            </p>
+          </div>
+        `;
         return;
       }
 

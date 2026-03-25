@@ -351,6 +351,19 @@ async function addComment(ticketId, text, authorEmail, authorName) {
   return true;
 }
 
+async function assignTicket(ticketId, adminEmail) {
+  await syncAndSaveTickets();
+  
+  const ticket = cache.tickets[ticketId];
+  if (!ticket) throw new Error('Ticket no encontrado');
+  
+  ticket.assignedTo = adminEmail;
+  ticket.assignedAt = Date.now();
+  
+  await syncAndSaveTickets();
+  return true;
+}
+
 async function refreshData() {
   const [users, tickets, counterData] = await Promise.all([
     jsonbinGet(BIN_IDS.users),
@@ -454,6 +467,7 @@ const API = {
   createTicket,
   getTicket,
   addComment,
+  assignTicket,
   getOpenTickets,
   getClosedTickets,
   getUserOpenTickets,

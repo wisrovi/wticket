@@ -287,16 +287,18 @@
     function renderOpenTickets(tickets = openTickets) {
       const container = document.getElementById('open-tickets');
       const skeleton = document.getElementById('open-skeleton');
-      const empty = document.getElementById('open-empty');
       
       if (skeleton) skeleton.style.display = 'none';
       
       document.getElementById('open-count').textContent = tickets.length;
       
       if (tickets.length === 0) {
-        if (empty) empty.style.display = 'block';
-        container.innerHTML = '';
-        container.appendChild(empty.cloneNode(true));
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No hay tickets${openTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
+          </div>
+        `;
         return;
       }
 
@@ -319,16 +321,18 @@
     function renderClosedTickets(tickets = closedTickets) {
       const container = document.getElementById('closed-tickets');
       const skeleton = document.getElementById('closed-skeleton');
-      const empty = document.getElementById('closed-empty');
       
       if (skeleton) skeleton.style.display = 'none';
       
       document.getElementById('closed-count').textContent = tickets.length;
       
       if (tickets.length === 0) {
-        if (empty) empty.style.display = 'block';
-        container.innerHTML = '';
-        container.appendChild(empty.cloneNode(true));
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <p class="empty-state-text">No hay tickets${closedTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
+          </div>
+        `;
         return;
       }
 
