@@ -70,5 +70,18 @@
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: 2026-03-25*
+| 21:56 | Updated architecture diagrams | Corrected diagram rendering | README.md |
+| 21:58 | Migrated to JSONBin.io | Upstash limitations - free tier incompatible | js/app.js, README.md |
+
+---
+
+## Technical Decisions Log
+
+| Date | Decision | Rationale | Impact |
+|------|----------|-----------|--------|
+| 2026-03-25 | Use Upstash Redis | Serverless, zero maintenance | No backend required |
+| 2026-03-25 | SHA-256 + salt | Web Crypto API native support | No crypto library needed |
+| 2026-03-25 | ES Modules | No build step required | Instant deployment |
+| 2026-03-25 | Service Worker caching | PWA offline capability | Partial offline support |
+| 2026-03-25 | Client-side search | Reduces API calls | Faster filtering |
+| 2026-03-25 | Migrate to JSONBin.io | Upstash free tier too restrictive | Full compatibility |
