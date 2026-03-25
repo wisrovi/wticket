@@ -194,6 +194,16 @@ a:focus:not(:focus-visible) {
 @media (max-width: 768px) {
   .hamburger {
     display: flex;
+    order: -1;
+  }
+
+  .navbar-brand {
+    order: 1;
+  }
+
+  .navbar-container {
+    justify-content: flex-start;
+    gap: 12px;
   }
 
   .navbar-nav {
@@ -207,20 +217,38 @@ a:focus:not(:focus-visible) {
     padding: 16px 20px;
     gap: 12px;
     box-shadow: var(--shadow);
+    z-index: 99;
   }
 
   .navbar-nav.active {
     display: flex;
   }
 
+  .navbar-nav > li:not(.nav-user):not(#last-update) {
+    display: none;
+  }
+
+  .navbar-nav.active > li {
+    display: block;
+  }
+
   .navbar-nav li {
     width: 100%;
-    text-align: center;
+    text-align: left;
   }
 
   .navbar-nav .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .nav-user, #last-update {
+    display: none !important;
+  }
+
+  .navbar-nav.active .nav-user,
+  .navbar-nav.active #last-update {
+    display: flex !important;
   }
 }
 

@@ -390,6 +390,12 @@ function getClosedTickets() {
     .sort((a, b) => b.createdAt - a.createdAt);
 }
 
+function getAdmins() {
+  return Object.values(cache.users)
+    .filter(u => u.role === 'admin')
+    .map(u => ({ email: u.email, name: u.name }));
+}
+
 function getUserOpenTickets(email) {
   return Object.values(cache.tickets)
     .filter(t => t.userEmail === email && t.status === 'open')
@@ -468,6 +474,7 @@ const API = {
   getTicket,
   addComment,
   assignTicket,
+  getAdmins,
   getOpenTickets,
   getClosedTickets,
   getUserOpenTickets,

@@ -410,11 +410,13 @@
                 <span class="ticket-id">#${ticket.id}</span>
                 <span>${priorityIcons[ticket.priority] || '🟡'} ${ticket.priority}</span>
                 <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
+                ${ticket.assignedTo ? `<span style="font-size: 11px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px;">👤 Asignado</span>` : ''}
               </div>
               <div class="ticket-title">${ticket.title}</div>
               <div class="ticket-meta">
                 <span>👤 ${ticket.userEmail}</span>
                 <span style="margin-left: 12px;">📅 ${API.formatDate(ticket.createdAt)}</span>
+                ${ticket.assignedTo ? `<span style="margin-left: 12px; color: var(--primary);">👤 ${ticket.assignedTo}</span>` : ''}
               </div>
               ${ticket.description ? `<div class="ticket-description" style="max-height: 60px; overflow: hidden;">${ticket.description}</div>` : ''}
             </div>
@@ -452,6 +454,7 @@
       if (ticket.status === 'open') {
         footerHtml = `
           <button class="btn btn-secondary" onclick="closeDetailModal()">Cancelar</button>
+          <button class="btn btn-outline" onclick="openAssignModal(${ticket.id})">👤 Asignar</button>
           <button class="btn btn-success" onclick="openRespondModal(${ticket.id})">
             ✅ Atender Ticket
           </button>
@@ -460,12 +463,21 @@
       
       document.getElementById('detail-footer').innerHTML = footerHtml;
       
+      const assignedInfo = ticket.assignedTo 
+        ? `<div style="margin-bottom: 16px; padding: 12px; background: var(--primary-light, #e0e7ff); border-radius: 8px;">
+             <strong style="display: block; margin-bottom: 4px;">👤 Asignado a:</strong>
+             <p style="margin: 0; color: var(--primary);">${ticket.assignedTo}</p>
+             ${ticket.assignedAt ? `<p style="margin: 4px 0 0; font-size: 12px; color: var(--gray-500);">Asignado: ${API.formatDate(ticket.assignedAt)}</p>` : ''}
+           </div>`
+        : '';
+      
       document.getElementById('detail-body').innerHTML = `
         <div style="margin-bottom: 16px;">
           <span class="ticket-status ${ticket.status}" style="margin-left: 8px;">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
           <span style="margin-left: 8px;">${priorityLabels[ticket.priority] || '🟡 Normal'}</span>
           <span style="margin-left: 8px;">${categoryLabels[ticket.category] || '📋 General'}</span>
         </div>
+        ${assignedInfo}
         <div style="margin-bottom: 16px;">
           <strong style="display: block; margin-bottom: 4px;">Título:</strong>
           <p>${ticket.title}</p>
@@ -534,6 +546,64 @@
 
     window.closeDetailModal = () => {
       document.getElementById('detail-modal').classList.remove('active');
+    };
+
+    window.openAssignModal = (id) => {
+      closeDetailModal();
+      
+      const admins = API.getAdmins();
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay active';
+      modal.id = 'assign-modal';
+      modal.innerHTML = `
+        <div class="modal">
+          <div class="modal-header">
+            <h3 class="modal-title">Asignar Ticket #${id}</h3>
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+          </div>
+          <form onsubmit="handleAssign(event, ${id})">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label" for="assign-admin">Seleccionar administrador</label>
+                <select id="assign-admin" class="form-input" required>
+                  <option value="">-- Seleccionar --</option>
+                  ${admins.map(a => `<option value="${a.email}">${a.name} (${a.email})</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="assign-btn">👤 Asignar</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    };
+
+    window.handleAssign = async (event, id) => {
+      event.preventDefault();
+      const btn = document.getElementById('assign-btn');
+      const adminEmail = document.getElementById('assign-admin').value;
+
+      if (!adminEmail) return;
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Asignando...';
+
+      try {
+        await API.assignTicket(id, adminEmail);
+        Toast.success(`Ticket #${id} asignado exitosamente`);
+        document.getElementById('assign-modal').remove();
+        await loadTickets();
+        await updateStats();
+      } catch (error) {
+        Toast.error('Error al asignar el ticket');
+        console.error(error);
+        btn.disabled = false;
+        btn.innerHTML = '👤 Asignar';
+      }
     };
 
     window.openRespondModal = (id) => {
@@ -629,6 +699,8 @@
         closeDetailModal();
         const respondModal = document.getElementById('respond-modal');
         if (respondModal) respondModal.remove();
+        const assignModal = document.getElementById('assign-modal');
+        if (assignModal) assignModal.remove();
       }
     });
 
