@@ -1,3 +1,5 @@
+import { initDB, cacheUsers, getCachedUsers, cacheTickets, getCachedTickets, cacheCounter, getCachedCounter } from './db.js';
+
 const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
 const JSONBIN_API_KEY = '$2a$10$4quMC2Ol6Cj0uD.YkIkvHeAqraYBiwxSkBj0mv5HTRL1xFadJTh7G';
 
@@ -86,6 +88,7 @@ async function syncAndSaveUsers() {
     cache.users = { ...latest, ...cache.users };
   }
   await jsonbinPut(BIN_IDS.users, cache.users);
+  await cacheUsers(cache.users);
 }
 
 async function syncAndSaveTickets() {
@@ -94,6 +97,7 @@ async function syncAndSaveTickets() {
     cache.tickets = { ...latest, ...cache.tickets };
   }
   await jsonbinPut(BIN_IDS.tickets, cache.tickets);
+  await cacheTickets(cache.tickets);
 }
 
 async function syncAndSaveCounter() {
@@ -102,29 +106,62 @@ async function syncAndSaveCounter() {
     cache.counter = latest.counter;
   }
   await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
+  await cacheCounter(cache.counter);
 }
 
 async function initCache(force = false) {
   if (cache.initialized && !force) return;
   
-  console.log('Loading data from JSONBin...');
-  
-  const [users, tickets, counterData] = await Promise.all([
-    jsonbinGet(BIN_IDS.users),
-    jsonbinGet(BIN_IDS.tickets),
-    jsonbinGet(BIN_IDS.counter)
-  ]);
+  try {
+    await initDB();
+    
+    console.log('Loading data...');
+    
+    const [users, tickets, counterData] = await Promise.all([
+      jsonbinGet(BIN_IDS.users),
+      jsonbinGet(BIN_IDS.tickets),
+      jsonbinGet(BIN_IDS.counter)
+    ]);
 
-  cache.users = users || {};
-  cache.tickets = tickets || {};
-  cache.counter = (counterData && typeof counterData.counter === 'number') ? counterData.counter : 0;
-  cache.initialized = true;
+    if (users) {
+      cache.users = users;
+      await cacheUsers(users);
+    } else {
+      cache.users = await getCachedUsers();
+    }
 
-  console.log('Loaded:', { 
-    users: Object.keys(cache.users).length, 
-    tickets: Object.keys(cache.tickets).length,
-    counter: cache.counter 
-  });
+    if (tickets) {
+      cache.tickets = tickets;
+      await cacheTickets(tickets);
+    } else {
+      cache.tickets = await getCachedTickets();
+    }
+
+    if (counterData && typeof counterData.counter === 'number') {
+      cache.counter = counterData.counter;
+    } else {
+      cache.counter = await getCachedCounter();
+    }
+
+    cache.initialized = true;
+
+    console.log('Loaded:', { 
+      users: Object.keys(cache.users).length, 
+      tickets: Object.keys(cache.tickets).length,
+      counter: cache.counter 
+    });
+  } catch (error) {
+    console.error('Error loading from IndexedDB, using JSONBin only:', error);
+    const [users, tickets, counterData] = await Promise.all([
+      jsonbinGet(BIN_IDS.users),
+      jsonbinGet(BIN_IDS.tickets),
+      jsonbinGet(BIN_IDS.counter)
+    ]);
+    cache.users = users || {};
+    cache.tickets = tickets || {};
+    cache.counter = (counterData && typeof counterData.counter === 'number') ? counterData.counter : 0;
+    cache.initialized = true;
+  }
 
   await ensureAdminExists();
 }
