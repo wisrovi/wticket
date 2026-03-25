@@ -15,7 +15,6 @@ let cache = {
   users: {},
   tickets: {},
   counter: 0,
-  sessions: {},
   initialized: false
 };
 
@@ -54,81 +53,47 @@ function formatDate(timestamp) {
   });
 }
 
+async function jsonbinGet(binId) {
+  const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}/latest`, {
+    headers: { 'X-Access-Key': JSONBIN_API_KEY }
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return data.record;
+}
+
+async function jsonbinPut(binId, data) {
+  const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Key': JSONBIN_API_KEY
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
 async function initCache() {
   if (cache.initialized) return;
   
   try {
-    const [usersRes, ticketsRes, counterRes] = await Promise.all([
-      fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.users}/latest`, {
-        headers: { 'X-Access-Key': JSONBIN_API_KEY }
-      }),
-      fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.tickets}/latest`, {
-        headers: { 'X-Access-Key': JSONBIN_API_KEY }
-      }),
-      fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.counter}/latest`, {
-        headers: { 'X-Access-Key': JSONBIN_API_KEY }
-      })
+    const [users, tickets, counterData] = await Promise.all([
+      jsonbinGet(BIN_IDS.users),
+      jsonbinGet(BIN_IDS.tickets),
+      jsonbinGet(BIN_IDS.counter)
     ]);
 
-    const usersData = await usersRes.json();
-    const ticketsData = await ticketsRes.json();
-    const counterData = await counterRes.json();
-
-    cache.users = usersData.record || {};
-    cache.tickets = ticketsData.record || {};
-    cache.counter = counterData.record?.counter || 0;
-    cache.sessions = {};
+    cache.users = users || {};
+    cache.tickets = tickets || {};
+    cache.counter = counterData?.counter || 0;
     cache.initialized = true;
 
     await ensureAdminExists();
   } catch (e) {
     console.error('Error initializing cache:', e);
     cache.initialized = true;
-  }
-}
-
-async function saveUsers() {
-  try {
-    await fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.users}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify(cache.users)
-    });
-  } catch (e) {
-    console.error('Error saving users:', e);
-  }
-}
-
-async function saveTickets() {
-  try {
-    await fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.tickets}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify(cache.tickets)
-    });
-  } catch (e) {
-    console.error('Error saving tickets:', e);
-  }
-}
-
-async function saveCounter() {
-  try {
-    await fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.counter}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify({ counter: cache.counter })
-    });
-  } catch (e) {
-    console.error('Error saving counter:', e);
   }
 }
 
@@ -142,8 +107,20 @@ async function ensureAdminExists() {
       role: 'admin',
       createdAt: Date.now()
     };
-    await saveUsers();
+    await jsonbinPut(BIN_IDS.users, cache.users);
   }
+}
+
+async function saveUsers() {
+  await jsonbinPut(BIN_IDS.users, cache.users);
+}
+
+async function saveTickets() {
+  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
+}
+
+async function saveCounter() {
+  await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
 }
 
 async function register(email, password, name) {
@@ -172,39 +149,41 @@ async function login(email, password) {
     throw new Error('Contraseña incorrecta');
   }
   const token = generateToken();
-  const expiresAt = Date.now() + SESSION_DURATION;
-  cache.sessions[token] = {
+  const sessionData = {
     email: user.email,
     name: user.name,
     role: user.role,
     createdAt: Date.now(),
-    expiresAt
+    expiresAt: Date.now() + SESSION_DURATION
   };
+  localStorage.setItem('wticket_token', token);
+  localStorage.setItem('wticket_session', JSON.stringify(sessionData));
   return { token, user: { email: user.email, name: user.name, role: user.role } };
 }
 
 async function validateSession() {
   const token = localStorage.getItem('wticket_token');
-  if (!token) return null;
-  const session = cache.sessions[token];
-  if (!session || !session.email) {
+  const sessionStr = localStorage.getItem('wticket_session');
+  if (!token || !sessionStr) return null;
+  
+  try {
+    const session = JSON.parse(sessionStr);
+    if (Date.now() > session.expiresAt) {
+      localStorage.removeItem('wticket_token');
+      localStorage.removeItem('wticket_session');
+      return null;
+    }
+    return { email: session.email, name: session.name, role: session.role };
+  } catch (e) {
     localStorage.removeItem('wticket_token');
+    localStorage.removeItem('wticket_session');
     return null;
   }
-  if (Date.now() > session.expiresAt) {
-    delete cache.sessions[token];
-    localStorage.removeItem('wticket_token');
-    return null;
-  }
-  return { email: session.email, name: session.name, role: session.role };
 }
 
 async function logout() {
-  const token = localStorage.getItem('wticket_token');
-  if (token) {
-    delete cache.sessions[token];
-    localStorage.removeItem('wticket_token');
-  }
+  localStorage.removeItem('wticket_token');
+  localStorage.removeItem('wticket_session');
 }
 
 async function createTicket(title, description, userEmail) {
