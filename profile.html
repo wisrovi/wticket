@@ -43,6 +43,15 @@
     <div style="max-width: 600px; margin: 0 auto;">
       <div class="card" style="margin-bottom: 24px;">
         <div class="card-header">
+          <h2 class="card-title">🏅 Mis Logros</h2>
+        </div>
+        <div class="card-body">
+          <div id="achievements-container" style="display: flex; flex-wrap: wrap; gap: 12px;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
           <h2 class="card-title">📝 Cambiar Nombre</h2>
         </div>
         <div class="card-body">
@@ -117,12 +126,43 @@
       onToggleTheme: () => toggleTheme()
     });
 
+    let currentSession = null;
+
     async function init() {
       const session = await API.requireAuth(['user'])();
       if (!session) return;
+      currentSession = session;
       
       document.getElementById('nav-user').innerHTML = `<span>👤 ${session.name}</span>`;
       document.getElementById('profile-name').value = session.name;
+      loadAchievements();
+    }
+
+    async function loadAchievements() {
+      try {
+        const { getAchievements } = await import('./js/achievements.js');
+        const userTickets = await API.getUserOpenTickets(currentSession.email);
+        const userClosed = await API.getUserClosedTickets(currentSession.email);
+        
+        const user = {
+          ticketCount: userTickets.length + userClosed.length,
+          resolvedCount: userClosed.length,
+          createdAt: currentSession.createdAt,
+          daysSinceCreated: Math.floor((Date.now() - currentSession.createdAt) / (1000 * 60 * 60 * 24))
+        };
+        
+        const achievements = getAchievements(user);
+        
+        const container = document.getElementById('achievements-container');
+        container.innerHTML = achievements.map(a => `
+          <div style="text-align: center; padding: 12px; border-radius: 8px; background: ${a.unlocked ? 'var(--primary)' : 'var(--gray-200)'}; color: ${a.unlocked ? 'white' : 'var(--gray-500)'}; opacity: ${a.unlocked ? 1 : 0.5}; min-width: 80px;">
+            <div style="font-size: 24px; margin-bottom: 4px;">${a.icon}</div>
+            <div style="font-size: 12px; font-weight: 600;">${a.name}</div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading achievements:', error);
+      }
     }
 
     window.toggleMenu = () => {
