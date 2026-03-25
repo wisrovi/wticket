@@ -1,13 +1,24 @@
-import { Redis } from "https://esm.sh/@upstash/redis";
-
-const REDIS = new Redis({
-  url: 'https://new-warthog-36731.upstash.io',
-  token: 'Ao97AAIgcDGdC0Sh4vNuaFwb97FpvVSketbZfyj-fsxQcV0h34e92w',
-});
+const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
+const JSONBIN_API_KEY = '$2a$10$placeholder_key_replace_with_yours';
 
 const ADMIN_EMAIL = 'wisrovi@wticket.com';
 const ADMIN_PASSWORD = 'wisrovi_wticket';
 const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+const BIN_IDS = {
+  users: 'users_bin_id',
+  tickets: 'tickets_bin_id',
+  counter: 'counter_bin_id',
+  sessions: 'sessions_bin_id'
+};
+
+let cache = {
+  users: {},
+  tickets: {},
+  counter: 0,
+  sessions: {},
+  initialized: false
+};
 
 function sha256(str) {
   const encoder = new TextEncoder();
@@ -44,80 +55,117 @@ function formatDate(timestamp) {
   });
 }
 
-async function redisGet(key) {
+async function initCache() {
+  if (cache.initialized) return;
+  
   try {
-    const data = await REDIS.get(key);
-    if (data === null) return null;
-    if (typeof data === 'string') {
-      try {
-        return JSON.parse(data);
-      } catch {
-        return data;
-      }
-    }
-    return data;
+    const [usersRes, ticketsRes, counterRes] = await Promise.all([
+      fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.users}/latest`, {
+        headers: { 'X-Access-Key': JSONBIN_API_KEY }
+      }),
+      fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.tickets}/latest`, {
+        headers: { 'X-Access-Key': JSONBIN_API_KEY }
+      }),
+      fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.counter}/latest`, {
+        headers: { 'X-Access-Key': JSONBIN_API_KEY }
+      })
+    ]);
+
+    const usersData = await usersRes.json();
+    const ticketsData = await ticketsRes.json();
+    const counterData = await counterRes.json();
+
+    cache.users = usersData.record || {};
+    cache.tickets = ticketsData.record || {};
+    cache.counter = counterData.record?.counter || 0;
+    cache.sessions = {};
+    cache.initialized = true;
+
+    await ensureAdminExists();
   } catch (e) {
-    console.error('Redis GET error:', e);
-    return null;
+    console.error('Error initializing cache:', e);
+    cache.initialized = true;
   }
 }
 
-async function redisSet(key, value) {
+async function saveUsers() {
   try {
-    return await REDIS.set(key, JSON.stringify(value));
+    await fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.users}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Key': JSONBIN_API_KEY
+      },
+      body: JSON.stringify(cache.users)
+    });
   } catch (e) {
-    console.error('Redis SET error:', e);
-    throw e;
+    console.error('Error saving users:', e);
   }
 }
 
-async function redisSetWithExpire(key, value, seconds) {
+async function saveTickets() {
   try {
-    return await REDIS.set(key, JSON.stringify(value), { EX: seconds });
+    await fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.tickets}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Key': JSONBIN_API_KEY
+      },
+      body: JSON.stringify(cache.tickets)
+    });
   } catch (e) {
-    console.error('Redis SET error:', e);
-    throw e;
+    console.error('Error saving tickets:', e);
+  }
+}
+
+async function saveCounter() {
+  try {
+    await fetch(`${JSONBIN_BASE_URL}/b/${BIN_IDS.counter}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Key': JSONBIN_API_KEY
+      },
+      body: JSON.stringify({ counter: cache.counter })
+    });
+  } catch (e) {
+    console.error('Error saving counter:', e);
   }
 }
 
 async function ensureAdminExists() {
-  try {
-    const adminData = await redisGet(`user:${ADMIN_EMAIL}`);
-    if (!adminData || !adminData.email) {
-      const hashedPassword = await hashPassword(ADMIN_PASSWORD);
-      await redisSet(`user:${ADMIN_EMAIL}`, {
-        email: ADMIN_EMAIL,
-        passwordHash: hashedPassword,
-        name: 'Administrador',
-        role: 'admin',
-        createdAt: Date.now()
-      });
-    }
-  } catch (e) {
-    console.error('Error ensuring admin exists:', e);
+  if (!cache.users[ADMIN_EMAIL]) {
+    const hashedPassword = await hashPassword(ADMIN_PASSWORD);
+    cache.users[ADMIN_EMAIL] = {
+      email: ADMIN_EMAIL,
+      passwordHash: hashedPassword,
+      name: 'Administrador',
+      role: 'admin',
+      createdAt: Date.now()
+    };
+    await saveUsers();
   }
 }
 
 async function register(email, password, name) {
-  const userData = await redisGet(`user:${email}`);
-  if (userData && userData.email) {
+  if (cache.users[email]) {
     throw new Error('El usuario ya existe');
   }
   const hashedPassword = await hashPassword(password);
-  await redisSet(`user:${email}`, {
+  cache.users[email] = {
     email,
     passwordHash: hashedPassword,
     name: name || email.split('@')[0],
     role: 'user',
     createdAt: Date.now()
-  });
-  await incrementUserCount();
+  };
+  await saveUsers();
   return login(email, password);
 }
 
 async function login(email, password) {
-  const user = await redisGet(`user:${email}`);
-  if (!user || !user.email) {
+  const user = cache.users[email];
+  if (!user) {
     throw new Error('Usuario no encontrado');
   }
   const hashedPassword = await hashPassword(password);
@@ -126,30 +174,26 @@ async function login(email, password) {
   }
   const token = generateToken();
   const expiresAt = Date.now() + SESSION_DURATION;
-  await redisSetWithExpire(`session:${token}`, {
+  cache.sessions[token] = {
     email: user.email,
     name: user.name,
     role: user.role,
     createdAt: Date.now(),
     expiresAt
-  }, Math.floor(SESSION_DURATION / 1000));
+  };
   return { token, user: { email: user.email, name: user.name, role: user.role } };
 }
 
 async function validateSession() {
   const token = localStorage.getItem('wticket_token');
   if (!token) return null;
-  const session = await redisGet(`session:${token}`);
+  const session = cache.sessions[token];
   if (!session || !session.email) {
     localStorage.removeItem('wticket_token');
     return null;
   }
-  if (Date.now() > parseInt(session.expiresAt)) {
-    try {
-      await REDIS.del(`session:${token}`);
-    } catch (e) {
-      console.error('Error deleting session:', e);
-    }
+  if (Date.now() > session.expiresAt) {
+    delete cache.sessions[token];
     localStorage.removeItem('wticket_token');
     return null;
   }
@@ -159,41 +203,33 @@ async function validateSession() {
 async function logout() {
   const token = localStorage.getItem('wticket_token');
   if (token) {
-    try {
-      await REDIS.del(`session:${token}`);
-    } catch (e) {
-      console.error('Error deleting session:', e);
-    }
+    delete cache.sessions[token];
     localStorage.removeItem('wticket_token');
   }
 }
 
-async function getNextTicketId() {
-  const id = await REDIS.incr('ticket:counter');
-  return id;
-}
-
 async function createTicket(title, description, userEmail) {
-  const id = await getNextTicketId();
-  const timestamp = Date.now();
-  await redisSet(`ticket:${id}`, {
+  cache.counter++;
+  const id = cache.counter;
+  await saveCounter();
+  
+  cache.tickets[id] = {
     id,
     title: escapeHtml(title),
     description: escapeHtml(description || ''),
     userEmail,
     status: 'open',
-    createdAt: timestamp,
+    createdAt: Date.now(),
     response: '',
     responseAt: 0
-  });
-  await REDIS.zadd('tickets:open', { score: timestamp, member: id });
-  await REDIS.sadd(`tickets:user:${userEmail}:open`, id);
+  };
+  await saveTickets();
   return id;
 }
 
-async function getTicket(id) {
-  const ticket = await redisGet(`ticket:${id}`);
-  if (!ticket || !ticket.id) return null;
+function getTicket(id) {
+  const ticket = cache.tickets[id];
+  if (!ticket) return null;
   return {
     ...ticket,
     id: parseInt(ticket.id),
@@ -202,80 +238,53 @@ async function getTicket(id) {
   };
 }
 
-async function getOpenTickets() {
-  const ids = await REDIS.zrange('tickets:open', 0, -1);
-  const tickets = [];
-  for (const id of ids) {
-    const ticket = await getTicket(id);
-    if (ticket) tickets.push(ticket);
-  }
-  return tickets;
+function getOpenTickets() {
+  return Object.values(cache.tickets)
+    .filter(t => t.status === 'open')
+    .sort((a, b) => a.createdAt - b.createdAt);
 }
 
-async function getClosedTickets() {
-  const ids = await REDIS.zrange('tickets:closed', 0, -1);
-  const tickets = [];
-  for (const id of ids) {
-    const ticket = await getTicket(id);
-    if (ticket) tickets.push(ticket);
-  }
-  return tickets.reverse();
+function getClosedTickets() {
+  return Object.values(cache.tickets)
+    .filter(t => t.status === 'closed')
+    .sort((a, b) => b.createdAt - a.createdAt);
 }
 
-async function getUserOpenTickets(email) {
-  const ids = await REDIS.smembers(`tickets:user:${email}:open`);
-  const tickets = [];
-  for (const id of ids) {
-    const ticket = await getTicket(parseInt(id));
-    if (ticket) tickets.push(ticket);
-  }
-  return tickets.sort((a, b) => a.createdAt - b.createdAt);
+function getUserOpenTickets(email) {
+  return Object.values(cache.tickets)
+    .filter(t => t.userEmail === email && t.status === 'open')
+    .sort((a, b) => a.createdAt - b.createdAt);
 }
 
-async function getUserClosedTickets(email) {
-  const ids = await REDIS.smembers(`tickets:user:${email}:closed`);
-  const tickets = [];
-  for (const id of ids) {
-    const ticket = await getTicket(parseInt(id));
-    if (ticket) tickets.push(ticket);
-  }
-  return tickets.sort((a, b) => b.createdAt - a.createdAt);
+function getUserClosedTickets(email) {
+  return Object.values(cache.tickets)
+    .filter(t => t.userEmail === email && t.status === 'closed')
+    .sort((a, b) => b.createdAt - a.createdAt);
 }
 
 async function closeTicket(id, response) {
-  const ticket = await getTicket(id);
+  const ticket = cache.tickets[id];
   if (!ticket) throw new Error('Ticket no encontrado');
-  const timestamp = Date.now();
-  await redisSet(`ticket:${id}`, {
-    ...ticket,
-    status: 'closed',
-    response: escapeHtml(response || ''),
-    responseAt: timestamp
-  });
-  await REDIS.zrem('tickets:open', id);
-  await REDIS.zadd('tickets:closed', { score: timestamp, member: id });
-  await REDIS.srem(`tickets:user:${ticket.userEmail}:open`, id);
-  await REDIS.sadd(`tickets:user:${ticket.userEmail}:closed`, id);
+  
+  ticket.status = 'closed';
+  ticket.response = escapeHtml(response || '');
+  ticket.responseAt = Date.now();
+  
+  await saveTickets();
 }
 
-async function getStats() {
-  const openCount = await REDIS.zcard('tickets:open');
-  const closedCount = await REDIS.zcard('tickets:closed');
-  const totalCount = openCount + closedCount;
+function getStats() {
+  const tickets = Object.values(cache.tickets);
+  const openCount = tickets.filter(t => t.status === 'open').length;
+  const closedCount = tickets.filter(t => t.status === 'closed').length;
+  const userCount = Object.keys(cache.users).length;
   
-  const userCount = await redisGet('users:count') || 0;
-  
-  return { openCount, closedCount, totalCount, userCount };
-}
-
-async function incrementUserCount() {
-  try {
-    const count = await REDIS.incr('users:count');
-    return count;
-  } catch (e) {
-    console.error('Error incrementing user count:', e);
-    return 1;
-  }
+  return {
+    openCount,
+    closedCount,
+    totalCount: openCount + closedCount,
+    userCount
+  };
 }
 
 function searchTickets(tickets, query) {
@@ -305,7 +314,7 @@ function requireAuth(allowedRoles = ['user', 'admin']) {
 
 const API = {
   init: async () => {
-    await ensureAdminExists();
+    await initCache();
   },
   sha256,
   hashPassword,
@@ -324,8 +333,7 @@ const API = {
   closeTicket,
   getStats,
   searchTickets,
-  requireAuth,
-  incrementUserCount
+  requireAuth
 };
 
 export default API;

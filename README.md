@@ -1,26 +1,24 @@
 # 🎫 WTicket - Enterprise Ticket Management System
 
-> A modern, scalable ticket management system engineered with vanilla JavaScript and Upstash Redis, designed for zero-infrastructure deployment on static hosting platforms.
+> A modern, scalable ticket management system engineered with vanilla JavaScript and JSONBin.io, designed for zero-infrastructure deployment on static hosting platforms.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-GitHub%20Pages-orange)](https://pages.github.com/)
-[![Database](https://img.shields.io/badge/Database-Upstash%20Redis-green)](https://upstash.com/)
+[![Database](https://img.shields.io/badge/Database-JSONBin.io-green)](https://jsonbin.io/)
 [![PWA](https://img.shields.io/badge/PWA-Ready-brightgreen)](https://web.dev/progressive-web-apps/)
-[![Code Quality](https://img.shields.io/badge/Code%20Quality-ESLint-blueviolet)](https://eslint.org/)
-[![Security](https://img.shields.io/badge/Security-XSS%20Protection-orange)](https://owasp.org/)
 
 ---
 
 ## 📋 Project Overview
 
-WTicket is an enterprise-grade, serverless ticket management system architected for rapid deployment without infrastructure overhead. The solution leverages Upstash Redis for persistent, serverless data storage and CDN-distributed static assets for optimal global performance.
+WTicket is an enterprise-grade, serverless ticket management system architected for rapid deployment without infrastructure overhead. The solution leverages JSONBin.io for persistent, serverless JSON storage and CDN-distributed static assets for optimal global performance.
 
 ### Core Objectives
 
 | Objective | Implementation |
 |-----------|----------------|
 | **Zero Infrastructure** | Deploy on any static hosting provider (GitHub Pages, Netlify, Vercel) |
-| **Cost Efficiency** | Serverless Redis with pay-per-request pricing |
+| **Cost Efficiency** | Free tier of JSONBin.io with generous limits |
 | **Developer Experience** | No build process, instant setup, hot-reload capable |
 | **Security First** | SHA-256 hashing, cryptographically secure sessions, XSS sanitization |
 | **Offline Capability** | Service Worker caching for static assets |
@@ -39,7 +37,6 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 | **Progressive Web App** | Installable on iOS/Android/Desktop with partial offline support |
 | **Responsive Design System** | Mobile-first CSS with adaptive breakpoints |
 | **Toast Notification System** | Non-intrusive visual feedback for all user actions |
-| **Auto-Refresh Mechanism** | Automatic data synchronization every 30 seconds |
 
 ---
 
@@ -50,9 +47,7 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 | **Frontend** | Vanilla JavaScript (ES6+) | ES2022 | Core application logic |
 | **Module System** | ES Modules | Native | Code organization and imports |
 | **Styling** | CSS3 Custom Properties | Modern | Design system and theming |
-| **Database** | Upstash Redis | Serverless | Persistent data storage |
-| **Redis Client** | @upstash/redis | Latest | Type-safe Redis operations |
-| **Dependency CDN** | esm.sh | Edge | Zero-config module bundling |
+| **Database** | JSONBin.io | Free Tier | Persistent JSON storage |
 | **Hosting** | GitHub Pages | Static | Global CDN distribution |
 | **PWA** | Service Worker API | v3 | Offline caching and installation |
 
@@ -72,17 +67,16 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 │   │                         │                                          │   │
 │   │  ┌─────────────────────────────────────────────────────────────┐  │   │
 │   │  │              JavaScript Modules                              │  │   │
-│   │  │  js/app.js (Redis Client + Auth + Tickets) │ js/toast.js   │  │   │
+│   │  │  js/app.js (JSONBin Client + Auth + Tickets) │ js/toast.js │  │   │
 │   │  └─────────────────────────────────────────────────────────────┘  │   │
 │   └───────────────────────────────────────────────────────────────────┘   │
 │                                    │ HTTPS/REST                            │
 │                                    ▼                                      │
 │   ┌───────────────────────────────────────────────────────────────────┐   │
-│   │                    DATA LAYER (Upstash Redis)                      │   │
-│   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │   │
-│   │  │   Sessions    │  │    Users     │  │    Tickets   │          │   │
-│   │  │ session:{id} │  │ user:{email} │  │  ticket:{id} │          │   │
-│   │  └──────────────┘  └──────────────┘  └──────────────┘          │   │
+│   │                    DATA LAYER (JSONBin.io)                          │   │
+│   │  ┌─────────────────────────────────────────────────────────────┐  │   │
+│   │  │  users.json  │  tickets.json  │  counter.json  │  sessions  │  │   │
+│   │  └─────────────────────────────────────────────────────────────┘  │   │
 │   └───────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -107,88 +101,11 @@ wticket/
 │   └── styles.css            # Complete design system with CSS custom properties
 │
 ├── js/
-│   ├── app.js                # Core API module - Redis operations, auth, ticket CRUD
+│   ├── app.js                # Core API module - JSONBin operations, auth, tickets
 │   └── toast.js              # Toast notification system with animations
 │
-├── example_base/              # Reference implementations
-│   └── example.js            # Original Upstash Redis connection example
-│
-├── .github/                   # GitHub configuration
-│   └── workflows/            # CI/CD pipelines (if configured)
-│
-├── LICENSE                    # MIT License
-└── README.md                  # This documentation
-```
-
----
-
-## 🔄 System Workflow
-
-### Authentication Flow
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as User Browser
-    participant App as js/app.js
-    participant R as Upstash Redis
-    
-    Note over U,R: Registration Flow
-    
-    U->>App: register(email, password, name)
-    App->>App: hashPassword(password + salt)
-    App->>R: SET user:{email} {userData}
-    R-->>App: OK
-    App->>App: login(email, password)
-    
-    Note over U,R: Login Flow
-    
-    U->>App: login(email, password)
-    App->>R: GET user:{email}
-    R-->>App: {passwordHash, ...}
-    App->>App: Validate credentials
-    App->>App: generateToken()
-    App->>R: SET session:{token} {sessionData}
-    R-->>App: OK
-    App-->>U: {token, user}
-```
-
-### Ticket Creation Flow
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as User
-    participant App as js/app.js
-    participant R as Upstash Redis
-    
-    U->>App: createTicket(title, description, email)
-    App->>R: INCR ticket:counter
-    R-->>App: nextId
-    App->>R: SET ticket:{id} {ticketData}
-    App->>R: ZADD tickets:open {score: timestamp, member: id}
-    App->>R: SADD tickets:user:{email}:open {id}
-    R-->>App: OK
-    App-->>U: ticketId
-```
-
-### Admin Resolution Flow
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant A as Admin
-    participant App as js/app.js
-    participant R as Upstash Redis
-    
-    A->>App: closeTicket(id, response)
-    App->>R: GET ticket:{id}
-    R-->>App: ticketData
-    App->>R: SET ticket:{id} {status: closed, response}
-    App->>R: ZREM tickets:open {id}
-    App->>R: ZADD tickets:closed {score: timestamp, member: id}
-    R-->>App: OK
-    App-->>A: void
+├── LICENSE                   # MIT License
+└── README.md                # This documentation
 ```
 
 ---
@@ -200,9 +117,8 @@ sequenceDiagram
 | Requirement | Specification |
 |-------------|----------------|
 | Browser | Chrome 90+, Firefox 88+, Safari 14+, Edge 90+ |
-| Network | Internet connectivity (Redis connection) |
-| Redis | Upstash account with REST API credentials |
-| Git | For version control and deployment |
+| Network | Internet connectivity |
+| JSONBin | Free account at https://jsonbin.io |
 
 ### Quick Start
 
@@ -211,23 +127,33 @@ sequenceDiagram
 git clone https://github.com/wisrovi/wticket.git
 cd wticket
 
-# 2. Configure Redis credentials
-# Edit js/app.js with your Redis URL and token
+# 2. Create JSONBin.io account
+# Visit https://jsonbin.io and sign up for free
+
+# 3. Create 3 bins for data storage
+# Create bins for: users, tickets, counter
+
+# 4. Configure JSONBin credentials
+# Edit js/app.js with your API key and bin IDs
 ```
 
 ```javascript
 // js/app.js - Configuration section
-const REDIS = new Redis({
-  url: 'YOUR_UPSTASH_REDIS_URL',    // e.g., https://xxx.upstash.io
-  token: 'YOUR_UPSTASH_TOKEN',      // Your authentication token
-});
+const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
+const JSONBIN_API_KEY = 'YOUR_API_KEY';
+
+const BIN_IDS = {
+  users: 'YOUR_USERS_BIN_ID',
+  tickets: 'YOUR_TICKETS_BIN_ID',
+  counter: 'YOUR_COUNTER_BIN_ID'
+};
 ```
 
 ```bash
-# 3. Local development server (optional but recommended)
+# 5. Local development server (optional but recommended)
 python3 -m http.server 8000
 
-# 4. Deploy to GitHub Pages
+# 6. Deploy to GitHub Pages
 # Push to your repository and enable Pages in Settings
 ```
 
@@ -268,51 +194,45 @@ const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 ---
 
-## 📊 Redis Data Schema
+## 📊 Data Schema
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           REDIS KEY STRUCTURE                                │
+│                           DATA STRUCTURE                                   │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  ticket:counter                    Integer                                  │
-│  └── Auto-incrementing unique ticket identifier                            │
+│  USERS (users.json)                                                       │
+│  ├── {email}: {                                                           │
+│  │     email: string                                                       │
+│  │     passwordHash: string (SHA-256)                                      │
+│  │     name: string                                                       │
+│  │     role: "user" | "admin"                                             │
+│  │     createdAt: number                                                   │
+│  │   }                                                                   │
 │                                                                             │
-│  ticket:{id}                       JSON String                             │
-│  ├── id: Integer                  Primary key                             │
-│  ├── title: String                Ticket subject (XSS sanitized)          │
-│  ├── description: String          Optional details                         │
-│  ├── userEmail: String            Ticket creator's email                  │
-│  ├── status: String               "open" | "closed"                       │
-│  ├── createdAt: Integer           Unix timestamp (milliseconds)           │
-│  ├── response: String             Admin response text                     │
-│  └── responseAt: Integer          Resolution timestamp                     │
+│  TICKETS (tickets.json)                                                   │
+│  ├── {id}: {                                                              │
+│  │     id: number                                                         │
+│  │     title: string (XSS sanitized)                                       │
+│  │     description: string                                                 │
+│  │     userEmail: string                                                   │
+│  │     status: "open" | "closed"                                          │
+│  │     createdAt: number                                                   │
+│  │     response: string                                                    │
+│  │     responseAt: number                                                  │
+│  │   }                                                                   │
 │                                                                             │
-│  tickets:open                      Sorted Set                              │
-│  └── Score: Unix timestamp, Member: ticket ID                             │
+│  COUNTER (counter.json)                                                    │
+│  └── { counter: number }                                                   │
 │                                                                             │
-│  tickets:closed                    Sorted Set                              │
-│  └── Score: Unix timestamp, Member: ticket ID                             │
-│                                                                             │
-│  tickets:user:{email}:open        Set                                     │
-│  └── User's open ticket IDs                                            │
-│                                                                             │
-│  tickets:user:{email}:closed      Set                                     │
-│  └── User's closed ticket IDs                                           │
-│                                                                             │
-│  user:{email}                     JSON String                              │
-│  ├── email: String                Unique identifier                        │
-│  ├── passwordHash: String         SHA-256 hash with salt                  │
-│  ├── name: String                 Display name                            │
-│  ├── role: String                 "user" | "admin"                        │
-│  └── createdAt: Integer          Registration timestamp                   │
-│                                                                             │
-│  session:{token}                  JSON String (TTL: 24h)                    │
-│  ├── email: String                Associated user email                    │
-│  ├── name: String                 Cached display name                     │
-│  ├── role: String                 Cached user role                         │
-│  ├── createdAt: Integer           Session creation timestamp               │
-│  └── expiresAt: Integer           Session expiry timestamp                 │
+│  SESSIONS (in-memory cache)                                                │
+│  └── {token}: {                                                           │
+│        email: string                                                       │
+│        name: string                                                       │
+│        role: string                                                       │
+│        createdAt: number                                                  │
+│        expiresAt: number                                                   │
+│      }                                                                   │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
