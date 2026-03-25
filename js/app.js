@@ -169,6 +169,16 @@ async function register(email, password, name) {
   return login(email, password);
 }
 
+async function updateUser(email, updates) {
+  if (!cache.users[email]) {
+    throw new Error('Usuario no encontrado');
+  }
+  
+  cache.users[email] = { ...cache.users[email], ...updates };
+  await jsonbinPut(BIN_IDS.users, cache.users);
+  return cache.users[email];
+}
+
 async function login(email, password) {
   console.log('Login attempt:', email);
   console.log('Available users:', Object.keys(cache.users));
@@ -344,7 +354,8 @@ const API = {
   closeTicket,
   getStats,
   searchTickets,
-  requireAuth
+  requireAuth,
+  updateUser
 };
 
 export default API;
