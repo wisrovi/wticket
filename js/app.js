@@ -1,15 +1,14 @@
 const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
-const JSONBIN_API_KEY = '$2a$10$placeholder_key_replace_with_yours';
+const JSONBIN_API_KEY = '$2a$10$4quMC2Ol6Cj0uD.YkIkvHeAqraYBiwxSkBj0mv5HTRL1xFadJTh7G';
 
 const ADMIN_EMAIL = 'wisrovi@wticket.com';
 const ADMIN_PASSWORD = 'wisrovi_wticket';
 const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
 const BIN_IDS = {
-  users: 'users_bin_id',
-  tickets: 'tickets_bin_id',
-  counter: 'counter_bin_id',
-  sessions: 'sessions_bin_id'
+  users: '69c45577c3097a1dd55da693',
+  tickets: '69c4558bc3097a1dd55da6e8',
+  counter: '69c4559baa77b81da91cad22'
 };
 
 let cache = {
