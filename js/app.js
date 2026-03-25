@@ -59,13 +59,13 @@ async function jsonbinGet(binId) {
       headers: { 'X-Access-Key': JSONBIN_API_KEY }
     });
     if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error(`HTTP ${res.status}`);
+      console.log('GET failed for', binId, 'status:', res.status);
+      return null;
     }
     const data = await res.json();
     return data.record;
   } catch (e) {
-    console.error('JSONBin GET error:', e);
+    console.error('GET error for', binId, e);
     return null;
   }
 }
@@ -82,11 +82,14 @@ async function jsonbinPut(binId, data) {
     });
     if (!res.ok) {
       const text = await res.text();
-      throw new Error(`HTTP ${res.status}: ${text}`);
+      console.error('PUT failed for', binId, 'status:', res.status, 'response:', text);
+      throw new Error(`Error guardando datos: ${res.status}`);
     }
-    return await res.json();
+    const result = await res.json();
+    console.log('PUT success for', binId, result);
+    return result;
   } catch (e) {
-    console.error('JSONBin PUT error:', e);
+    console.error('PUT error for', binId, e);
     throw e;
   }
 }
@@ -94,36 +97,29 @@ async function jsonbinPut(binId, data) {
 async function initCache() {
   if (cache.initialized) return;
   
-  console.log('Initializing cache from JSONBin...');
+  console.log('Loading data from JSONBin...');
   
-  try {
-    const [users, tickets, counterData] = await Promise.all([
-      jsonbinGet(BIN_IDS.users),
-      jsonbinGet(BIN_IDS.tickets),
-      jsonbinGet(BIN_IDS.counter)
-    ]);
+  let users = await jsonbinGet(BIN_IDS.users);
+  let tickets = await jsonbinGet(BIN_IDS.tickets);
+  let counterData = await jsonbinGet(BIN_IDS.counter);
 
-    cache.users = users || {};
-    cache.tickets = tickets || {};
-    cache.counter = (counterData && counterData.counter) || 0;
-    cache.initialized = true;
+  cache.users = users || {};
+  cache.tickets = tickets || {};
+  cache.counter = (counterData && typeof counterData.counter === 'number') ? counterData.counter : 0;
+  cache.initialized = true;
 
-    console.log('Cache initialized:', { 
-      users: Object.keys(cache.users).length, 
-      tickets: Object.keys(cache.tickets).length,
-      counter: cache.counter 
-    });
+  console.log('Loaded from JSONBin:', { 
+    users: Object.keys(cache.users).length, 
+    tickets: Object.keys(cache.tickets).length,
+    counter: cache.counter 
+  });
 
-    await ensureAdminExists();
-  } catch (e) {
-    console.error('Error initializing cache:', e);
-    cache.initialized = true;
-  }
+  await ensureAdminExists();
 }
 
 async function ensureAdminExists() {
   if (!cache.users[ADMIN_EMAIL]) {
-    console.log('Creating admin user...');
+    console.log('Creating admin...');
     const hashedPassword = await hashPassword(ADMIN_PASSWORD);
     cache.users[ADMIN_EMAIL] = {
       email: ADMIN_EMAIL,
@@ -134,28 +130,17 @@ async function ensureAdminExists() {
     };
     try {
       await jsonbinPut(BIN_IDS.users, cache.users);
-      console.log('Admin user saved to JSONBin');
+      console.log('Admin saved!');
     } catch (e) {
       console.error('Failed to save admin:', e);
     }
+  } else {
+    console.log('Admin exists');
   }
 }
 
-async function saveUsers() {
-  console.log('Saving users to JSONBin:', cache.users);
-  await jsonbinPut(BIN_IDS.users, cache.users);
-}
-
-async function saveTickets() {
-  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
-}
-
-async function saveCounter() {
-  await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
-}
-
 async function register(email, password, name) {
-  console.log('Registering user:', email);
+  console.log('Registering:', email);
   
   if (cache.users[email]) {
     throw new Error('El usuario ya existe');
@@ -171,15 +156,14 @@ async function register(email, password, name) {
   };
   
   cache.users[email] = userData;
-  console.log('User added to cache, saving...');
+  console.log('Saving user to JSONBin...');
   
   try {
-    await saveUsers();
-    console.log('User saved successfully');
+    await jsonbinPut(BIN_IDS.users, cache.users);
+    console.log('User saved successfully!');
   } catch (e) {
-    console.error('Failed to save user:', e);
     delete cache.users[email];
-    throw new Error('Error al guardar usuario. Intenta de nuevo.');
+    throw new Error('Error al guardar. Verifica tu conexión e intenta de nuevo.');
   }
   
   return login(email, password);
@@ -187,10 +171,11 @@ async function register(email, password, name) {
 
 async function login(email, password) {
   console.log('Login attempt:', email);
+  console.log('Available users:', Object.keys(cache.users));
   
   const user = cache.users[email];
   if (!user) {
-    throw new Error('Usuario no encontrado');
+    throw new Error('Usuario no encontrado. Verifica el email o regístrate.');
   }
   
   const hashedPassword = await hashPassword(password);
@@ -210,7 +195,7 @@ async function login(email, password) {
   localStorage.setItem('wticket_token', token);
   localStorage.setItem('wticket_session', JSON.stringify(sessionData));
   
-  console.log('Login successful for:', user.name);
+  console.log('Login success!');
   return { token, user: { email: user.email, name: user.name, role: user.role } };
 }
 
@@ -242,7 +227,7 @@ async function logout() {
 async function createTicket(title, description, userEmail) {
   cache.counter++;
   const id = cache.counter;
-  await saveCounter();
+  await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
   
   cache.tickets[id] = {
     id,
@@ -254,7 +239,7 @@ async function createTicket(title, description, userEmail) {
     response: '',
     responseAt: 0
   };
-  await saveTickets();
+  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
   return id;
 }
 
@@ -301,7 +286,7 @@ async function closeTicket(id, response) {
   ticket.response = escapeHtml(response || '');
   ticket.responseAt = Date.now();
   
-  await saveTickets();
+  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
 }
 
 function getStats() {
