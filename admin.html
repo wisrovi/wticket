@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de Administrador - Gestionar Tickets">
+  <meta name="theme-color" content="#6366f1">
+  <title>Admin - WTicket</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">🎫 WTicket</a>
+      <ul class="navbar-nav">
+        <li><a href="index.html" class="nav-link">Inicio</a></li>
+        <li class="nav-user" id="nav-user"></li>
+        <li><button onclick="handleLogout()" class="btn btn-secondary btn-sm">Cerrar Sesión</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h1 class="page-title">Panel de Administrador</h1>
+          <p class="page-subtitle">Gestiona todos los tickets del sistema</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-open">-</div>
+        <div class="stat-label">Tickets Abiertos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value success" id="stat-closed">-</div>
+        <div class="stat-label">Tickets Atendidos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value warning" id="stat-total">-</div>
+        <div class="stat-label">Total Tickets</div>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="open" onclick="switchTab('open')">
+        📂 Tickets Abiertos (<span id="tab-open-count">0</span>)
+      </button>
+      <button class="admin-tab" data-tab="closed" onclick="switchTab('closed')">
+        ✅ Tickets Atendidos (<span id="tab-closed-count">0</span>)
+      </button>
+    </div>
+
+    <div class="search-box" style="margin-bottom: 24px; max-width: 400px;">
+      <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-tickets" oninput="filterTickets()">
+    </div>
+
+    <div id="tickets-container">
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p class="empty-state-text">Cargando tickets...</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detail-title">Detalle del Ticket</h3>
+        <button class="modal-close" onclick="closeDetailModal()">×</button>
+      </div>
+      <div class="modal-body" id="detail-body"></div>
+      <div class="modal-footer" id="detail-footer">
+        <button class="btn btn-secondary" onclick="closeDetailModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import API from './js/app.js';
+    import Toast from './js/toast.js';
+
+    let currentTab = 'open';
+    let allOpenTickets = [];
+    let allClosedTickets = [];
+
+    async function init() {
+      const session = await API.requireAuth(['admin'])();
+      if (!session) return;
+      
+      document.getElementById('nav-user').innerHTML = `
+        <span>👤 ${session.name}</span>
+        <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">ADMIN</span>
+      `;
+      
+      await loadTickets();
+      await updateStats();
+    }
+
+    async function updateStats() {
+      try {
+        const stats = await API.getStats();
+        document.getElementById('stat-open').textContent = stats.openCount;
+        document.getElementById('stat-closed').textContent = stats.closedCount;
+        document.getElementById('stat-total').textContent = stats.totalCount;
+        document.getElementById('tab-open-count').textContent = stats.openCount;
+        document.getElementById('tab-closed-count').textContent = stats.closedCount;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    async function loadTickets() {
+      try {
+        allOpenTickets = await API.getOpenTickets();
+        allClosedTickets = await API.getClosedTickets();
+        renderTickets();
+      } catch (error) {
+        Toast.error('Error al cargar los tickets');
+        console.error(error);
+      }
+    }
+
+    window.switchTab = (tab) => {
+      currentTab = tab;
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+      renderTickets();
+    };
+
+    function renderTickets() {
+      const container = document.getElementById('tickets-container');
+      const tickets = currentTab === 'open' ? allOpenTickets : allClosedTickets;
+      const query = document.getElementById('search-tickets').value.trim();
+      const filtered = API.searchTickets(tickets, query);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">${currentTab === 'open' ? '📭' : '📋'}</div>
+            <p class="empty-state-text">
+              ${tickets.length === 0 
+                ? `No hay tickets ${currentTab === 'open' ? 'abiertos' : 'atendidos'}`
+                : 'No hay tickets que coincidan con la búsqueda'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="ticket-list">
+          ${filtered.map(ticket => `
+            <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
+              <div class="ticket-header">
+                <span class="ticket-id">#${ticket.id}</span>
+                <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
+              </div>
+              <div class="ticket-title">${ticket.title}</div>
+              <div class="ticket-meta">
+                <span>👤 ${ticket.userEmail}</span>
+                <span style="margin-left: 12px;">📅 ${API.formatDate(ticket.createdAt)}</span>
+              </div>
+              ${ticket.description ? `<div class="ticket-description" style="max-height: 60px; overflow: hidden;">${ticket.description}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    window.filterTickets = () => {
+      renderTickets();
+    };
+
+    window.openDetailModal = async (id) => {
+      const ticket = await API.getTicket(id);
+      if (!ticket) {
+        Toast.error('Ticket no encontrado');
+        return;
+      }
+      
+      document.getElementById('detail-title').textContent = `Ticket #${ticket.id}`;
+      
+      let footerHtml = '<button class="btn btn-secondary" onclick="closeDetailModal()">Cerrar</button>';
+      
+      if (ticket.status === 'open') {
+        footerHtml = `
+          <button class="btn btn-secondary" onclick="closeDetailModal()">Cancelar</button>
+          <button class="btn btn-success" onclick="openRespondModal(${ticket.id})">
+            ✅ Atender Ticket
+          </button>
+        `;
+      }
+      
+      document.getElementById('detail-footer').innerHTML = footerHtml;
+      
+      document.getElementById('detail-body').innerHTML = `
+        <div style="margin-bottom: 16px;">
+          <span class="ticket-status ${ticket.status}" style="margin-left: 8px;">${ticket.status === 'open' ? 'Abierto' : 'Atendido'}</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <strong style="display: block; margin-bottom: 4px;">Título:</strong>
+          <p>${ticket.title}</p>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <strong style="display: block; margin-bottom: 4px;">Usuario:</strong>
+          <p style="color: var(--gray-600);">${ticket.userEmail}</p>
+        </div>
+        ${ticket.description ? `
+          <div style="margin-bottom: 16px;">
+            <strong style="display: block; margin-bottom: 4px;">Descripción:</strong>
+            <p style="color: var(--gray-600); white-space: pre-wrap;">${ticket.description}</p>
+          </div>
+        ` : ''}
+        <div style="margin-bottom: 16px;">
+          <strong style="display: block; margin-bottom: 4px;">Fecha de creación:</strong>
+          <p style="color: var(--gray-500); font-size: 14px;">${API.formatDate(ticket.createdAt)}</p>
+        </div>
+        ${ticket.response ? `
+          <div class="ticket-response">
+            <div class="ticket-response-label">Respuesta del administrador</div>
+            <div class="ticket-response-text">${ticket.response}</div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--gray-500);">
+              Respondido: ${API.formatDate(ticket.responseAt)}
+            </div>
+          </div>
+        ` : ''}
+      `;
+      document.getElementById('detail-modal').classList.add('active');
+    };
+
+    window.closeDetailModal = () => {
+      document.getElementById('detail-modal').classList.remove('active');
+    };
+
+    window.openRespondModal = (id) => {
+      closeDetailModal();
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay active';
+      modal.id = 'respond-modal';
+      modal.innerHTML = `
+        <div class="modal">
+          <div class="modal-header">
+            <h3 class="modal-title">Atender Ticket #${id}</h3>
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+          </div>
+          <form onsubmit="handleRespond(event, ${id})">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label" for="response-text">Respuesta (opcional)</label>
+                <textarea id="response-text" class="form-input" placeholder="Ingresa una respuesta para el usuario..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+              <button type="submit" class="btn btn-success" id="respond-btn">✅ Atender y Cerrar</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    };
+
+    window.handleRespond = async (event, id) => {
+      event.preventDefault();
+      const btn = document.getElementById('respond-btn');
+      const response = document.getElementById('response-text').value.trim();
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Procesando...';
+
+      try {
+        await API.closeTicket(id, response);
+        Toast.success(`Ticket #${id} atendido exitosamente`);
+        document.getElementById('respond-modal').remove();
+        await loadTickets();
+        await updateStats();
+      } catch (error) {
+        Toast.error('Error al atender el ticket');
+        console.error(error);
+        btn.disabled = false;
+        btn.innerHTML = '✅ Atender y Cerrar';
+      }
+    };
+
+    window.handleLogout = async () => {
+      await API.logout();
+      Toast.success('Sesión cerrada correctamente');
+      setTimeout(() => window.location.href = 'login.html', 1000);
+    };
+
+    init();
+
+    setInterval(async () => {
+      await loadTickets();
+      await updateStats();
+    }, 30000);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDetailModal();
+        const respondModal = document.getElementById('respond-modal');
+        if (respondModal) respondModal.remove();
+      }
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
