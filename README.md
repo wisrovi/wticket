@@ -33,10 +33,19 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 | **User Authentication** | Email/password registration and login with secure session tokens |
 | **Role-Based Access Control** | Segregated user and administrator panels with authorization enforcement |
 | **Complete Ticket Lifecycle** | Create → Open → Attended → Closed workflow |
+| **Ticket Priorities** | Urgent (🔴), High (🟠), Normal (🟡), Low (🟢) |
+| **Ticket Categories** | General, Technical, Billing, Suggestion, Bug, Other |
+| **Ticket Assignment** | Admins can assign tickets to other admins |
+| **Comments System** | Threaded comments on tickets for communication |
+| **User Achievements** | Gamification with badges for user engagement |
 | **Real-Time Search** | Filter tickets by title or ID across all views |
+| **CSV Export** | Export all tickets to CSV for data analysis |
+| **Pull-to-Refresh** | Mobile-friendly swipe-to-refresh functionality |
 | **Progressive Web App** | Installable on iOS/Android/Desktop with partial offline support |
-| **Responsive Design System** | Mobile-first CSS with adaptive breakpoints |
+| **Responsive Design System** | Mobile-first CSS with adaptive breakpoints and segmented navbar |
+| **Dark Mode** | Toggle between light and dark themes |
 | **Toast Notification System** | Non-intrusive visual feedback for all user actions |
+| **Keyboard Shortcuts** | n=new ticket, /=search, r=refresh, d=dark mode, Esc=close modals |
 
 ---
 
@@ -50,6 +59,7 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 | **Database** | JSONBin.io | Free Tier | Persistent JSON storage |
 | **Hosting** | GitHub Pages | Static | Global CDN distribution |
 | **PWA** | Service Worker API | v3 | Offline caching and installation |
+| **Testing** | Playwright | Latest | End-to-end testing |
 
 ### Architecture Overview
 
@@ -64,10 +74,15 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 │   │  │ index.html  │  │ login.html  │  │dashboard.html│  admin.html  │   │
 │   │  │ (Dashboard) │  │   (Auth)    │  │  (User)     │  (Admin)    │   │
 │   │  └─────────────┘  └─────────────┘  └─────────────┘              │   │
+│   │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │   │
+│   │  │profile.html │  │ contact.html│  │   (PWA)    │              │   │
+│   │  │  (Profile)  │  │ (Contact)   │  │             │              │   │
+│   │  └─────────────┘  └─────────────┘  └─────────────┘              │   │
 │   │                         │                                          │   │
 │   │  ┌─────────────────────────────────────────────────────────────┐  │   │
 │   │  │              JavaScript Modules                              │  │   │
-│   │  │  js/app.js (JSONBin Client + Auth + Tickets) │ js/toast.js │  │   │
+│   │  │  app.js │ toast.js │ shortcuts.js │ utils.js │ db.js     │  │   │
+│   │  │  i18n.js │ achievements.js                              │  │   │
 │   │  └─────────────────────────────────────────────────────────────┘  │   │
 │   └───────────────────────────────────────────────────────────────────┘   │
 │                                    │ HTTPS/REST                            │
@@ -75,7 +90,7 @@ WTicket is an enterprise-grade, serverless ticket management system architected 
 │   ┌───────────────────────────────────────────────────────────────────┐   │
 │   │                    DATA LAYER (JSONBin.io)                          │   │
 │   │  ┌─────────────────────────────────────────────────────────────┐  │   │
-│   │  │  users.json  │  tickets.json  │  counter.json  │  sessions  │  │   │
+│   │  │  users.json  │  tickets.json  │  counter.json             │  │   │
 │   │  └─────────────────────────────────────────────────────────────┘  │   │
 │   └───────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
@@ -93,6 +108,8 @@ wticket/
 ├── login.html                 # Authentication - login/register tabs
 ├── dashboard.html             # User panel - open/closed ticket columns
 ├── admin.html                 # Administrator panel - ticket management
+├── profile.html               # User profile - change name/password, achievements
+├── contact.html               # Contact page - developer information
 │
 ├── manifest.json              # PWA manifest - app metadata and icons
 ├── service-worker.js          # Service Worker - offline caching strategy
@@ -102,7 +119,16 @@ wticket/
 │
 ├── js/
 │   ├── app.js                # Core API module - JSONBin operations, auth, tickets
-│   └── toast.js              # Toast notification system with animations
+│   ├── toast.js              # Toast notification system with animations
+│   ├── shortcuts.js          # Keyboard shortcuts module
+│   ├── utils.js              # Debounce/throttle utilities
+│   ├── db.js                 # IndexedDB caching layer
+│   ├── i18n.js               # Internationalization (ES/EN)
+│   └── achievements.js       # User achievements/gamification system
+│
+├── tests/
+│   ├── app.spec.js           # Playwright end-to-end tests
+│   └── README.md             # Testing documentation
 │
 ├── LICENSE                   # MIT License
 └── README.md                # This documentation
@@ -179,18 +205,32 @@ const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 1. **Access Dashboard** → View public statistics without login
 2. **Register** → Create account with email and password
 3. **Login** → Authenticate with credentials
-4. **Create Ticket** → Submit title and optional description
+4. **Create Ticket** → Submit title, description, priority, and category
 5. **Track Tickets** → Monitor open tickets in real-time
-6. **View Resolution** → Check closed tickets with responses
+6. **Add Comments** → Communicate on tickets
+7. **View Resolution** → Check closed tickets with responses
+8. **Manage Profile** → Update name/password, view achievements
 
 ### Administrator Flow
 
 1. **Login** → Use admin credentials
-2. **View Stats** → Monitor system-wide ticket metrics
+2. **View Stats** → Monitor system-wide ticket metrics with charts
 3. **Browse Open Tickets** → Ordered by creation date (oldest first)
-4. **Search Tickets** → Find by title or ID
-5. **Resolve Tickets** → Add optional response and close
-6. **Review Closed** → Access history of resolved tickets
+4. **Assign Tickets** → Assign tickets to other admins
+5. **Search Tickets** → Find by title or ID
+6. **Resolve Tickets** → Add optional response and close
+7. **Review Closed** → Access history of resolved tickets
+8. **Export CSV** → Download all tickets for analysis
+
+### Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `n` | Create new ticket |
+| `/` | Focus search input |
+| `r` | Refresh data |
+| `d` | Toggle dark mode |
+| `Esc` | Close modals |
 
 ---
 
@@ -213,24 +253,30 @@ const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 │  TICKETS (tickets.json)                                                   │
 │  ├── {id}: {                                                              │
 │  │     id: number                                                         │
-│  │     title: string (XSS sanitized)                                       │
+│  │     title: string                                                       │
 │  │     description: string                                                 │
 │  │     userEmail: string                                                   │
+│  │     priority: "urgent" | "high" | "normal" | "low"                     │
+│  │     category: "general" | "technical" | "billing" | "suggestion" |    │
+│  │               "bug" | "other"                                          │
 │  │     status: "open" | "closed"                                          │
 │  │     createdAt: number                                                   │
 │  │     response: string                                                    │
 │  │     responseAt: number                                                  │
+│  │     assignedTo: string (admin email)                                   │
+│  │     assignedAt: number                                                  │
+│  │     comments: Array<{text, authorEmail, authorName, createdAt}>        │
 │  │   }                                                                   │
 │                                                                             │
 │  COUNTER (counter.json)                                                    │
-│  └── { counter: number }                                                   │
+│  └── { counter: number }                                                  │
 │                                                                             │
 │  SESSIONS (in-memory cache)                                                │
 │  └── {token}: {                                                           │
 │        email: string                                                       │
-│        name: string                                                       │
-│        role: string                                                       │
-│        createdAt: number                                                  │
+│        name: string                                                        │
+│        role: string                                                        │
+│        createdAt: number                                                   │
 │        expiresAt: number                                                   │
 │      }                                                                   │
 │                                                                             │
@@ -250,6 +296,28 @@ const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 | **Session Expiry** | 24-hour automatic TTL | Medium |
 | **XSS Prevention** | HTML entity escaping | High |
 | **Input Sanitization** | Client-side validation | Medium |
+| **Data Sync** | GET before PUT to prevent overwrites | High |
+
+---
+
+## 🧪 Testing
+
+```bash
+# Install dependencies
+npm install -D @playwright/test
+npx playwright install chromium
+
+# Run tests
+npx playwright test
+```
+
+### Test Coverage
+
+- Homepage loads correctly
+- Login page functionality
+- Dark mode toggle
+- Contact page
+- Global stats banner
 
 ---
 
