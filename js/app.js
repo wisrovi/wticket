@@ -28,6 +28,7 @@ function generateToken() {
 }
 
 function escapeHtml(text) {
+  if (!text) return '';
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
@@ -43,11 +44,31 @@ function formatDate(timestamp) {
   });
 }
 
+async function redisGet(key) {
+  const data = await REDIS.get(key);
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return data;
+    }
+  }
+  return data;
+}
+
+async function redisSet(key, value) {
+  return await REDIS.set(key, JSON.stringify(value));
+}
+
+async function redisSetWithExpire(key, value, seconds) {
+  return await REDIS.set(key, JSON.stringify(value), { EX: seconds });
+}
+
 async function ensureAdminExists() {
-  const adminExists = await REDIS.exists(`user:${ADMIN_EMAIL}`);
-  if (!adminExists) {
+  const adminData = await redisGet(`user:${ADMIN_EMAIL}`);
+  if (!adminData || !adminData.email) {
     const hashedPassword = await hashPassword(ADMIN_PASSWORD);
-    await REDIS.hset(`user:${ADMIN_EMAIL}`, {
+    await redisSet(`user:${ADMIN_EMAIL}`, {
       email: ADMIN_EMAIL,
       passwordHash: hashedPassword,
       name: 'Administrador',
@@ -58,12 +79,12 @@ async function ensureAdminExists() {
 }
 
 async function register(email, password, name) {
-  const exists = await REDIS.exists(`user:${email}`);
-  if (exists) {
+  const userData = await redisGet(`user:${email}`);
+  if (userData && userData.email) {
     throw new Error('El usuario ya existe');
   }
   const hashedPassword = await hashPassword(password);
-  await REDIS.hset(`user:${email}`, {
+  await redisSet(`user:${email}`, {
     email,
     passwordHash: hashedPassword,
     name: name || email.split('@')[0],
@@ -74,7 +95,7 @@ async function register(email, password, name) {
 }
 
 async function login(email, password) {
-  const user = await REDIS.hgetall(`user:${email}`);
+  const user = await redisGet(`user:${email}`);
   if (!user || !user.email) {
     throw new Error('Usuario no encontrado');
   }
@@ -84,21 +105,20 @@ async function login(email, password) {
   }
   const token = generateToken();
   const expiresAt = Date.now() + SESSION_DURATION;
-  await REDIS.hset(`session:${token}`, {
+  await redisSetWithExpire(`session:${token}`, {
     email: user.email,
     name: user.name,
     role: user.role,
     createdAt: Date.now(),
     expiresAt
-  });
-  await REDIS.expire(`session:${token}`, SESSION_DURATION / 1000);
+  }, Math.floor(SESSION_DURATION / 1000));
   return { token, user: { email: user.email, name: user.name, role: user.role } };
 }
 
 async function validateSession() {
   const token = localStorage.getItem('wticket_token');
   if (!token) return null;
-  const session = await REDIS.hgetall(`session:${token}`);
+  const session = await redisGet(`session:${token}`);
   if (!session || !session.email) {
     localStorage.removeItem('wticket_token');
     return null;
@@ -127,7 +147,7 @@ async function getNextTicketId() {
 async function createTicket(title, description, userEmail) {
   const id = await getNextTicketId();
   const timestamp = Date.now();
-  await REDIS.hset(`ticket:${id}`, {
+  await redisSet(`ticket:${id}`, {
     id,
     title: escapeHtml(title),
     description: escapeHtml(description || ''),
@@ -143,7 +163,7 @@ async function createTicket(title, description, userEmail) {
 }
 
 async function getTicket(id) {
-  const ticket = await REDIS.hgetall(`ticket:${id}`);
+  const ticket = await redisGet(`ticket:${id}`);
   if (!ticket || !ticket.id) return null;
   return {
     ...ticket,
@@ -197,7 +217,8 @@ async function closeTicket(id, response) {
   const ticket = await getTicket(id);
   if (!ticket) throw new Error('Ticket no encontrado');
   const timestamp = Date.now();
-  await REDIS.hset(`ticket:${id}`, {
+  await redisSet(`ticket:${id}`, {
+    ...ticket,
     status: 'closed',
     response: escapeHtml(response || ''),
     responseAt: timestamp
@@ -212,8 +233,8 @@ async function getStats() {
   const openCount = await REDIS.zcard('tickets:open');
   const closedCount = await REDIS.zcard('tickets:closed');
   const totalCount = openCount + closedCount;
-  const users = await REDIS.keys('user:*');
-  const userCount = users.filter(k => !k.includes('session:') && !k.includes('tickets:')).length;
+  const userKeys = await REDIS.keys('user:*');
+  const userCount = userKeys.filter(k => !k.includes('session:') && !k.includes('tickets:')).length;
   return { openCount, closedCount, totalCount, userCount };
 }
 
@@ -221,8 +242,8 @@ function searchTickets(tickets, query) {
   if (!query) return tickets;
   const q = query.toLowerCase();
   return tickets.filter(t => {
-    const titleMatch = t.title.toLowerCase().includes(q);
-    const idMatch = t.id.toString().includes(q);
+    const titleMatch = t.title && t.title.toLowerCase().includes(q);
+    const idMatch = t.id && t.id.toString().includes(q);
     return titleMatch || idMatch;
   });
 }
