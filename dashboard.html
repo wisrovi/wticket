@@ -11,6 +11,9 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
 </head>
 <body>
+  <div id="pull-indicator" class="pull-to-refresh">
+    <span>↓ Desliza para actualizar</span>
+  </div>
   <nav class="navbar" role="navigation" aria-label="Navegación principal">
     <div class="container navbar-container">
       <a href="index.html" class="navbar-brand" aria-label="WTicket inicio">🎫 WTicket</a>
@@ -204,6 +207,42 @@
       },
       onRefresh: () => manualRefresh(),
       onToggleTheme: () => toggleTheme()
+    });
+
+    let touchStartY = 0;
+    let touchCurrentY = 0;
+    const pullIndicator = document.getElementById('pull-indicator');
+
+    document.addEventListener('touchstart', (e) => {
+      if (window.scrollY === 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (touchStartY > 0 && window.scrollY === 0) {
+        touchCurrentY = e.touches[0].clientY;
+        const pullDistance = touchCurrentY - touchStartY;
+        if (pullDistance > 0) {
+          e.preventDefault();
+          pullIndicator.classList.add('active');
+          pullIndicator.style.transform = `translateY(${Math.min(pullDistance - 60, 60)}px)`;
+        }
+      }
+    });
+
+    document.addEventListener('touchend', async () => {
+      if (touchStartY > 0 && touchCurrentY - touchStartY > 100) {
+        pullIndicator.innerHTML = '<span class="loading-spinner"></span>';
+        await API.refreshData();
+        await loadTickets();
+        Toast.success('Datos actualizados');
+      }
+      pullIndicator.classList.remove('active');
+      pullIndicator.style.transform = 'translateY(-100%)';
+      pullIndicator.innerHTML = '<span>↓ Desliza para actualizar</span>';
+      touchStartY = 0;
+      touchCurrentY = 0;
     });
 
     let currentUser = null;
