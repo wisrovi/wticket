@@ -130,6 +130,16 @@ wticket/
 │   ├── app.spec.js           # Playwright end-to-end tests
 │   └── README.md             # Testing documentation
 │
+├── docs/                      # Sphinx documentation (ReadTheDocs compatible)
+│   ├── source/               # Source files for Sphinx
+│   ├── Makefile              # Build automation
+│   └── README.md             # Docs README
+│
+├── docs_pdf/                  # LaTeX/PDF documentation
+│   ├── wticket-documentation.tex
+│   ├── wticket-documentation.pdf
+│   └── sources/              # Images and assets
+│
 ├── LICENSE                   # MIT License
 └── README.md                # This documentation
 ```
@@ -297,6 +307,34 @@ const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 | **XSS Prevention** | HTML entity escaping | High |
 | **Input Sanitization** | Client-side validation | Medium |
 | **Data Sync** | GET before PUT to prevent overwrites | High |
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation is available in multiple formats:
+
+### Sphinx Documentation (Recommended)
+
+```bash
+cd docs
+make install-deps  # Install dependencies
+make html          # Build HTML docs
+make serve         # Preview at http://localhost:8000
+```
+
+### LaTeX/PDF Documentation
+
+```bash
+cd docs_pdf
+pdflatex wticket-documentation.tex  # Compile (run 3 times)
+```
+
+### Online Resources
+
+- **Live Demo**: https://wisrovi.github.io/wticket
+- **Sphinx Docs**: Build with `make html` in docs folder
+- **PDF Docs**: docs_pdf/wticket-documentation.pdf
 
 ---
 
