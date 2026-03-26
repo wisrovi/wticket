@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tickets API &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="User Management API" href="users.html" />
+    <link rel="prev" title="Authentication API" href="authentication.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="authentication.html">Authentication API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tickets API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#createticket-title-description-priority-category">createTicket(title, description, priority, category)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getticket-id">getTicket(id)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#closeticket-id-response">closeTicket(id, response)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#addcomment-ticketid-text-authoremail-authorname">addComment(ticketId, text, authorEmail, authorName)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#assignticket-ticketid-adminemail">assignTicket(ticketId, adminEmail)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#query-methods">Query Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#getopentickets">getOpenTickets()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getclosedtickets">getClosedTickets()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getuseropentickets-email">getUserOpenTickets(email)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getuserclosedtickets-email">getUserClosedTickets(email)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getstats">getStats()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#searchtickets-tickets-query">searchTickets(tickets, query)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ticket-object-schema">Ticket Object Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#priority-levels">Priority Levels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#categories">Categories</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="users.html">User Management API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-structure">Module Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#base-configuration">Base Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#common-error-messages">Common Error Messages</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Tickets API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/tickets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tickets-api">
+<h1>Tickets API<a class="headerlink" href="#tickets-api" title="Link to this heading"></a></h1>
+<p>This section documents all ticket-related API methods.</p>
+<section id="createticket-title-description-priority-category">
+<h2>createTicket(title, description, priority, category)<a class="headerlink" href="#createticket-title-description-priority-category" title="Link to this heading"></a></h2>
+<p>Creates a new support ticket.</p>
+<p><strong>Parameters:</strong></p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Ticket&gt;</span></code></p>
+<p><strong>Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">ticket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">createTicket</span><span class="p">(</span>
+<span class="w">    </span><span class="s1">&#39;Login not working&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;Cannot access my account since yesterday. Error: Invalid credentials.&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;high&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;technical&#39;</span>
+<span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ticket created:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ticket</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="getticket-id">
+<h2>getTicket(id)<a class="headerlink" href="#getticket-id" title="Link to this heading"></a></h2>
+<p>Retrieves a single ticket by ID.</p>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>number</p></td>
+<td><p>Ticket ID</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Ticket|null&gt;</span></code></p>
+<p><strong>Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">ticket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getTicket</span><span class="p">(</span><span class="mf">123</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">ticket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Title:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ticket</span><span class="p">.</span><span class="nx">title</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Status:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ticket</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="closeticket-id-response">
+<h2>closeTicket(id, response)<a class="headerlink" href="#closeticket-id-response" title="Link to this heading"></a></h2>
+<p>Closes an open ticket with an administrator response.</p>
+<p><strong>Parameters:</strong></p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;boolean&gt;</span></code></p>
+<p><strong>Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">closeTicket</span><span class="p">(</span>
+<span class="w">    </span><span class="mf">123</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;Issue resolved by password reset. Please check your email.&#39;</span>
+<span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ticket resolved&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="addcomment-ticketid-text-authoremail-authorname">
+<h2>addComment(ticketId, text, authorEmail, authorName)<a class="headerlink" href="#addcomment-ticketid-text-authoremail-authorname" title="Link to this heading"></a></h2>
+<p>Adds a comment to a ticket.</p>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ticketId</p></td>
+<td><p>number</p></td>
+<td><p>Target ticket ID</p></td>
+</tr>
+<tr class="row-odd"><td><p>text</p></td>
+<td><p>string</p></td>
+<td><p>Comment content</p></td>
+</tr>
+<tr class="row-even"><td><p>authorEmail</p></td>
+<td><p>string</p></td>
+<td><p>Comment author’s email</p></td>
+</tr>
+<tr class="row-odd"><td><p>authorName</p></td>
+<td><p>string</p></td>
+<td><p>Comment author’s name</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;boolean&gt;</span></code></p>
+<p><strong>Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">addComment</span><span class="p">(</span>
+<span class="w">    </span><span class="mf">123</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;Thank you for the update!&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;John User&#39;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="assignticket-ticketid-adminemail">
+<h2>assignTicket(ticketId, adminEmail)<a class="headerlink" href="#assignticket-ticketid-adminemail" title="Link to this heading"></a></h2>
+<p>Assigns a ticket to an administrator (admin only).</p>
+<p><strong>Parameters:</strong></p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;boolean&gt;</span></code></p>
+<p><strong>Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">admins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getAdmins</span><span class="p">();</span>
+<span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">assignTicket</span><span class="p">(</span><span class="mf">123</span><span class="p">,</span><span class="w"> </span><span class="nx">admins</span><span class="p">[</span><span class="mf">0</span><span class="p">].</span><span class="nx">email</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="query-methods">
+<h2>Query Methods<a class="headerlink" href="#query-methods" title="Link to this heading"></a></h2>
+<section id="getopentickets">
+<h3>getOpenTickets()<a class="headerlink" href="#getopentickets" title="Link to this heading"></a></h3>
+<p>Returns all open tickets sorted by creation date.</p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Ticket[]&gt;</span></code></p>
+</section>
+<section id="getclosedtickets">
+<h3>getClosedTickets()<a class="headerlink" href="#getclosedtickets" title="Link to this heading"></a></h3>
+<p>Returns all closed tickets sorted by creation date (newest first).</p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Ticket[]&gt;</span></code></p>
+</section>
+<section id="getuseropentickets-email">
+<h3>getUserOpenTickets(email)<a class="headerlink" href="#getuseropentickets-email" title="Link to this heading"></a></h3>
+<p>Returns open tickets for a specific user.</p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Ticket[]&gt;</span></code></p>
+</section>
+<section id="getuserclosedtickets-email">
+<h3>getUserClosedTickets(email)<a class="headerlink" href="#getuserclosedtickets-email" title="Link to this heading"></a></h3>
+<p>Returns closed tickets for a specific user.</p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Ticket[]&gt;</span></code></p>
+</section>
+<section id="getstats">
+<h3>getStats()<a class="headerlink" href="#getstats" title="Link to this heading"></a></h3>
+<p>Returns global statistics.</p>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Promise&lt;Stats&gt;</span></code></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">stats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getStats</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Open:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">openCount</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Closed:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">closedCount</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Total:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">totalCount</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="searchtickets-tickets-query">
+<h3>searchTickets(tickets, query)<a class="headerlink" href="#searchtickets-tickets-query" title="Link to this heading"></a></h3>
+<p>Filters tickets by title or ID.</p>
+<p><strong>Parameters:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tickets</p></td>
+<td><p>Ticket[]</p></td>
+<td><p>Array of tickets to filter</p></td>
+</tr>
+<tr class="row-odd"><td><p>query</p></td>
+<td><p>string</p></td>
+<td><p>Search query</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code class="docutils literal notranslate"><span class="pre">Ticket[]</span></code></p>
+</section>
+</section>
+<section id="ticket-object-schema">
+<h2>Ticket Object Schema<a class="headerlink" href="#ticket-object-schema" title="Link to this heading"></a></h2>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span><span class="w"> </span><span class="nx">Ticket</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">title</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">userEmail</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">priority</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;urgent&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;high&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;normal&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;low&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">category</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;general&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;technical&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;billing&#39;</span><span class="w"> </span><span class="o">|</span>
+<span class="w">              </span><span class="s1">&#39;suggestion&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;bug&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;other&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;open&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;closed&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">response?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">responseAt?</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">assignedTo?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">assignedAt?</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">comments</span><span class="o">:</span><span class="w"> </span><span class="kt">Comment</span><span class="p">[];</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">Comment</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">authorEmail</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">authorName</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="priority-levels">
+<h2>Priority Levels<a class="headerlink" href="#priority-levels" title="Link to this heading"></a></h2>
+</section>
+<section id="categories">
+<h2>Categories<a class="headerlink" href="#categories" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="authentication.html" class="btn btn-neutral float-left" title="Authentication API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="users.html" class="btn btn-neutral float-right" title="User Management API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

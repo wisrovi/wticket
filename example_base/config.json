@@ -4,5 +4,6 @@
     "password": "wisrovi_wticket",
     "passwordHash": "733b31a774d7c3e99851270b4aaaf53f8e91df5cc982fb441a38e489e9c5e2b4"
   },
-  "instructions": "Para crear el admin en JSONBin manualmente, copia este JSON en el bin de users:"
+  "instructions": "Para crear el admin en JSONBin manualmente, copia este JSON en el bin de users:",
+  "DB": "https://jsonbin.io/app/bins"
 }

@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation Guide &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Configuration Guide" href="configuration.html" />
+    <link rel="prev" title="Getting Started" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-clone-the-repository">Step 1: Clone the Repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-create-jsonbin-io-bins">Step 2: Create JSONBin.io Bins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-configure-the-application">Step 3: Configure the Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-local-development-server">Step 4: Local Development Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-verify-installation">Step 5: Verify Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deployment.html">Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#estimated-setup-time">Estimated Setup Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Getting Started</a></li>
+      <li class="breadcrumb-item active">Installation Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting_started/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation-guide">
+<h1>Installation Guide<a class="headerlink" href="#installation-guide" title="Link to this heading"></a></h1>
+<p>This guide provides step-by-step instructions for installing and running WTicket locally.</p>
+<section id="step-1-clone-the-repository">
+<h2>Step 1: Clone the Repository<a class="headerlink" href="#step-1-clone-the-repository" title="Link to this heading"></a></h2>
+<p>Clone the WTicket repository from GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/wisrovi/wticket.git
+<span class="nb">cd</span><span class="w"> </span>wticket
+</pre></div>
+</div>
+</section>
+<section id="step-2-create-jsonbin-io-bins">
+<h2>Step 2: Create JSONBin.io Bins<a class="headerlink" href="#step-2-create-jsonbin-io-bins" title="Link to this heading"></a></h2>
+<p>JSONBin.io provides the data persistence layer for WTicket. Follow these steps:</p>
+<ol class="arabic simple">
+<li><p>Visit <a class="reference external" href="https://jsonbin.io">JSONBin.io</a> and create a free account</p></li>
+<li><p>Navigate to the dashboard and create <strong>three</strong> new bins:</p>
+<ul class="simple">
+<li><p><strong>Users Bin</strong>: Stores user account data</p></li>
+<li><p><strong>Tickets Bin</strong>: Stores all ticket information</p></li>
+<li><p><strong>Counter Bin</strong>: Manages ticket ID sequencing</p></li>
+</ul>
+</li>
+<li><p>Copy the <strong>Bin IDs</strong> from each bin’s URL</p></li>
+<li><p>Navigate to your profile and generate an <strong>API Key</strong></p></li>
+</ol>
+</section>
+<section id="step-3-configure-the-application">
+<h2>Step 3: Configure the Application<a class="headerlink" href="#step-3-configure-the-application" title="Link to this heading"></a></h2>
+<p>Edit the configuration section in <code class="docutils literal notranslate"><span class="pre">js/app.js</span></code>:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Configuration Setup</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// JSONBin.io Configuration</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">JSONBIN_BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://api.jsonbin.io/v3&#39;</span><span class="p">;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">JSONBIN_API_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;your-master-key-here&#39;</span><span class="p">;</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">BIN_IDS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">users</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your-users-bin-id&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">tickets</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your-tickets-bin-id&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">counter</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your-counter-bin-id&#39;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="step-4-local-development-server">
+<h2>Step 4: Local Development Server<a class="headerlink" href="#step-4-local-development-server" title="Link to this heading"></a></h2>
+<p>Start a local HTTP server to test the application:</p>
+<p><strong>Using Python 3:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8000</span>
+</pre></div>
+</div>
+<p><strong>Using Node.js:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npx<span class="w"> </span>serve<span class="w"> </span>.
+</pre></div>
+</div>
+<p><strong>Using PHP:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>php<span class="w"> </span>-S<span class="w"> </span>localhost:8000
+</pre></div>
+</div>
+<p>Access the application at <code class="docutils literal notranslate"><span class="pre">http://localhost:8000</span></code></p>
+</section>
+<section id="step-5-verify-installation">
+<h2>Step 5: Verify Installation<a class="headerlink" href="#step-5-verify-installation" title="Link to this heading"></a></h2>
+<p>After starting the server:</p>
+<ol class="arabic simple">
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">http://localhost:8000</span></code> in your browser</p></li>
+<li><p>Verify the public dashboard displays statistics</p></li>
+<li><p>Navigate to the login page</p></li>
+<li><p>Test user registration with a new account</p></li>
+<li><p>Create a sample ticket to verify data persistence</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<p><strong>Issue: CORS Errors</strong></p>
+<blockquote>
+<div><p>Ensure your JSONBin bins are configured with proper CORS headers to allow requests from your domain.</p>
+</div></blockquote>
+<p><strong>Issue: Service Worker Not Caching</strong></p>
+<blockquote>
+<div><p>Clear browser cache and unregister existing service workers before testing.</p>
+</div></blockquote>
+<p><strong>Issue: Data Not Persisting</strong></p>
+<blockquote>
+<div><p>Verify your JSONBin API key has write permissions enabled.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

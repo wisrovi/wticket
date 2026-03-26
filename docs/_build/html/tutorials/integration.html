@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Integration Tutorial &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api_reference/index.html" />
+    <link rel="prev" title="Admin Workflow Tutorial" href="admin_workflow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="user_workflow.html">User Workflow Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_workflow.html">Admin Workflow Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Integration Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#embedding-wticket-widget">Embedding WTicket Widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-data-fetching">Custom Data Fetching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#webhook-notifications">Webhook Notifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#external-dashboard-integration">External Dashboard Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verification">Verification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorial-structure">Tutorial Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#available-tutorials">Available Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Integration Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/integration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="integration-tutorial">
+<h1>Integration Tutorial<a class="headerlink" href="#integration-tutorial" title="Link to this heading"></a></h1>
+<p>This tutorial covers integrating WTicket with external systems and custom applications.</p>
+<section id="objective">
+<h2>Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h2>
+<p>Learn how to integrate WTicket functionality into your existing applications.</p>
+</section>
+<section id="embedding-wticket-widget">
+<h2>Embedding WTicket Widget<a class="headerlink" href="#embedding-wticket-widget" title="Link to this heading"></a></h2>
+<p>Embed a simplified ticket creation widget in external pages.</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cm">&lt;!-- Add to your page --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;wticket-embed&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="nx">API</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;https://your-domain.com/js/app.js&#39;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">initWidget</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">validateSession</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">session</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;wticket-embed&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span>
+<span class="w">                </span><span class="s1">&#39;&lt;p&gt;Please login first&lt;/p&gt;&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Embed ticket form</span>
+<span class="w">        </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;wticket-embed&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">            &lt;form id=&quot;quick-ticket&quot;&gt;</span>
+<span class="sb">                &lt;input type=&quot;text&quot; id=&quot;title&quot; placeholder=&quot;Issue title&quot;&gt;</span>
+<span class="sb">                &lt;textarea id=&quot;desc&quot; placeholder=&quot;Description&quot;&gt;&lt;/textarea&gt;</span>
+<span class="sb">                &lt;button type=&quot;submit&quot;&gt;Submit Ticket&lt;/button&gt;</span>
+<span class="sb">            &lt;/form&gt;</span>
+<span class="sb">        `</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">initWidget</span><span class="p">();</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-data-fetching">
+<h2>Custom Data Fetching<a class="headerlink" href="#custom-data-fetching" title="Link to this heading"></a></h2>
+<p>Fetch ticket data for external dashboards.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span><span class="w"> </span><span class="nx">WTicketClient</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">apiKey</span><span class="p">,</span><span class="w"> </span><span class="nx">bins</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">baseUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://api.jsonbin.io/v3&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">apiKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">apiKey</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">bins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bins</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">get</span><span class="p">(</span><span class="nx">endpoint</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span>
+<span class="w">            </span><span class="sb">`</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">baseUrl</span><span class="si">}</span><span class="sb">/b/</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">bins</span><span class="p">[</span><span class="nx">endpoint</span><span class="p">]</span><span class="si">}</span><span class="sb">/latest`</span><span class="p">,</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s1">&#39;X-Master-Key&#39;</span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">apiKey</span><span class="w"> </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">record</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">getStats</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">tickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;tickets&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">tickets</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;open&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">closed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">tickets</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;closed&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">openCount</span><span class="o">:</span><span class="w"> </span><span class="nx">open</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">closedCount</span><span class="o">:</span><span class="w"> </span><span class="nx">closed</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">totalCount</span><span class="o">:</span><span class="w"> </span><span class="nx">open</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">closed</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">userCount</span><span class="o">:</span><span class="w"> </span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">users</span><span class="p">).</span><span class="nx">length</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WTicketClient</span><span class="p">(</span><span class="nx">API_KEY</span><span class="p">,</span><span class="w"> </span><span class="nx">BIN_IDS</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">stats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getStats</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stats</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="webhook-notifications">
+<h2>Webhook Notifications<a class="headerlink" href="#webhook-notifications" title="Link to this heading"></a></h2>
+<p>Set up custom notifications when tickets are created.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// Monitor for new tickets using polling</span>
+<span class="kd">class</span><span class="w"> </span><span class="nx">TicketWebhook</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span><span class="w"> </span><span class="nx">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5000</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">callback</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">interval</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">lastTicketId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">check</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">tickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getOpenTickets</span><span class="p">();</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">newest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(...</span><span class="nx">tickets</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="p">));</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">newest</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">lastTicketId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="nx">lastTicketId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">newest</span><span class="p">;</span>
+<span class="w">            </span><span class="kd">const</span><span class="w"> </span><span class="nx">newTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">tickets</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">lastTicketId</span><span class="p">);</span>
+<span class="w">            </span><span class="nx">newTickets</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">callback</span><span class="p">(</span><span class="nx">t</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">start</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">check</span><span class="p">();</span>
+<span class="w">        </span><span class="nx">setInterval</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">check</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">interval</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">webhook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">TicketWebhook</span><span class="p">((</span><span class="nx">ticket</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;New ticket:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ticket</span><span class="p">.</span><span class="nx">title</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Send email, Slack notification, etc.</span>
+<span class="p">});</span>
+<span class="nx">webhook</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+<section id="external-dashboard-integration">
+<h2>External Dashboard Integration<a class="headerlink" href="#external-dashboard-integration" title="Link to this heading"></a></h2>
+<p>Create a custom admin dashboard.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">buildDashboard</span><span class="p">(</span><span class="nx">containerId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">containerId</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Fetch data</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">stats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getStats</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">openTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getOpenTickets</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">closedTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getClosedTickets</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Build dashboard HTML</span>
+<span class="w">    </span><span class="nx">container</span><span class="p">.</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">        &lt;div class=&quot;dashboard&quot;&gt;</span>
+<span class="sb">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="sb">                &lt;h3&gt;Open&lt;/h3&gt;</span>
+<span class="sb">                &lt;div class=&quot;stat-value&quot;&gt;</span><span class="si">${</span><span class="nx">stats</span><span class="p">.</span><span class="nx">openCount</span><span class="si">}</span><span class="sb">&lt;/div&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="sb">                &lt;h3&gt;Closed&lt;/h3&gt;</span>
+<span class="sb">                &lt;div class=&quot;stat-value&quot;&gt;</span><span class="si">${</span><span class="nx">stats</span><span class="p">.</span><span class="nx">closedCount</span><span class="si">}</span><span class="sb">&lt;/div&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="sb">                &lt;h3&gt;Resolution Rate&lt;/h3&gt;</span>
+<span class="sb">                &lt;div class=&quot;stat-value&quot;&gt;</span>
+<span class="sb">                    </span><span class="si">${</span><span class="p">((</span><span class="nx">stats</span><span class="p">.</span><span class="nx">closedCount</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">totalCount</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">100</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="si">}</span><span class="sb">%</span>
+<span class="sb">                &lt;/div&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div class=&quot;tickets-list&quot;&gt;</span>
+<span class="sb">            &lt;h2&gt;Recent Tickets&lt;/h2&gt;</span>
+<span class="sb">            </span><span class="si">${</span><span class="nx">openTickets</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">10</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">                &lt;div class=&quot;ticket-item&quot;&gt;</span>
+<span class="sb">                    &lt;span&gt;#</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">&lt;/span&gt;</span>
+<span class="sb">                    &lt;span&gt;</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">title</span><span class="si">}</span><span class="sb">&lt;/span&gt;</span>
+<span class="sb">                    &lt;span class=&quot;priority-</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">priority</span><span class="si">}</span><span class="sb">&quot;&gt;</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">priority</span><span class="si">}</span><span class="sb">&lt;/span&gt;</span>
+<span class="sb">                &lt;/div&gt;</span>
+<span class="sb">            `</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">    `</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>To verify integration:</p>
+<ol class="arabic simple">
+<li><p>Embed widget in a test page</p></li>
+<li><p>Create a ticket through the widget</p></li>
+<li><p>Verify data appears in main system</p></li>
+<li><p>Check webhook notifications</p></li>
+</ol>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Review <a class="reference internal" href="../api_reference/index.html"><span class="doc">API Reference</span></a> for complete API details</p></li>
+<li><p>Check <span class="xref std std-doc">../faq</span> for common integration issues</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="admin_workflow.html" class="btn btn-neutral float-left" title="Admin Workflow Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api_reference/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

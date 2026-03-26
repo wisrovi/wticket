@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Workflow Tutorial &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Integration Tutorial" href="integration.html" />
+    <link rel="prev" title="User Workflow Tutorial" href="user_workflow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="user_workflow.html">User Workflow Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Admin Workflow Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-administrator-login">Step 1: Administrator Login</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-view-system-statistics">Step 2: View System Statistics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-browse-open-tickets">Step 3: Browse Open Tickets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-resolve-a-ticket">Step 4: Resolve a Ticket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-assign-tickets-to-admins">Step 5: Assign Tickets to Admins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-6-export-data-to-csv">Step 6: Export Data to CSV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verification">Verification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html">Integration Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorial-structure">Tutorial Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#available-tutorials">Available Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Admin Workflow Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/admin_workflow.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="admin-workflow-tutorial">
+<h1>Admin Workflow Tutorial<a class="headerlink" href="#admin-workflow-tutorial" title="Link to this heading"></a></h1>
+<p>This tutorial covers administrator-specific functions in WTicket.</p>
+<section id="objective">
+<h2>Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h2>
+<p>By the end of this tutorial, you will:</p>
+<ul class="simple">
+<li><p>Login as an administrator</p></li>
+<li><p>View system-wide statistics</p></li>
+<li><p>Resolve and close tickets</p></li>
+<li><p>Assign tickets to other admins</p></li>
+<li><p>Export data to CSV</p></li>
+</ul>
+</section>
+<section id="step-1-administrator-login">
+<h2>Step 1: Administrator Login<a class="headerlink" href="#step-1-administrator-login" title="Link to this heading"></a></h2>
+<p>Admin login uses the same API but requires admin credentials.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="nx">API</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./js/app.js&#39;</span><span class="p">;</span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">adminLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">login</span><span class="p">(</span>
+<span class="w">            </span><span class="s1">&#39;wisrovi@wticket.com&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">&#39;adminPassword123&#39;</span>
+<span class="w">        </span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">role</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">&#39;Unauthorized access&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Admin access granted:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">session</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Admin login failed:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-view-system-statistics">
+<h2>Step 2: View System Statistics<a class="headerlink" href="#step-2-view-system-statistics" title="Link to this heading"></a></h2>
+<p>Get comprehensive system metrics.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getSystemStats</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">stats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getStats</span><span class="p">();</span>
+
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;=== System Statistics ===&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Open Tickets:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">openCount</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Closed Tickets:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">closedCount</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Total Tickets:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">stats</span><span class="p">.</span><span class="nx">totalCount</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">stats</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-browse-open-tickets">
+<h2>Step 3: Browse Open Tickets<a class="headerlink" href="#step-3-browse-open-tickets" title="Link to this heading"></a></h2>
+<p>View all open tickets sorted by creation date.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">browseOpenTickets</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">openTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getOpenTickets</span><span class="p">();</span>
+
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Found </span><span class="si">${</span><span class="nx">openTickets</span><span class="p">.</span><span class="nx">length</span><span class="si">}</span><span class="sb"> open tickets:`</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">openTickets</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">ticket</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`#</span><span class="si">${</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">title</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`  Priority: </span><span class="si">${</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">priority</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`  Category: </span><span class="si">${</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">category</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`  Created: </span><span class="si">${</span><span class="nx">API</span><span class="p">.</span><span class="nx">formatDate</span><span class="p">(</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">createdAt</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">assignedTo</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`  Assigned to: </span><span class="si">${</span><span class="nx">ticket</span><span class="p">.</span><span class="nx">assignedTo</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">openTickets</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-resolve-a-ticket">
+<h2>Step 4: Resolve a Ticket<a class="headerlink" href="#step-4-resolve-a-ticket" title="Link to this heading"></a></h2>
+<p>Close a ticket with an administrator response.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">resolveTicket</span><span class="p">(</span><span class="nx">ticketId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span>
+<span class="sb">        Thank you for reporting this issue.</span>
+
+<span class="sb">        We have identified the root cause and implemented a fix.</span>
+<span class="sb">        The changes will be deployed in the next release.</span>
+
+<span class="sb">        If you need further assistance, please reply to this ticket.</span>
+<span class="sb">    `</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">closeTicket</span><span class="p">(</span><span class="nx">ticketId</span><span class="p">,</span><span class="w"> </span><span class="nx">response</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Ticket #</span><span class="si">${</span><span class="nx">ticketId</span><span class="si">}</span><span class="sb"> has been resolved`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">success</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-assign-tickets-to-admins">
+<h2>Step 5: Assign Tickets to Admins<a class="headerlink" href="#step-5-assign-tickets-to-admins" title="Link to this heading"></a></h2>
+<p>Delegate tickets to other administrators.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">assignTicket</span><span class="p">(</span><span class="nx">ticketId</span><span class="p">,</span><span class="w"> </span><span class="nx">targetAdminEmail</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get list of available admins</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">admins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getAdmins</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Available admins:&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">admins</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">admin</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`  - </span><span class="si">${</span><span class="nx">admin</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb"> (</span><span class="si">${</span><span class="nx">admin</span><span class="p">.</span><span class="nx">email</span><span class="si">}</span><span class="sb">)`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Assign ticket</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">assignTicket</span><span class="p">(</span><span class="nx">ticketId</span><span class="p">,</span><span class="w"> </span><span class="nx">targetAdminEmail</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Ticket #</span><span class="si">${</span><span class="nx">ticketId</span><span class="si">}</span><span class="sb"> assigned to </span><span class="si">${</span><span class="nx">targetAdminEmail</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">success</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-6-export-data-to-csv">
+<h2>Step 6: Export Data to CSV<a class="headerlink" href="#step-6-export-data-to-csv" title="Link to this heading"></a></h2>
+<p>Download all tickets for external analysis.</p>
+<p>The CSV export is available in the admin panel UI via the “Export CSV” button.
+For programmatic export:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">exportTicketsToCSV</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get all tickets</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">openTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getOpenTickets</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">closedTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getClosedTickets</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">allTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[...</span><span class="nx">openTickets</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="nx">closedTickets</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// Build CSV content</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">headers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s1">&#39;ID&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Title&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;User&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Priority&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;Category&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Status&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Assigned To&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;Created&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Response&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Response Date&#39;</span>
+<span class="w">    </span><span class="p">];</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">allTickets</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+<span class="w">        </span><span class="sb">`&quot;</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/g</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span><span class="si">}</span><span class="sb">&quot;`</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">userEmail</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">priority</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">category</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">status</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">assignedTo</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="ow">new</span><span class="w"> </span><span class="nb">Date</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">createdAt</span><span class="p">).</span><span class="nx">toISOString</span><span class="p">(),</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">response</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="sb">`&quot;</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/g</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span><span class="si">}</span><span class="sb">&quot;`</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">t</span><span class="p">.</span><span class="nx">responseAt</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Date</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">responseAt</span><span class="p">).</span><span class="nx">toISOString</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="p">]);</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">csv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nx">headers</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span><span class="w"> </span><span class="p">...</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Download file</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">blob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Blob</span><span class="p">([</span><span class="nx">csv</span><span class="p">],</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;text/csv&#39;</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">blob</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">link</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">link</span><span class="p">.</span><span class="nx">href</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">url</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">link</span><span class="p">.</span><span class="nx">download</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`wticket_export_</span><span class="si">${</span><span class="ow">new</span><span class="w"> </span><span class="nb">Date</span><span class="p">().</span><span class="nx">toISOString</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)[</span><span class="mf">0</span><span class="p">]</span><span class="si">}</span><span class="sb">.csv`</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">link</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
+
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;CSV export downloaded&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>To verify admin implementation:</p>
+<ol class="arabic simple">
+<li><p>Login with admin credentials</p></li>
+<li><p>View statistics dashboard</p></li>
+<li><p>Process at least 5 tickets</p></li>
+<li><p>Assign tickets to different admins</p></li>
+<li><p>Export ticket data to CSV</p></li>
+</ol>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Explore <a class="reference internal" href="integration.html"><span class="doc">Integration Tutorial</span></a> for system integration options</p></li>
+<li><p>Review the <a class="reference internal" href="../api_reference/index.html"><span class="doc">API Reference</span></a> for complete API details</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_workflow.html" class="btn btn-neutral float-left" title="User Workflow Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="integration.html" class="btn btn-neutral float-right" title="Integration Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

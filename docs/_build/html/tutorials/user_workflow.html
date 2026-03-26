@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Workflow Tutorial &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api_reference/index.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">User Workflow Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-user-registration">Step 1: User Registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-create-a-support-ticket">Step 2: Create a Support Ticket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-add-comments">Step 3: Add Comments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-track-ticket-status">Step 4: Track Ticket Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-search-your-tickets">Step 5: Search Your Tickets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verification">Verification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorial-structure">Tutorial Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">User Workflow Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/user_workflow.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-workflow-tutorial">
+<h1>User Workflow Tutorial<a class="headerlink" href="#user-workflow-tutorial" title="Link to this heading"></a></h1>
+<p>This tutorial guides you through the complete end-user experience with WTicket.</p>
+<section id="objective">
+<h2>Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h2>
+<p>By the end of this tutorial, you will be able to:</p>
+<ul class="simple">
+<li><p>Register a new user account</p></li>
+<li><p>Create and manage support tickets</p></li>
+<li><p>Add comments to tickets</p></li>
+<li><p>Track ticket resolution progress</p></li>
+</ul>
+</section>
+<section id="step-1-user-registration">
+<h2>Step 1: User Registration<a class="headerlink" href="#step-1-user-registration" title="Link to this heading"></a></h2>
+<p>First, register a new account to access the system.</p>
+<p><strong>Code Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="nx">API</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./js/app.js&#39;</span><span class="p">;</span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">registerUser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span>
+<span class="w">            </span><span class="s1">&#39;developer@techcorp.com&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">&#39;SecurePass123!&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">&#39;Jane Developer&#39;</span>
+<span class="w">        </span><span class="p">);</span>
+
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Registration successful!&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Welcome,&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Role:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">session</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Registration failed:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Registration successful!
+Welcome, Jane Developer
+Role: user
+</pre></div>
+</div>
+</section>
+<section id="step-2-create-a-support-ticket">
+<h2>Step 2: Create a Support Ticket<a class="headerlink" href="#step-2-create-a-support-ticket" title="Link to this heading"></a></h2>
+<p>Create a ticket to report an issue or request assistance.</p>
+<p><strong>Code Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">createSupportTicket</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">ticket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">createTicket</span><span class="p">(</span>
+<span class="w">        </span><span class="s1">&#39;Application crashes on startup&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;When I try to launch the application, it immediately &#39;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">        </span><span class="s1">&#39;crashes with the following error: &#39;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">        </span><span class="s1">&#39;&quot;Error: Cannot read property \&#39;data\&#39; of undefined&quot;&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="w">      </span><span class="c1">// Priority: urgent, high, normal, low</span>
+<span class="w">        </span><span class="s1">&#39;technical&#39;</span><span class="w">  </span><span class="c1">// Category: general, technical, billing,</span>
+<span class="w">                     </span><span class="c1">// suggestion, bug, other</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ticket created with ID:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ticket</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Status:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ticket</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">ticket</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Ticket created with ID: 42
+Status: open
+</pre></div>
+</div>
+</section>
+<section id="step-3-add-comments">
+<h2>Step 3: Add Comments<a class="headerlink" href="#step-3-add-comments" title="Link to this heading"></a></h2>
+<p>Communicate additional information on your ticket.</p>
+<p><strong>Code Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">addTicketComment</span><span class="p">(</span><span class="nx">ticketId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">validateSession</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Add initial comment</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">addComment</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">ticketId</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;I am using Windows 11 with the latest updates.&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">session</span><span class="p">.</span><span class="nx">email</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">session</span><span class="p">.</span><span class="nx">name</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Add follow-up information</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">addComment</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">ticketId</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;The issue started after the recent version update.&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">session</span><span class="p">.</span><span class="nx">email</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">session</span><span class="p">.</span><span class="nx">name</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Comments added successfully&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-track-ticket-status">
+<h2>Step 4: Track Ticket Status<a class="headerlink" href="#step-4-track-ticket-status" title="Link to this heading"></a></h2>
+<p>Monitor your ticket as it progresses through resolution.</p>
+<p><strong>Code Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">trackTicket</span><span class="p">(</span><span class="nx">ticketId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get user&#39;s open tickets</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">validateSession</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">openTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getUserOpenTickets</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">email</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">myTicket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">openTickets</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">ticketId</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">myTicket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Your ticket is still open&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Priority:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">myTicket</span><span class="p">.</span><span class="nx">priority</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Created:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">formatDate</span><span class="p">(</span><span class="nx">myTicket</span><span class="p">.</span><span class="nx">createdAt</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Check closed tickets</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">closedTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getUserClosedTickets</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">email</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">resolved</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">closedTickets</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">ticketId</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">resolved</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Your ticket has been resolved!&#39;</span><span class="p">);</span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Response:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">resolved</span><span class="p">.</span><span class="nx">response</span><span class="p">);</span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Resolved on:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">formatDate</span><span class="p">(</span><span class="nx">resolved</span><span class="p">.</span><span class="nx">responseAt</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-search-your-tickets">
+<h2>Step 5: Search Your Tickets<a class="headerlink" href="#step-5-search-your-tickets" title="Link to this heading"></a></h2>
+<p>Find specific tickets quickly using search.</p>
+<p><strong>Code Example:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">searchTickets</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">validateSession</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Get all user tickets</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">openTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getUserOpenTickets</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">email</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">closedTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">getUserClosedTickets</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">email</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">allTickets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[...</span><span class="nx">openTickets</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="nx">closedTickets</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// Search by title or ID</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">API</span><span class="p">.</span><span class="nx">searchTickets</span><span class="p">(</span><span class="nx">allTickets</span><span class="p">,</span><span class="w"> </span><span class="nx">query</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Found </span><span class="si">${</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="si">}</span><span class="sb"> matching tickets:`</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">results</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`#</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">title</span><span class="si">}</span><span class="sb"> (</span><span class="si">${</span><span class="nx">t</span><span class="p">.</span><span class="nx">status</span><span class="si">}</span><span class="sb">)`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">results</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>To verify your implementation:</p>
+<ol class="arabic simple">
+<li><p>Register a new user account</p></li>
+<li><p>Create at least 3 tickets with different priorities</p></li>
+<li><p>Add comments to each ticket</p></li>
+<li><p>Search for tickets by title</p></li>
+<li><p>View ticket details and status</p></li>
+</ol>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Learn about <span class="xref std std-doc">admin_workflow</span> to understand administrator functions</p></li>
+<li><p>Explore <span class="xref std std-doc">integration</span> to integrate WTicket with other systems</p></li>
+<li><p>Review the <a class="reference internal" href="../api_reference/index.html"><span class="doc">API Reference</span></a> for complete API details</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api_reference/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
