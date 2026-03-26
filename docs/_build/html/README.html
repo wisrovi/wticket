@@ -43,10 +43,21 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="understanding.html">Understanding WTicket</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture Deep Dive</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API Reference</a></li>
 </ul>
 
@@ -77,11 +88,15 @@
   <section id="wticket-sphinx-documentation">
 <h1>WTicket Sphinx Documentation<a class="headerlink" href="#wticket-sphinx-documentation" title="Link to this heading"></a></h1>
 <p>Professional Sphinx-based documentation for the WTicket project.</p>
-<section id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p><strong>Live Documentation</strong>: https://wticket.readthedocs.io</p>
+<p>This documentation is automatically built and deployed by ReadTheDocs.</p>
+<section id="quick-start-local-development">
+<h2>Quick Start (Local Development)<a class="headerlink" href="#quick-start-local-development" title="Link to this heading"></a></h2>
 <section id="install-dependencies">
 <h3>Install Dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<span class="c1"># or</span>
 make<span class="w"> </span>install-deps
 </pre></div>
 </div>
@@ -100,20 +115,67 @@ make<span class="w"> </span>install-deps
 <p>Then open http://localhost:8000 in your browser.</p>
 </section>
 </section>
+<section id="online-documentation">
+<h2>Online Documentation<a class="headerlink" href="#online-documentation" title="Link to this heading"></a></h2>
+<p>The official documentation is available at: <strong>https://wticket.readthedocs.io</strong></p>
+<p>This is automatically built from the latest code on every commit.</p>
+</section>
 <section id="project-structure">
 <h2>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docs/
-├── source/
-│   ├── _static/          # Static files (CSS, images)
-│   ├── api_reference/    # API documentation
-│   ├── getting_started/  # Installation guides
-│   ├── tutorials/       # Step-by-step tutorials
-│   ├── conf.py          # Sphinx configuration
-│   └── index.rst        # Main documentation index
-├── Makefile             # Build automation
-└── README.md           # This file
+├── _static/              # Static files (CSS, images)
+├── _templates/          # Sphinx templates
+├── api_reference/       # API documentation
+├── getting_started/     # Installation guides
+├── tutorials/          # Step-by-step tutorials
+├── conf.py             # Sphinx configuration
+├── index.rst           # Main documentation index
+├── understanding.rst    # Architecture concepts
+├── architecture.rst    # System architecture
+├── faq.rst             # Frequently asked questions
+├── bibliography.rst     # References and resources
+├── Makefile            # Build automation
+├── requirements.txt     # Python dependencies
+└── README.md          # This file
 </pre></div>
 </div>
+</section>
+<section id="documentation-sections">
+<h2>Documentation Sections<a class="headerlink" href="#documentation-sections" title="Link to this heading"></a></h2>
+<section id="getting-started">
+<h3>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Installation guide</p></li>
+<li><p>Configuration options</p></li>
+<li><p>Deployment instructions</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h3>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Authentication API</p></li>
+<li><p>Ticket management API</p></li>
+<li><p>User management API</p></li>
+<li><p>Utility functions</p></li>
+</ul>
+</section>
+<section id="tutorials">
+<h3>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>User workflow tutorial</p></li>
+<li><p>Admin workflow tutorial</p></li>
+<li><p>Integration examples</p></li>
+</ul>
+</section>
+<section id="additional-resources">
+<h3>Additional Resources<a class="headerlink" href="#additional-resources" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Architecture deep dive</p></li>
+<li><p>Understanding serverless concepts</p></li>
+<li><p>FAQ and troubleshooting</p></li>
+<li><p>Bibliography</p></li>
+</ul>
+</section>
 </section>
 <section id="available-make-commands">
 <h2>Available Make Commands<a class="headerlink" href="#available-make-commands" title="Link to this heading"></a></h2>

@@ -44,10 +44,21 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="understanding.html">Understanding WTicket</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture Deep Dive</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API Reference</a></li>
 </ul>
 
@@ -77,21 +88,25 @@
              
   <section id="wticket-documentation">
 <h1>WTicket Documentation<a class="headerlink" href="#wticket-documentation" title="Link to this heading"></a></h1>
-<p>Welcome to the <strong>WTicket</strong> documentation!</p>
+<p>Welcome to the official <strong>WTicket</strong> documentation!</p>
 <p>WTicket is an enterprise-grade, serverless ticket management system engineered with vanilla JavaScript and JSONBin.io. Designed for zero-infrastructure deployment on static hosting platforms, it delivers production-ready functionality without the complexity of traditional backend systems.</p>
-<a class="reference internal image-reference" href="_static/logo.svg"><img alt="WTicket Logo" class="align-center" src="_static/logo.svg" width="200" />
+<a class="reference internal image-reference" href="_static/logo.png"><img alt="WTicket Logo" class="align-center" src="_static/logo.png" width="200" />
 </a>
+<p>Live Demo: <a class="reference external" href="https://wisrovi.github.io/wticket">https://wisrovi.github.io/wticket</a></p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><strong>Zero Infrastructure</strong>: Deploy on any static hosting provider</p></li>
-<li><p><strong>Serverless Architecture</strong>: No backend servers required</p></li>
-<li><p><strong>Real-time Statistics</strong>: Live dashboard with ticket metrics</p></li>
-<li><p><strong>Role-Based Access</strong>: Administrator and user panels</p></li>
-<li><p><strong>Progressive Web App</strong>: Installable on any device</p></li>
-<li><p><strong>Offline Support</strong>: Service Worker caching</p></li>
-<li><p><strong>Multi-language</strong>: Spanish and English support</p></li>
-<li><p><strong>Dark Mode</strong>: Built-in theme customization</p></li>
+<li><p><strong>Zero Infrastructure</strong>: Deploy on any static hosting provider (GitHub Pages, Netlify, Vercel)</p></li>
+<li><p><strong>Serverless Architecture</strong>: No backend servers required - pure client-side application</p></li>
+<li><p><strong>Real-time Statistics</strong>: Live dashboard with ticket metrics and charts</p></li>
+<li><p><strong>Role-Based Access</strong>: Administrator and user panels with proper authorization</p></li>
+<li><p><strong>Progressive Web App</strong>: Installable on iOS, Android, and Desktop</p></li>
+<li><p><strong>Offline Support</strong>: Service Worker caching for partial offline functionality</p></li>
+<li><p><strong>Multi-language</strong>: Spanish and English support with runtime switching</p></li>
+<li><p><strong>Dark Mode</strong>: Built-in theme customization with localStorage persistence</p></li>
+<li><p><strong>Keyboard Shortcuts</strong>: Power-user productivity features</p></li>
+<li><p><strong>CSV Export</strong>: Download all ticket data for external analysis</p></li>
+<li><p><strong>Gamification</strong>: User achievements and badges for engagement</p></li>
 </ul>
 </section>
 <section id="quick-start">
@@ -110,23 +125,130 @@ python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class=
 </div>
 <p>For detailed installation instructions, see <a class="reference internal" href="getting_started/index.html"><span class="doc">Getting Started</span></a>.</p>
 </section>
-<section id="live-demo">
-<h2>Live Demo<a class="headerlink" href="#live-demo" title="Link to this heading"></a></h2>
-<p>Access the live demonstration at: <a class="reference external" href="https://wisrovi.github.io/wticket">https://wisrovi.github.io/wticket</a></p>
+<section id="system-requirements">
+<h2>System Requirements<a class="headerlink" href="#system-requirements" title="Link to this heading"></a></h2>
+</section>
+<section id="why-wticket">
+<h2>Why WTicket?<a class="headerlink" href="#why-wticket" title="Link to this heading"></a></h2>
+<p>Traditional ticket management systems require significant infrastructure:</p>
+<ul class="simple">
+<li><p>Application servers</p></li>
+<li><p>Database management systems</p></li>
+<li><p>DevOps expertise</p></li>
+<li><p>Ongoing maintenance</p></li>
+</ul>
+<p>WTicket eliminates these requirements while providing:</p>
+<ul class="simple">
+<li><p>Zero hosting costs</p></li>
+<li><p>Automatic scaling</p></li>
+<li><p>No server maintenance</p></li>
+<li><p>Production-ready functionality</p></li>
+</ul>
+</section>
+<section id="architecture-highlights">
+<h2>Architecture Highlights<a class="headerlink" href="#architecture-highlights" title="Link to this heading"></a></h2>
+<p>WTicket uses a modern three-tier architecture:</p>
+<ol class="arabic simple">
+<li><p><strong>Presentation Layer</strong>: HTML5, CSS3, Vanilla JavaScript ES6+</p></li>
+<li><p><strong>Business Logic</strong>: ES Modules with Service Workers</p></li>
+<li><p><strong>Data Layer</strong>: JSONBin.io REST API + IndexedDB cache</p></li>
+</ol>
 </section>
 <section id="author">
 <h2>Author<a class="headerlink" href="#author" title="Link to this heading"></a></h2>
 <p><strong>William Rodriguez</strong>
 Telecommunications Engineer &amp; AI Solutions Architect</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://es.linkedin.com/in/wisrovi-rodriguez">LinkedIn Profile</a></p></li>
-<li><p><a class="reference external" href="https://github.com/wisrovi">GitHub Profile</a></p></li>
+<li><p>LinkedIn: <a class="reference external" href="https://es.linkedin.com/in/wisrovi-rodriguez">https://es.linkedin.com/in/wisrovi-rodriguez</a></p></li>
+<li><p>GitHub: <a class="reference external" href="https://github.com/wisrovi">https://github.com/wisrovi</a></p></li>
 <li><p>Email: <a class="reference external" href="mailto:wisrovi&#37;&#52;&#48;wticket&#46;com">wisrovi<span>&#64;</span>wticket<span>&#46;</span>com</a></p></li>
 </ul>
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
 <p>This project is released under the MIT License.</p>
+</section>
+<section id="documentation-contents">
+<h2>Documentation Contents<a class="headerlink" href="#documentation-contents" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/installation.html">Installation Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/configuration.html">Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/deployment.html">Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#estimated-setup-time">Estimated Setup Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="understanding.html">Understanding WTicket</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#introduction-to-serverless-architecture">Introduction to Serverless Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#the-rise-of-baas-backend-as-a-service">The Rise of BaaS (Backend as a Service)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#understanding-ticket-management-systems">Understanding Ticket Management Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#why-javascript-for-enterprise-applications">Why JavaScript for Enterprise Applications?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#jsonbin-io-purpose-and-capabilities">JSONBin.io: Purpose and Capabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#architecture-patterns-for-modern-applications">Architecture Patterns for Modern Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#security-considerations-in-client-side-applications">Security Considerations in Client-Side Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#performance-optimization-techniques">Performance Optimization Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#the-technology-stack-explained">The Technology Stack Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#industry-best-practices">Industry Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#future-trends-in-web-development">Future Trends in Web Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understanding.html#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture Deep Dive</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#system-architecture-overview">System Architecture Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#client-side-architecture">Client-Side Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#data-layer-design">Data Layer Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#authentication-architecture">Authentication Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#role-based-access-control">Role-Based Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#presentation-layer-architecture">Presentation Layer Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#progressive-web-app-architecture">Progressive Web App Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#error-handling-architecture">Error Handling Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#performance-optimization">Performance Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#extensibility-points">Extensibility Points</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/user_workflow.html">User Workflow Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/admin_workflow.html">Admin Workflow Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/integration.html">Integration Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#tutorial-structure">Tutorial Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#available-tutorials">Available Tutorials</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/authentication.html">Authentication API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/tickets.html">Tickets API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/users.html">User Management API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/utilities.html">Utility Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#module-structure">Module Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#base-configuration">Base Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#common-error-messages">Common Error Messages</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="toctree-wrapper compound">
 </div>
 </section>

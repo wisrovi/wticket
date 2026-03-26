@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture Deep Dive &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials/index.html" />
+    <link rel="prev" title="Understanding WTicket" href="understanding.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="understanding.html">Understanding WTicket</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture Deep Dive</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-architecture-overview">System Architecture Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#client-side-architecture">Client-Side Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-layer-design">Data Layer Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#authentication-architecture">Authentication Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#role-based-access-control">Role-Based Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#presentation-layer-architecture">Presentation Layer Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#progressive-web-app-architecture">Progressive Web App Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling-architecture">Error Handling Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-optimization">Performance Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extensibility-points">Extensibility Points</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Architecture Deep Dive</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/architecture.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="architecture-deep-dive">
+<h1>Architecture Deep Dive<a class="headerlink" href="#architecture-deep-dive" title="Link to this heading"></a></h1>
+<p>This section provides an in-depth exploration of WTicket’s system architecture, design decisions, and technical implementation details.</p>
+<section id="system-architecture-overview">
+<h2>System Architecture Overview<a class="headerlink" href="#system-architecture-overview" title="Link to this heading"></a></h2>
+<p>WTicket employs a modern three-tier architecture optimized for serverless deployment and scalability. The architecture prioritizes simplicity, maintainability, and cost efficiency while delivering enterprise-grade functionality.</p>
+<p><strong>Architecture Principles:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Separation of Concerns</strong>: Clear boundaries between presentation, logic, and data layers</p></li>
+<li><p><strong>Stateless Design</strong>: Each request contains all information needed for processing</p></li>
+<li><p><strong>Cache-First Strategy</strong>: Local caching reduces network requests and improves responsiveness</p></li>
+<li><p><strong>Graceful Degradation</strong>: Application continues functioning during network interruptions</p></li>
+</ol>
+<p><strong>Technology Layer Mapping:</strong></p>
+</section>
+<section id="client-side-architecture">
+<h2>Client-Side Architecture<a class="headerlink" href="#client-side-architecture" title="Link to this heading"></a></h2>
+<p>### Module Structure</p>
+<p>The application consists of seven core modules, each responsible for specific functionality:</p>
+<p><strong>Core Modules:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>js/
+├── app.js           # Central API and business logic
+├── toast.js         # User notification system
+├── shortcuts.js     # Keyboard shortcut handling
+├── utils.js         # Shared utility functions
+├── db.js            # IndexedDB cache management
+├── i18n.js          # Internationalization
+└── achievements.js   # Gamification system
+</pre></div>
+</div>
+<p><strong>Module Dependencies:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>app.js (Core)
+   ├── toast.js
+   ├── shortcuts.js
+   ├── utils.js
+   ├── db.js
+   ├── i18n.js
+   └── achievements.js
+</pre></div>
+</div>
+<p>### Page Architecture</p>
+<p>Six HTML pages serve distinct user journeys:</p>
+<p><strong>Public Pages:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">index.html</span></code>: Landing page with public statistics</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contact.html</span></code>: Developer contact information</p></li>
+</ul>
+<p><strong>Authenticated Pages:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">login.html</span></code>: Authentication gateway</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dashboard.html</span></code>: User ticket management</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">admin.html</span></code>: Administrator control panel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">profile.html</span></code>: Account settings and achievements</p></li>
+</ul>
+<p>### Data Flow Architecture</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>User Action
+     │
+     ▼
+HTML Event Handler
+     │
+     ▼
+JavaScript Module
+     │
+     ├──► IndexedDB Cache (immediate read)
+     │
+     ▼
+JSONBin.io API (async)
+     │
+     ▼
+Server Response
+     │
+     ▼
+Update Cache ──► Update UI
+     │
+     ▼
+Display Result
+</pre></div>
+</div>
+</section>
+<section id="data-layer-design">
+<h2>Data Layer Design<a class="headerlink" href="#data-layer-design" title="Link to this heading"></a></h2>
+<p>### JSONBin.io Integration</p>
+<p>JSONBin.io serves as the primary persistent data store, providing RESTful access to JSON documents.</p>
+<p><strong>Bin Structure:</strong></p>
+<p><strong>API Operations:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// Read operation</span>
+<span class="nx">GET</span><span class="w"> </span><span class="o">/</span><span class="nx">b</span><span class="o">/</span><span class="p">{</span><span class="nx">bin_id</span><span class="p">}</span><span class="o">/</span><span class="nx">latest</span>
+<span class="nx">Headers</span><span class="o">:</span><span class="w"> </span><span class="nx">X</span><span class="o">-</span><span class="nx">Master</span><span class="o">-</span><span class="nx">Key</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">api_key</span><span class="p">}</span>
+
+<span class="c1">// Write operation</span>
+<span class="nx">PUT</span><span class="w"> </span><span class="o">/</span><span class="nx">b</span><span class="o">/</span><span class="p">{</span><span class="nx">bin_id</span><span class="p">}</span>
+<span class="nx">Headers</span><span class="o">:</span>
+<span class="w">    </span><span class="nx">X</span><span class="o">-</span><span class="nx">Master</span><span class="o">-</span><span class="nx">Key</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">api_key</span><span class="p">}</span>
+<span class="w">    </span><span class="nx">Content</span><span class="o">-</span><span class="nx">Type</span><span class="o">:</span><span class="w"> </span><span class="nx">application</span><span class="o">/</span><span class="nx">json</span>
+<span class="nx">Body</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">json_data</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>### Synchronization Strategy</p>
+<p>The sync-before-write pattern prevents data loss from concurrent operations.</p>
+<p><strong>The Problem:</strong></p>
+<p>When multiple users operate simultaneously, naive write operations can overwrite concurrent changes.</p>
+<p><strong>The Solution:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">safeWrite</span><span class="p">(</span><span class="nx">binId</span><span class="p">,</span><span class="w"> </span><span class="nx">localData</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Fetch latest server state</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">serverData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetchLatest</span><span class="p">(</span><span class="nx">binId</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 2. Merge changes (local takes precedence)</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">mergedData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">merge</span><span class="p">(</span><span class="nx">serverData</span><span class="p">,</span><span class="w"> </span><span class="nx">localData</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3. Write merged data</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">writeToServer</span><span class="p">(</span><span class="nx">binId</span><span class="p">,</span><span class="w"> </span><span class="nx">mergedData</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Update local cache</span>
+<span class="w">    </span><span class="nx">localCache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">mergedData</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>### IndexedDB Caching</p>
+<p>IndexedDB provides client-side persistence for offline access and performance optimization.</p>
+<p><strong>Database Schema:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">Database</span><span class="o">:</span><span class="w"> </span><span class="nx">wticket_db</span><span class="w"> </span><span class="p">(</span><span class="nx">version</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+
+<span class="nb">Object</span><span class="w"> </span><span class="nx">Stores</span><span class="o">:</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">users</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">keyPath</span><span class="o">:</span><span class="w"> </span><span class="nx">email</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">tickets</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">keyPath</span><span class="o">:</span><span class="w"> </span><span class="nx">id</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">counter</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">keyPath</span><span class="o">:</span><span class="w"> </span><span class="nx">id</span>
+<span class="err">└──</span><span class="w"> </span><span class="nx">sync</span>
+<span class="w">    </span><span class="err">└──</span><span class="w"> </span><span class="nx">keyPath</span><span class="o">:</span><span class="w"> </span><span class="nx">type</span>
+</pre></div>
+</div>
+<p><strong>Cache Operations:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cacheUsers()</span></code>: Persist user data locally</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getCachedUsers()</span></code>: Retrieve cached user data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cacheTickets()</span></code>: Store tickets for offline access</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getCachedTickets()</span></code>: Access cached ticket data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cacheCounter()</span></code>: Preserve ID sequence</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getCachedCounter()</span></code>: Retrieve cached counter value</p></li>
+</ul>
+<p>### localStorage Usage</p>
+<p>Session and preference data use localStorage for immediate access.</p>
+<p><strong>Stored Items:</strong></p>
+<ul class="simple">
+<li><p>Session token and user information</p></li>
+<li><p>Theme preference (light/dark)</p></li>
+<li><p>Language preference (es/en)</p></li>
+<li><p>Last sync timestamps</p></li>
+</ul>
+</section>
+<section id="authentication-architecture">
+<h2>Authentication Architecture<a class="headerlink" href="#authentication-architecture" title="Link to this heading"></a></h2>
+<p>### Session Management</p>
+<p>Sessions provide authenticated state across page navigations.</p>
+<p><strong>Session Lifecycle:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Creation</strong>: User submits credentials</p></li>
+<li><p><strong>Validation</strong>: Server (JSONBin) validates against stored hash</p></li>
+<li><p><strong>Token Generation</strong>: 256-bit cryptographically random token created</p></li>
+<li><p><strong>Storage</strong>: Token stored in localStorage</p></li>
+<li><p><strong>Validation</strong>: Token checked on each authenticated action</p></li>
+<li><p><strong>Expiration</strong>: Token expires after 24 hours</p></li>
+<li><p><strong>Cleanup</strong>: Expired tokens trigger re-authentication</p></li>
+</ol>
+<p><strong>Session Object Structure:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nx">token</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3d4e5f6...&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// 256-bit secure token</span>
+<span class="w">    </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">role</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span><span class="w">               </span><span class="c1">// or &quot;admin&quot;</span>
+<span class="w">    </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="mf">1711459200000</span><span class="p">,</span><span class="w">   </span><span class="c1">// Unix timestamp</span>
+<span class="w">    </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="mf">1711545600000</span><span class="w">    </span><span class="c1">// 24 hours later</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>### Password Security</p>
+<p>Passwords undergo client-side hashing before transmission and storage.</p>
+<p><strong>Hashing Process:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">hashPassword</span><span class="p">(</span><span class="nx">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">salt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;wticket_salt&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">TextEncoder</span><span class="p">().</span><span class="nx">encode</span><span class="p">(</span><span class="nx">password</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">salt</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">hashBuffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">crypto</span><span class="p">.</span><span class="nx">subtle</span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="s1">&#39;SHA-256&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">hashArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nb">Uint8Array</span><span class="p">(</span><span class="nx">hashBuffer</span><span class="p">));</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">hashArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">b</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mf">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="p">)).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Security Considerations:</strong></p>
+<ul class="simple">
+<li><p>Salt prevents rainbow table attacks</p></li>
+<li><p>SHA-256 is computationally intensive</p></li>
+<li><p>Client-side hashing does not replace server-side bcrypt</p></li>
+<li><p>Transport over HTTPS is mandatory</p></li>
+</ul>
+</section>
+<section id="role-based-access-control">
+<h2>Role-Based Access Control<a class="headerlink" href="#role-based-access-control" title="Link to this heading"></a></h2>
+<p>### User Roles</p>
+<p>Two roles provide appropriate access levels:</p>
+<p><strong>User Role:</strong></p>
+<ul class="simple">
+<li><p>Create tickets</p></li>
+<li><p>View own tickets</p></li>
+<li><p>Add comments to own tickets</p></li>
+<li><p>Update own profile</p></li>
+<li><p>View own achievements</p></li>
+</ul>
+<p><strong>Admin Role:</strong></p>
+<ul class="simple">
+<li><p>All user permissions plus:</p></li>
+<li><p>View all tickets</p></li>
+<li><p>Close any ticket</p></li>
+<li><p>Assign tickets to admins</p></li>
+<li><p>Export ticket data</p></li>
+<li><p>View system statistics</p></li>
+</ul>
+<p>### Authorization Decorator</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">requireAuth()</span></code> decorator enforces access control:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">requireAuth</span><span class="p">(</span><span class="nx">allowedRoles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">validateSession</span><span class="p">();</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">session</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">redirectToLogin</span><span class="p">();</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">allowedRoles</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">role</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">showUnauthorizedError</span><span class="p">();</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">session</span><span class="p">;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="presentation-layer-architecture">
+<h2>Presentation Layer Architecture<a class="headerlink" href="#presentation-layer-architecture" title="Link to this heading"></a></h2>
+<p>### CSS Design System</p>
+<p>A comprehensive design system ensures visual consistency.</p>
+<p><strong>Design Tokens:</strong></p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">root</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c">/* Colors */</span>
+<span class="w">    </span><span class="nv">--primary</span><span class="p">:</span><span class="w"> </span><span class="mh">#6366f1</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--primary-hover</span><span class="p">:</span><span class="w"> </span><span class="mh">#4f46e5</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--success</span><span class="p">:</span><span class="w"> </span><span class="mh">#10b981</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--warning</span><span class="p">:</span><span class="w"> </span><span class="mh">#f59e0b</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--danger</span><span class="p">:</span><span class="w"> </span><span class="mh">#ef4444</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c">/* Typography */</span>
+<span class="w">    </span><span class="nv">--font-family</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Inter&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">system-ui</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--font-size-base</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c">/* Spacing */</span>
+<span class="w">    </span><span class="nv">--spacing-unit</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--spacing-sm</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--spacing-md</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--spacing-lg</span><span class="p">:</span><span class="w"> </span><span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c">/* Borders */</span>
+<span class="w">    </span><span class="nv">--border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--border-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#e5e7eb</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c">/* Shadows */</span>
+<span class="w">    </span><span class="nv">--shadow-sm</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05</span><span class="p">);</span>
+<span class="w">    </span><span class="nv">--shadow-md</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>### Dark Mode Implementation</p>
+<p>Theme switching uses CSS custom properties and data attributes.</p>
+<p><strong>Implementation:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">toggleTheme</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;data-theme&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">newTheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">current</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;dark&#39;</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;light&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;dark&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;data-theme&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">newTheme</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="s1">&#39;theme&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">newTheme</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>CSS Variables for Dark Mode:</strong></p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="nt">data-theme</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="o">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">--bg-primary</span><span class="p">:</span><span class="w"> </span><span class="mh">#111827</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--bg-secondary</span><span class="p">:</span><span class="w"> </span><span class="mh">#1f2937</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--text-primary</span><span class="p">:</span><span class="w"> </span><span class="mh">#f9fafb</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--text-secondary</span><span class="p">:</span><span class="w"> </span><span class="mh">#d1d5db</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--border-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#374151</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>### Responsive Breakpoints</p>
+<p>Mobile-first design with progressive enhancement.</p>
+<p><strong>Breakpoints:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">640px</span></code>: Mobile devices</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">640px</span> <span class="pre">-</span> <span class="pre">768px</span></code>: Small tablets</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">768px</span> <span class="pre">-</span> <span class="pre">1024px</span></code>: Tablets</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">1024px</span></code>: Desktops</p></li>
+</ul>
+<p>### Navigation Architecture</p>
+<p>Segmented navigation improves usability on all devices.</p>
+<p><strong>Desktop Layout:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[Hamburger] [Logo] | [Nav Links] ..................... [User] [Theme] [Actions]
+</pre></div>
+</div>
+<p><strong>Mobile Layout:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[Hamburger] [Logo]
+
+Slide-out drawer on hamburger click:
+┌─────────────────────────┐
+│ [User Info]             │
+│─────────────────────────│
+│ Inicio                  │
+│ Contacto                │
+│ Mi Perfil               │
+│─────────────────────────│
+│ 🌙 Theme    🔄 Refresh │
+│ 🚪 Logout              │
+└─────────────────────────┘
+</pre></div>
+</div>
+</section>
+<section id="progressive-web-app-architecture">
+<h2>Progressive Web App Architecture<a class="headerlink" href="#progressive-web-app-architecture" title="Link to this heading"></a></h2>
+<p>### Service Worker Strategy</p>
+<p>Service workers enable offline functionality and performance optimization.</p>
+<p><strong>Caching Strategy:</strong></p>
+<ul class="simple">
+<li><p><strong>Cache-First</strong>: Static assets (HTML, CSS, JS, images)</p></li>
+<li><p><strong>Network-First</strong>: Dynamic data (JSONBin requests bypassed)</p></li>
+<li><p><strong>Stale-While-Revalidate</strong>: Best effort with cache fallback</p></li>
+</ul>
+<p><strong>Cached Assets:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">CACHE_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;wticket-v3&#39;</span><span class="p">;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">STATIC_ASSETS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s1">&#39;index.html&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;login.html&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;dashboard.html&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;admin.html&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;profile.html&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;contact.html&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;css/styles.css&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/app.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/toast.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/shortcuts.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/utils.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/db.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/i18n.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;js/achievements.js&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;manifest.json&#39;</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>### Web App Manifest</p>
+<p>The manifest enables installation on home screens.</p>
+<p><strong>Manifest Properties:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WTicket - Sistema de Tickets&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;short_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WTicket&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;display&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standalone&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;background_color&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#f3f4f6&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;theme_color&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#6366f1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;icons&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;src&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/icon-192.png&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;sizes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192x192&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;image/png&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;shortcuts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Crear Ticket&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/login.html?tab=register&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="error-handling-architecture">
+<h2>Error Handling Architecture<a class="headerlink" href="#error-handling-architecture" title="Link to this heading"></a></h2>
+<p>### API Error Handling</p>
+<p>Consistent error handling provides clear feedback.</p>
+<p><strong>Error Categories:</strong></p>
+<ul class="simple">
+<li><p><strong>Network Errors</strong>: Connection failures, timeouts</p></li>
+<li><p><strong>Authentication Errors</strong>: Invalid credentials, expired sessions</p></li>
+<li><p><strong>Validation Errors</strong>: Invalid input data</p></li>
+<li><p><strong>Server Errors</strong>: JSONBin service issues</p></li>
+</ul>
+<p><strong>Error Handler Implementation:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">safeApiCall</span><span class="p">(</span><span class="nx">apiFunction</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">apiFunction</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;NetworkError&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">Toast</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Network connection failed. Please check your internet.&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="s1">&#39;Session&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">redirectToLogin</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">Toast</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="sb">`Error: </span><span class="si">${</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="nx">error</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>### UI Error States</p>
+<p>Graceful degradation maintains user experience during errors.</p>
+<p><strong>Error States:</strong></p>
+<ul class="simple">
+<li><p><strong>Empty States</strong>: No data to display</p></li>
+<li><p><strong>Loading States</strong>: Data being fetched</p></li>
+<li><p><strong>Error States</strong>: Operation failed</p></li>
+<li><p><strong>Offline States</strong>: No network connectivity</p></li>
+</ul>
+</section>
+<section id="performance-optimization">
+<h2>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading"></a></h2>
+<p>### Code Splitting</p>
+<p>Modules load on demand, reducing initial bundle size.</p>
+<p><strong>Deferred Modules:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">achievements.js</span></code>: Loaded only on profile page</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">i18n.js</span></code>: Loaded only when language switching needed</p></li>
+</ul>
+<p>### Debouncing and Throttling</p>
+<p>Input handling optimizes performance.</p>
+<p><strong>Search Input:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">debouncedSearch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">debounce</span><span class="p">((</span><span class="nx">query</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">filterTickets</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+<span class="p">},</span><span class="w"> </span><span class="mf">300</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Refresh Button:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">throttledRefresh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">throttle</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">loadTickets</span><span class="p">();</span>
+<span class="p">},</span><span class="w"> </span><span class="mf">1000</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>### Lazy Loading Images</p>
+<p>Images below viewport load on scroll.</p>
+<p><strong>Implementation:</strong></p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">img</span> <span class="na">data-src</span><span class="o">=</span><span class="s">&quot;image.jpg&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lazy&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Description&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">observer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">IntersectionObserver</span><span class="p">((</span><span class="nx">entries</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">entries</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">entry</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">entry</span><span class="p">.</span><span class="nx">isIntersecting</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">entry</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">entry</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">src</span><span class="p">;</span>
+<span class="w">            </span><span class="nx">observer</span><span class="p">.</span><span class="nx">unobserve</span><span class="p">(</span><span class="nx">entry</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</section>
+<section id="extensibility-points">
+<h2>Extensibility Points<a class="headerlink" href="#extensibility-points" title="Link to this heading"></a></h2>
+<p>### Adding New Modules</p>
+<p>Extend functionality by creating new modules.</p>
+<p><strong>Module Template:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// js/newModule.js</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">newFeature</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Implementation</span>
+<span class="p">}</span>
+
+<span class="c1">// Import in app.js</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">newFeature</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./newModule.js&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>### Custom Themes</p>
+<p>Create custom themes by extending CSS variables.</p>
+<p><strong>Theme File Template:</strong></p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="nt">data-theme</span><span class="o">=</span><span class="s2">&quot;custom&quot;</span><span class="o">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">--primary</span><span class="p">:</span><span class="w"> </span><span class="mh">#custom</span><span class="o">-</span><span class="kc">color</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">--primary-hover</span><span class="p">:</span><span class="w"> </span><span class="mh">#custom</span><span class="o">-</span><span class="n">hover</span><span class="p">;</span>
+<span class="w">    </span><span class="c">/* Override other variables */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>### API Extensions</p>
+<p>Extend the API with custom functions.</p>
+<p><strong>Extension Pattern:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// In app.js</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">extendedAPI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span><span class="nx">API</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">customFunction</span><span class="o">:</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">param</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Custom implementation</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="understanding.html" class="btn btn-neutral float-left" title="Understanding WTicket" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorials/index.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

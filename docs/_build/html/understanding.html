@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Understanding WTicket &mdash; WTicket 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Architecture Deep Dive" href="architecture.html" />
+    <link rel="prev" title="Deployment Guide" href="getting_started/deployment.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #6366f1" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WTicket
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Understanding WTicket</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-serverless-architecture">Introduction to Serverless Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-rise-of-baas-backend-as-a-service">The Rise of BaaS (Backend as a Service)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#understanding-ticket-management-systems">Understanding Ticket Management Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-javascript-for-enterprise-applications">Why JavaScript for Enterprise Applications?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jsonbin-io-purpose-and-capabilities">JSONBin.io: Purpose and Capabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#architecture-patterns-for-modern-applications">Architecture Patterns for Modern Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#security-considerations-in-client-side-applications">Security Considerations in Client-Side Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-optimization-techniques">Performance Optimization Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-technology-stack-explained">The Technology Stack Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#industry-best-practices">Industry Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#future-trends-in-web-development">Future Trends in Web Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture Deep Dive</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #6366f1" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WTicket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Understanding WTicket</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/understanding.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="understanding-wticket">
+<h1>Understanding WTicket<a class="headerlink" href="#understanding-wticket" title="Link to this heading"></a></h1>
+<p>A comprehensive guide to serverless architecture and modern ticket management systems.</p>
+<section id="introduction-to-serverless-architecture">
+<h2>Introduction to Serverless Architecture<a class="headerlink" href="#introduction-to-serverless-architecture" title="Link to this heading"></a></h2>
+<p>Traditional software deployment requires managing servers, configuring infrastructure, and maintaining complex backend systems. Serverless architecture revolutionizes this approach by eliminating server management while providing scalable, cost-effective solutions.</p>
+<p><strong>What is Serverless?</strong></p>
+<p>Serverless computing allows developers to build applications without managing infrastructure. The cloud provider handles server allocation, scaling, and maintenance automatically. Despite the name, servers still exist—they’re just abstracted away from the developer.</p>
+<p><strong>Key Characteristics of Serverless Architecture:</strong></p>
+<ul class="simple">
+<li><p><strong>No Server Management</strong>: No provisioning, configuration, or maintenance required</p></li>
+<li><p><strong>Automatic Scaling</strong>: Resources scale automatically based on demand</p></li>
+<li><p><strong>Pay-per-Use</strong>: Costs are proportional to actual resource consumption</p></li>
+<li><p><strong>High Availability</strong>: Built-in redundancy and fault tolerance</p></li>
+<li><p><strong>Rapid Deployment</strong>: Code can be deployed in seconds</p></li>
+</ul>
+</section>
+<section id="the-rise-of-baas-backend-as-a-service">
+<h2>The Rise of BaaS (Backend as a Service)<a class="headerlink" href="#the-rise-of-baas-backend-as-a-service" title="Link to this heading"></a></h2>
+<p>Backend as a Service platforms provide pre-built backend functionality, allowing developers to focus entirely on frontend development. These platforms handle authentication, databases, storage, and APIs without custom backend code.</p>
+<p><strong>Popular BaaS Platforms:</strong></p>
+<ul class="simple">
+<li><p><strong>Firebase</strong>: Google’s comprehensive BaaS for mobile and web apps</p></li>
+<li><p><strong>Supabase</strong>: Open-source Firebase alternative with PostgreSQL</p></li>
+<li><p><strong>JSONBin.io</strong>: Specialized JSON storage service</p></li>
+<li><p><strong>Parse</strong>: Open-source BaaS platform</p></li>
+<li><p><strong>AWS Amplify</strong>: Amazon’s BaaS solution</p></li>
+</ul>
+</section>
+<section id="understanding-ticket-management-systems">
+<h2>Understanding Ticket Management Systems<a class="headerlink" href="#understanding-ticket-management-systems" title="Link to this heading"></a></h2>
+<p>Ticket management systems, also known as issue trackers or help desk software, are essential tools for organizations of all sizes. They provide a centralized system for tracking, managing, and resolving user requests, bug reports, and support inquiries.</p>
+<p><strong>Core Functions of Ticket Management:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Ticket Creation</strong>: Users submit requests with title, description, and metadata</p></li>
+<li><p><strong>Categorization</strong>: Tickets are organized by type, priority, and department</p></li>
+<li><p><strong>Assignment</strong>: Tickets route to appropriate team members</p></li>
+<li><p><strong>Tracking</strong>: Progress monitored through status updates</p></li>
+<li><p><strong>Resolution</strong>: Final response closes the ticket</p></li>
+<li><p><strong>Reporting</strong>: Analytics provide insights into trends and performance</p></li>
+</ol>
+<p><strong>Benefits of Systematic Ticket Management:</strong></p>
+<ul class="simple">
+<li><p><strong>Improved Response Times</strong>: Clear routing reduces resolution delays</p></li>
+<li><p><strong>Accountability</strong>: Every ticket has an owner responsible for resolution</p></li>
+<li><p><strong>Data-Driven Decisions</strong>: Analytics reveal patterns and common issues</p></li>
+<li><p><strong>Customer Satisfaction</strong>: Transparent tracking builds trust</p></li>
+<li><p><strong>Knowledge Retention</strong>: Resolved tickets become a knowledge base</p></li>
+</ul>
+</section>
+<section id="why-javascript-for-enterprise-applications">
+<h2>Why JavaScript for Enterprise Applications?<a class="headerlink" href="#why-javascript-for-enterprise-applications" title="Link to this heading"></a></h2>
+<p>JavaScript has evolved from a simple scripting language to a powerful platform capable of enterprise-grade applications. Modern JavaScript offers capabilities previously only available in compiled languages.</p>
+<p><strong>JavaScript Advantages:</strong></p>
+<ul class="simple">
+<li><p><strong>Ubiquity</strong>: Runs in every browser worldwide</p></li>
+<li><p><strong>Performance</strong>: V8 engine provides exceptional execution speed</p></li>
+<li><p><strong>Ecosystem</strong>: npm hosts over 1.5 million packages</p></li>
+<li><p><strong>Unified Development</strong>: Single language for frontend and backend</p></li>
+<li><p><strong>Tooling</strong>: World-class IDEs, debuggers, and testing frameworks</p></li>
+</ul>
+<p><strong>ES6+ Features Enabling Complex Applications:</strong></p>
+<ul class="simple">
+<li><p><strong>Modules</strong>: Clean code organization with ES imports</p></li>
+<li><p><strong>Promises/Async-Await</strong>: Simplified asynchronous programming</p></li>
+<li><p><strong>Classes</strong>: Object-oriented programming support</p></li>
+<li><p><strong>Arrow Functions</strong>: Concise syntax for callbacks</p></li>
+<li><p><strong>Destructuring</strong>: Easy extraction of object properties</p></li>
+<li><p><strong>Spread Operators</strong>: Simplified array and object operations</p></li>
+</ul>
+</section>
+<section id="jsonbin-io-purpose-and-capabilities">
+<h2>JSONBin.io: Purpose and Capabilities<a class="headerlink" href="#jsonbin-io-purpose-and-capabilities" title="Link to this heading"></a></h2>
+<p>JSONBin.io is a RESTful JSON storage service that provides persistent data storage without database setup. It bridges the gap between client-side applications and traditional databases.</p>
+<p><strong>Core Features of JSONBin.io:</strong></p>
+<ul class="simple">
+<li><p><strong>RESTful API</strong>: Standard HTTP methods for CRUD operations</p></li>
+<li><p><strong>JSON Storage</strong>: Native JSON document storage and retrieval</p></li>
+<li><p><strong>Master Key Authentication</strong>: Secure write access control</p></li>
+<li><p><strong>Versioning</strong>: Automatic version history for data recovery</p></li>
+<li><p><strong>CORS Support</strong>: Cross-origin requests from web applications</p></li>
+<li><p><strong>Free Tier</strong>: Generous limits for development and small projects</p></li>
+</ul>
+<p><strong>When to Use JSONBin.io:</strong></p>
+<ul class="simple">
+<li><p>✓ Prototyping and MVPs</p></li>
+<li><p>✓ Small to medium-scale applications</p></li>
+<li><p>✓ Client-heavy architectures</p></li>
+<li><p>✓ Static site backends</p></li>
+<li><p>✓ Educational projects</p></li>
+<li><p>✓ Rapid development scenarios</p></li>
+</ul>
+<p><strong>When to Consider Alternatives:</strong></p>
+<ul class="simple">
+<li><p>✗ High-volume write operations</p></li>
+<li><p>✗ Complex queries and aggregations</p></li>
+<li><p>✗ Real-time requirements</p></li>
+<li><p>✗ Strict compliance requirements</p></li>
+<li><p>✗ Large file storage</p></li>
+</ul>
+</section>
+<section id="architecture-patterns-for-modern-applications">
+<h2>Architecture Patterns for Modern Applications<a class="headerlink" href="#architecture-patterns-for-modern-applications" title="Link to this heading"></a></h2>
+<p>Understanding architectural patterns helps developers make informed decisions about system design.</p>
+<p>### Client-Server Pattern</p>
+<p>The most common distributed architecture, dividing responsibilities between clients (requester) and servers (provider).</p>
+<p><strong>Advantages:</strong>
+* Centralized data management
+* Scalable server infrastructure
+* Reusable server logic</p>
+<p><strong>Disadvantages:</strong>
+* Server dependency
+* Network latency
+* Single point of failure (mitigated with redundancy)</p>
+<p>### Three-Tier Architecture</p>
+<p>Separates presentation, business logic, and data storage into distinct layers.</p>
+<p><strong>Benefits:</strong>
+* Modular development
+* Independent scaling
+* Technology flexibility</p>
+<p>### Single Page Application (SPA)</p>
+<p>Loads once and dynamically updates content without page reloads.</p>
+<p><strong>Benefits:</strong>
+* Smooth user experience
+* Reduced server load
+* Offline capability (with service workers)</p>
+<p>### Progressive Web App (PWA)</p>
+<p>Web applications with native-like features including offline access, push notifications, and home screen installation.</p>
+<p><strong>Key PWA Features:</strong>
+* Service Workers: Network proxy for caching and offline support
+* Web App Manifest: Installation metadata and appearance
+* HTTPS Requirement: Security prerequisite for all PWA features
+* Responsive Design: Adapts to any device form factor</p>
+</section>
+<section id="security-considerations-in-client-side-applications">
+<h2>Security Considerations in Client-Side Applications<a class="headerlink" href="#security-considerations-in-client-side-applications" title="Link to this heading"></a></h2>
+<p>Client-side architectures require careful security planning. Understanding threats and mitigations ensures robust applications.</p>
+<p>### Authentication Strategies</p>
+<p><strong>Token-Based Authentication:</strong></p>
+<ol class="arabic simple">
+<li><p>User submits credentials</p></li>
+<li><p>Server validates and returns signed token</p></li>
+<li><p>Client stores token for subsequent requests</p></li>
+<li><p>Token accompanies each API request</p></li>
+<li><p>Server validates token on each request</p></li>
+</ol>
+<p><strong>Best Practices:</strong></p>
+<ul class="simple">
+<li><p>Use cryptographically secure token generation</p></li>
+<li><p>Implement token expiration (TTL)</p></li>
+<li><p>Store tokens securely (HttpOnly cookies preferred)</p></li>
+<li><p>Implement token refresh mechanisms</p></li>
+<li><p>Hash passwords with salts before storage</p></li>
+</ul>
+<p>### XSS (Cross-Site Scripting) Prevention</p>
+<p>Malicious scripts injected into web pages can steal data or hijack sessions.</p>
+<p><strong>Mitigation Strategies:</strong></p>
+<ul class="simple">
+<li><p>Escape all user-generated content before display</p></li>
+<li><p>Use Content Security Policy headers</p></li>
+<li><p>Validate and sanitize all input</p></li>
+<li><p>Avoid inline JavaScript</p></li>
+<li><p>Use modern frameworks with built-in sanitization</p></li>
+</ul>
+<p>### CORS (Cross-Origin Resource Sharing)</p>
+<p>Browser security mechanism controlling cross-origin requests.</p>
+<p><strong>Configuration Best Practices:</strong></p>
+<ul class="simple">
+<li><p>Whitelist specific origins</p></li>
+<li><p>Use HTTPS in production</p></li>
+<li><p>Configure appropriate HTTP headers</p></li>
+<li><p>Test CORS behavior in all browsers</p></li>
+</ul>
+</section>
+<section id="performance-optimization-techniques">
+<h2>Performance Optimization Techniques<a class="headerlink" href="#performance-optimization-techniques" title="Link to this heading"></a></h2>
+<p>### Minification and Compression</p>
+<p>Reduce file sizes for faster downloads.</p>
+<p><strong>Tools:</strong>
+* Terser (JavaScript)
+* CSSNano (CSS)
+* HTMLMinifier (HTML)</p>
+<p><strong>Compression:</strong>
+* Gzip compression on server
+* Brotli for even better ratios</p>
+<p>### Caching Strategies</p>
+<ul class="simple">
+<li><p><strong>Service Workers</strong>: Cache-first for static assets</p></li>
+<li><p><strong>CDN Distribution</strong>: Edge caching for global performance</p></li>
+<li><p><strong>Browser Caching</strong>: ETag and Cache-Control headers</p></li>
+<li><p><strong>API Response Caching</strong>: Reduce redundant requests</p></li>
+</ul>
+<p>### Code Splitting</p>
+<p>Load only necessary code for each page.</p>
+<p><strong>Benefits:</strong>
+* Faster initial load
+* Reduced bandwidth usage
+* Parallel chunk loading</p>
+<p>### Lazy Loading</p>
+<p>Defer loading of non-critical resources.</p>
+<p><strong>Applications:</strong>
+* Images below the fold
+* Routes not yet visited
+* Heavy components
+* Analytics scripts</p>
+</section>
+<section id="the-technology-stack-explained">
+<h2>The Technology Stack Explained<a class="headerlink" href="#the-technology-stack-explained" title="Link to this heading"></a></h2>
+<p>### HTML5: Semantic Markup</p>
+<p>Semantic HTML improves accessibility and SEO while providing clear document structure.</p>
+<p><strong>Key Elements:</strong>
+* <code class="docutils literal notranslate"><span class="pre">&lt;header&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;nav&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;main&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;article&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;footer&gt;</span></code>
+* <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code> for thematic groupings
+* <code class="docutils literal notranslate"><span class="pre">&lt;aside&gt;</span></code> for tangential content
+* ARIA attributes for accessibility</p>
+<p>### CSS3: Modern Styling</p>
+<p>CSS Custom Properties (Variables) enable dynamic theming and maintainable stylesheets.</p>
+<p><strong>Advantages:</strong>
+* Centralized design tokens
+* Runtime theme switching
+* Reduced code duplication</p>
+<p>### JavaScript ES6+: Application Logic</p>
+<p>Modern JavaScript provides all features needed for complex applications.</p>
+<p><strong>Key APIs:</strong>
+* <strong>Fetch API</strong>: HTTP requests
+* <strong>IndexedDB</strong>: Browser-based database
+* <strong>Service Workers</strong>: Network proxy and caching
+* <strong>Web Storage</strong>: Session and local storage
+* <strong>Intersection Observer</strong>: Efficient scroll tracking
+* <strong>Web Crypto API</strong>: Cryptographic operations</p>
+<p>### PWA Technologies</p>
+<ul class="simple">
+<li><p><strong>Service Workers</strong>: Cache management and offline support</p></li>
+<li><p><strong>Web App Manifest</strong>: Installability metadata</p></li>
+<li><p><strong>Push API</strong>: Server-to-client messaging</p></li>
+<li><p><strong>Notifications API</strong>: System notifications</p></li>
+</ul>
+</section>
+<section id="industry-best-practices">
+<h2>Industry Best Practices<a class="headerlink" href="#industry-best-practices" title="Link to this heading"></a></h2>
+<p>### Version Control</p>
+<p>Git remains the standard for source code management.</p>
+<p><strong>Workflow Recommendations:</strong>
+* Feature branches for development
+* Pull requests for code review
+* Protected main branch
+* Meaningful commit messages
+* Regular integration</p>
+<p>### Testing Strategy</p>
+<p>Multiple testing levels ensure quality.</p>
+<p><strong>Testing Pyramid:</strong>
+* Unit Tests: Individual function testing
+* Integration Tests: Component interaction
+* E2E Tests: Complete user flows
+* Performance Tests: Load and stress testing</p>
+<p>### Continuous Integration/Deployment</p>
+<p>Automate builds and deployments.</p>
+<p><strong>Benefits:</strong>
+* Early bug detection
+* Consistent deployment process
+* Reduced manual errors
+* Faster iteration cycles</p>
+<p>### Documentation</p>
+<p>Comprehensive documentation ensures project longevity.</p>
+<p><strong>Documentation Types:</strong>
+* User Guides: How to use the application
+* API Documentation: Technical integration details
+* Architecture Documentation: System design decisions
+* Contributor Guidelines: Development standards</p>
+</section>
+<section id="future-trends-in-web-development">
+<h2>Future Trends in Web Development<a class="headerlink" href="#future-trends-in-web-development" title="Link to this heading"></a></h2>
+<p>### WebAssembly (Wasm)</p>
+<p>Binary instruction format enabling near-native performance in browsers.</p>
+<p><strong>Applications:</strong>
+* Video/audio processing
+* Gaming engines
+* Scientific computation
+* CAD applications</p>
+<p>### Edge Computing</p>
+<p>Processing data closer to the source reduces latency.</p>
+<p><strong>Edge Platforms:</strong>
+* Cloudflare Workers
+* Vercel Edge Functions
+* AWS <a class="reference external" href="mailto:Lambda&#37;&#52;&#48;Edge">Lambda<span>&#64;</span>Edge</a>
+* Deno Deploy</p>
+<p>### AI Integration</p>
+<p>Machine learning capabilities directly in browsers.</p>
+<p><strong>Browser APIs:</strong>
+* WebGNN for neural networks
+* TensorFlow.js for ML models
+* MediaPipe for vision processing</p>
+<p>### Improved Offline Capabilities</p>
+<p>Advanced caching and synchronization strategies.</p>
+<p><strong>Emerging Standards:</strong>
+* Cache API improvements
+* Background Sync API
+* Periodic Background Sync
+* Persistent Storage API</p>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>Understanding these foundational concepts prepares you to build sophisticated applications using WTicket. The architecture demonstrates how modern web technologies combine to create powerful, scalable, and cost-effective solutions.</p>
+<p>Continue to the next section to learn about WTicket’s implementation details and practical application.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started/deployment.html" class="btn btn-neutral float-left" title="Deployment Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="architecture.html" class="btn btn-neutral float-right" title="Architecture Deep Dive" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, William Rodriguez. All rights reserved..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

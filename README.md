@@ -6,6 +6,11 @@
 [![Platform](https://img.shields.io/badge/Platform-GitHub%20Pages-orange)](https://pages.github.com/)
 [![Database](https://img.shields.io/badge/Database-JSONBin.io-green)](https://jsonbin.io/)
 [![PWA](https://img.shields.io/badge/PWA-Ready-brightgreen)](https://web.dev/progressive-web-apps/)
+[![Documentation Status](https://readthedocs.org/projects/wticket/badge/?version=latest)](https://wticket.readthedocs.io/en/latest/?badge=latest)
+[![Documentation](https://img.shields.io/badge/Documentation-ReadTheDocs-blue)](https://wticket.readthedocs.io/)
+
+**Live Demo**: https://wisrovi.github.io/wticket  
+**Documentation**: https://wticket.readthedocs.io
 
 ---
 
