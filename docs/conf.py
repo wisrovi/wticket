@@ -88,11 +88,6 @@ html_favicon = "_static/favicon.ico"
 # Add any paths that contain custom static files (such as style sheets)
 html_static_path = ["_static"]
 
-# Custom static files
-html_css_files = [
-    "css/custom.css",
-]
-
 # -- Options for HTML Help output -------------------------------------------
 
 # Output file base name for HTML help builder

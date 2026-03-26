@@ -5,9 +5,8 @@
 # from the environment for the first two.
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = source
+SOURCEDIR     = .
 BUILDDIR      = _build
-CONFpy        = conf.py
 
 # Put it first so that "make" without argument is like "make help".
 help:
