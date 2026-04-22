@@ -2,7 +2,7 @@ import { initDB, cacheUsers, getCachedUsers, cacheTickets, getCachedTickets, cac
 
 const ACCOUNT_ID = "e3a420c454b6c6ca891b31aea00ac53f";
 const DATABASE_ID = "d39fa1b3-2c4c-45cd-9e72-b896703bc48d";
-const API_TOKEN = "tu-api-token-aqui";
+const API_TOKEN = "cfut_DBFrs2S30XVy3FULBHx5xyvgRvesOuwZK3zrhkQk8e986334";
 
 const ADMIN_EMAIL = 'wisrovi@wticket.com';
 const ADMIN_PASSWORD = 'wisrovi_wticket';
