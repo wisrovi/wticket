@@ -1,17 +1,12 @@
 import { initDB, cacheUsers, getCachedUsers, cacheTickets, getCachedTickets, cacheCounter, getCachedCounter } from './db.js';
 
-const JSONBIN_BASE_URL = 'https://api.jsonbin.io/v3';
-const JSONBIN_API_KEY = '$2a$10$4quMC2Ol6Cj0uD.YkIkvHeAqraYBiwxSkBj0mv5HTRL1xFadJTh7G';
+const ACCOUNT_ID = "e3a420c454b6c6ca891b31aea00ac53f";
+const DATABASE_ID = "d39fa1b3-2c4c-45cd-9e72-b896703bc48d";
+const API_TOKEN = "tu-api-token-aqui";
 
 const ADMIN_EMAIL = 'wisrovi@wticket.com';
 const ADMIN_PASSWORD = 'wisrovi_wticket';
 const SESSION_DURATION = 24 * 60 * 60 * 1000;
-
-const BIN_IDS = {
-  users: '69c45577c3097a1dd55da693',
-  tickets: '69c4558bc3097a1dd55da6e8',
-  counter: '69c4559baa77b81da91cad22'
-};
 
 let cache = {
   users: {},
@@ -20,93 +15,61 @@ let cache = {
   initialized: false
 };
 
-function sha256(str) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(str);
-  return crypto.subtle.digest('SHA-256', data).then(buffer => {
-    const hashArray = Array.from(new Uint8Array(buffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  });
-}
-
-async function hashPassword(password) {
-  return await sha256(password + 'wticket_salt');
-}
-
-function generateToken() {
-  return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-    .map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function formatDate(timestamp) {
-  return new Date(timestamp).toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
-
-async function jsonbinGet(binId) {
+async function query(sql, params = []) {
   try {
-    const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_API_KEY }
+    const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DATABASE_ID}/query`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${API_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ sql, params }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('D1 Query HTTP error:', res.status, errorText);
+      throw new Error(`D1 HTTP error ${res.status}`);
+    }
     const data = await res.json();
-    return data.record;
+    if (!data.success) {
+      console.error('D1 Query success=false:', data.errors);
+      throw new Error(data.errors[0]?.message || 'D1 Query error');
+    }
+    // D1 returns result as an array of objects, each containing results array
+    return data.result[0].results;
   } catch (e) {
-    console.error('GET error:', e);
-    return null;
+    console.error('Query error:', e);
+    throw e;
   }
 }
 
-async function jsonbinPut(binId, data) {
-  const res = await fetch(`${JSONBIN_BASE_URL}/b/${binId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': JSONBIN_API_KEY
-    },
-    body: JSON.stringify(data)
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
-}
-
-async function syncAndSaveUsers() {
-  const latest = await jsonbinGet(BIN_IDS.users);
-  if (latest) {
-    cache.users = { ...latest, ...cache.users };
-  }
-  await jsonbinPut(BIN_IDS.users, cache.users);
-  await cacheUsers(cache.users);
-}
-
-async function syncAndSaveTickets() {
-  const latest = await jsonbinGet(BIN_IDS.tickets);
-  if (latest) {
-    cache.tickets = { ...latest, ...cache.tickets };
-  }
-  await jsonbinPut(BIN_IDS.tickets, cache.tickets);
-  await cacheTickets(cache.tickets);
-}
-
-async function syncAndSaveCounter() {
-  const latest = await jsonbinGet(BIN_IDS.counter);
-  if (latest && typeof latest.counter === 'number') {
-    cache.counter = latest.counter;
-  }
-  await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
-  await cacheCounter(cache.counter);
+async function setupDatabase() {
+  await query(`
+    CREATE TABLE IF NOT EXISTS users (
+      email TEXT PRIMARY KEY,
+      passwordHash TEXT,
+      name TEXT,
+      role TEXT,
+      createdAt INTEGER
+    )
+  `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS tickets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
+      description TEXT,
+      userEmail TEXT,
+      priority TEXT,
+      category TEXT,
+      status TEXT,
+      createdAt INTEGER,
+      response TEXT,
+      responseAt INTEGER,
+      assignedTo TEXT,
+      assignedAt INTEGER,
+      comments TEXT
+    )
+  `);
 }
 
 async function initCache(force = false) {
@@ -114,34 +77,40 @@ async function initCache(force = false) {
   
   try {
     await initDB();
+    await setupDatabase();
     
-    console.log('Loading data...');
+    console.log('Loading data from D1...');
     
-    const [users, tickets, counterData] = await Promise.all([
-      jsonbinGet(BIN_IDS.users),
-      jsonbinGet(BIN_IDS.tickets),
-      jsonbinGet(BIN_IDS.counter)
+    const [usersList, ticketsList] = await Promise.all([
+      query("SELECT * FROM users"),
+      query("SELECT * FROM tickets")
     ]);
 
-    if (users) {
-      cache.users = users;
-      await cacheUsers(users);
-    } else {
-      cache.users = await getCachedUsers();
-    }
+    cache.users = {};
+    usersList.forEach(u => {
+      cache.users[u.email] = u;
+    });
 
-    if (tickets) {
-      cache.tickets = tickets;
-      await cacheTickets(tickets);
-    } else {
-      cache.tickets = await getCachedTickets();
-    }
+    cache.tickets = {};
+    ticketsList.forEach(t => {
+      // Parse comments if they exist
+      try {
+        t.comments = t.comments ? JSON.parse(t.comments) : [];
+      } catch (e) {
+        t.comments = [];
+      }
+      cache.tickets[t.id] = t;
+    });
 
-    if (counterData && typeof counterData.counter === 'number') {
-      cache.counter = counterData.counter;
-    } else {
-      cache.counter = await getCachedCounter();
-    }
+    // Update counter from max ID
+    const maxIdResult = await query("SELECT MAX(id) as maxId FROM tickets");
+    cache.counter = maxIdResult[0]?.maxId || 0;
+
+    await Promise.all([
+      cacheUsers(cache.users),
+      cacheTickets(cache.tickets),
+      cacheCounter(cache.counter)
+    ]);
 
     cache.initialized = true;
 
@@ -151,15 +120,10 @@ async function initCache(force = false) {
       counter: cache.counter 
     });
   } catch (error) {
-    console.error('Error loading from IndexedDB, using JSONBin only:', error);
-    const [users, tickets, counterData] = await Promise.all([
-      jsonbinGet(BIN_IDS.users),
-      jsonbinGet(BIN_IDS.tickets),
-      jsonbinGet(BIN_IDS.counter)
-    ]);
-    cache.users = users || {};
-    cache.tickets = tickets || {};
-    cache.counter = (counterData && typeof counterData.counter === 'number') ? counterData.counter : 0;
+    console.error('Error loading data, using local cache:', error);
+    cache.users = await getCachedUsers() || {};
+    cache.tickets = await getCachedTickets() || {};
+    cache.counter = await getCachedCounter() || 0;
     cache.initialized = true;
   }
 
@@ -169,14 +133,17 @@ async function initCache(force = false) {
 async function ensureAdminExists() {
   if (!cache.users[ADMIN_EMAIL]) {
     const hashedPassword = await hashPassword(ADMIN_PASSWORD);
-    cache.users[ADMIN_EMAIL] = {
+    const user = {
       email: ADMIN_EMAIL,
       passwordHash: hashedPassword,
       name: 'Administrador',
       role: 'admin',
       createdAt: Date.now()
     };
-    await syncAndSaveUsers();
+    await query("INSERT OR IGNORE INTO users (email, passwordHash, name, role, createdAt) VALUES (?, ?, ?, ?, ?)",
+      [user.email, user.passwordHash, user.name, user.role, user.createdAt]);
+    cache.users[ADMIN_EMAIL] = user;
+    await cacheUsers(cache.users);
   }
 }
 
@@ -186,7 +153,7 @@ async function register(email, password, name) {
   }
   
   const hashedPassword = await hashPassword(password);
-  cache.users[email] = {
+  const user = {
     email,
     passwordHash: hashedPassword,
     name: name || email.split('@')[0],
@@ -194,19 +161,24 @@ async function register(email, password, name) {
     createdAt: Date.now()
   };
   
-  await syncAndSaveUsers();
+  await query("INSERT INTO users (email, passwordHash, name, role, createdAt) VALUES (?, ?, ?, ?, ?)", 
+    [user.email, user.passwordHash, user.name, user.role, user.createdAt]);
+    
+  cache.users[email] = user;
+  await cacheUsers(cache.users);
+  
   return login(email, password);
 }
 
 async function updateUserName(email, newName) {
-  await syncAndSaveUsers();
-  
   if (!cache.users[email]) {
     throw new Error('Usuario no encontrado');
   }
   
+  await query("UPDATE users SET name = ? WHERE email = ?", [newName, email]);
+  
   cache.users[email].name = newName;
-  await syncAndSaveUsers();
+  await cacheUsers(cache.users);
   
   const session = JSON.parse(localStorage.getItem('wticket_session'));
   if (session && session.email === email) {
@@ -218,8 +190,6 @@ async function updateUserName(email, newName) {
 }
 
 async function updateUserPassword(email, currentPassword, newPassword) {
-  await syncAndSaveUsers();
-  
   const user = cache.users[email];
   if (!user) {
     throw new Error('Usuario no encontrado');
@@ -231,8 +201,10 @@ async function updateUserPassword(email, currentPassword, newPassword) {
   }
   
   const hashedNew = await hashPassword(newPassword);
-  cache.users[email].passwordHash = hashedNew;
-  await syncAndSaveUsers();
+  await query("UPDATE users SET passwordHash = ? WHERE email = ?", [hashedNew, email]);
+  
+  user.passwordHash = hashedNew;
+  await cacheUsers(cache.users);
   
   return true;
 }
@@ -293,16 +265,7 @@ async function logout() {
 }
 
 async function createTicket(title, description, userEmail, priority = 'normal', category = 'general') {
-  await syncAndSaveCounter();
-  await syncAndSaveTickets();
-  
-  cache.counter++;
-  const id = cache.counter;
-  
-  await jsonbinPut(BIN_IDS.counter, { counter: cache.counter });
-  
-  cache.tickets[id] = {
-    id,
+  const ticketData = {
     title: escapeHtml(title),
     description: escapeHtml(description || ''),
     userEmail,
@@ -312,10 +275,41 @@ async function createTicket(title, description, userEmail, priority = 'normal', 
     createdAt: Date.now(),
     response: '',
     responseAt: 0,
+    comments: '[]'
+  };
+
+  const results = await query(`
+    INSERT INTO tickets (title, description, userEmail, priority, category, status, createdAt, response, responseAt, comments)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    RETURNING id
+  `, [
+    ticketData.title,
+    ticketData.description,
+    ticketData.userEmail,
+    ticketData.priority,
+    ticketData.category,
+    ticketData.status,
+    ticketData.createdAt,
+    ticketData.response,
+    ticketData.responseAt,
+    ticketData.comments
+  ]);
+  
+  const id = results[0].id;
+  
+  cache.tickets[id] = {
+    ...ticketData,
+    id,
     comments: []
   };
   
-  await syncAndSaveTickets();
+  cache.counter = Math.max(cache.counter, id);
+  
+  await Promise.all([
+    cacheTickets(cache.tickets),
+    cacheCounter(cache.counter)
+  ]);
+  
   return id;
 }
 
@@ -332,50 +326,76 @@ function getTicket(id) {
 }
 
 async function addComment(ticketId, text, authorEmail, authorName) {
-  await syncAndSaveTickets();
-  
   const ticket = cache.tickets[ticketId];
   if (!ticket) throw new Error('Ticket no encontrado');
   
-  if (!ticket.comments) ticket.comments = [];
-  
-  ticket.comments.push({
+  const comment = {
     id: Date.now(),
     text: escapeHtml(text),
     authorEmail,
     authorName,
     createdAt: Date.now()
-  });
+  };
   
-  await syncAndSaveTickets();
+  if (!ticket.comments) ticket.comments = [];
+  ticket.comments.push(comment);
+  
+  await query("UPDATE tickets SET comments = ? WHERE id = ?", [JSON.stringify(ticket.comments), ticketId]);
+  
+  await cacheTickets(cache.tickets);
   return true;
 }
 
 async function assignTicket(ticketId, adminEmail) {
-  await syncAndSaveTickets();
-  
   const ticket = cache.tickets[ticketId];
   if (!ticket) throw new Error('Ticket no encontrado');
   
-  ticket.assignedTo = adminEmail;
-  ticket.assignedAt = Date.now();
+  const assignedAt = Date.now();
+  await query("UPDATE tickets SET assignedTo = ?, assignedAt = ? WHERE id = ?", [adminEmail, assignedAt, ticketId]);
   
-  await syncAndSaveTickets();
+  ticket.assignedTo = adminEmail;
+  ticket.assignedAt = assignedAt;
+  
+  await cacheTickets(cache.tickets);
   return true;
 }
 
 async function refreshData() {
-  const [users, tickets, counterData] = await Promise.all([
-    jsonbinGet(BIN_IDS.users),
-    jsonbinGet(BIN_IDS.tickets),
-    jsonbinGet(BIN_IDS.counter)
-  ]);
-  
-  cache.users = users || cache.users;
-  cache.tickets = tickets || cache.tickets;
-  cache.counter = (counterData && typeof counterData.counter === 'number') 
-    ? counterData.counter 
-    : cache.counter;
+  try {
+    const [usersList, ticketsList] = await Promise.all([
+      query("SELECT * FROM users"),
+      query("SELECT * FROM tickets")
+    ]);
+
+    const newUsers = {};
+    usersList.forEach(u => {
+      newUsers[u.email] = u;
+    });
+
+    const newTickets = {};
+    ticketsList.forEach(t => {
+      try {
+        t.comments = t.comments ? JSON.parse(t.comments) : [];
+      } catch (e) {
+        t.comments = [];
+      }
+      newTickets[t.id] = t;
+    });
+
+    cache.users = newUsers;
+    cache.tickets = newTickets;
+    
+    const maxIdResult = await query("SELECT MAX(id) as maxId FROM tickets");
+    cache.counter = maxIdResult[0]?.maxId || 0;
+
+    await Promise.all([
+      cacheUsers(cache.users),
+      cacheTickets(cache.tickets),
+      cacheCounter(cache.counter)
+    ]);
+  } catch (e) {
+    console.error('Refresh data error:', e);
+  }
 }
 
 function getOpenTickets() {
@@ -409,16 +429,20 @@ function getUserClosedTickets(email) {
 }
 
 async function closeTicket(id, response) {
-  await syncAndSaveTickets();
-  
   const ticket = cache.tickets[id];
   if (!ticket) throw new Error('Ticket no encontrado');
   
-  ticket.status = 'closed';
-  ticket.response = escapeHtml(response || '');
-  ticket.responseAt = Date.now();
+  const responseText = escapeHtml(response || '');
+  const responseAt = Date.now();
   
-  await syncAndSaveTickets();
+  await query("UPDATE tickets SET status = 'closed', response = ?, responseAt = ? WHERE id = ?", 
+    [responseText, responseAt, id]);
+  
+  ticket.status = 'closed';
+  ticket.response = responseText;
+  ticket.responseAt = responseAt;
+  
+  await cacheTickets(cache.tickets);
 }
 
 function getStats() {
