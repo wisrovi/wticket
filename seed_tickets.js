@@ -5,7 +5,7 @@
 
 const ACCOUNT_ID = "e3a420c454b6c6ca891b31aea00ac53f";
 const DATABASE_ID = "d39fa1b3-2c4c-45cd-9e72-b896703bc48d";
-const API_TOKEN = "cfut_DBFrs2S30XVy3FULBHx5xyvgRvesOuwZK3zrhkQk8e986334"; // <--- REEMPLAZA ESTO CON TU TOKEN REAL
+const API_TOKEN = "cfut_YIiWmCsPWWwkpyooN4fTfcOyBHDSTOtsxefRaOO517820db9"; // <--- REEMPLAZA ESTO CON TU TOKEN REAL
 
 async function query(sql, params = []) {
   const res = await fetch(
