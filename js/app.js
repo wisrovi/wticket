@@ -1,3 +1,4 @@
+// v1.0.1 - Last update: 2026-04-23
 import { initDB, cacheUsers, getCachedUsers, cacheTickets, getCachedTickets, cacheCounter, getCachedCounter } from './db.js';
 
 const ACCOUNT_ID = "e3a420c454b6c6ca891b31aea00ac53f";
