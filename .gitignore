@@ -1,0 +1,15 @@
+# Credentials and secrets
+cloudflare_credentials.txt
+admin_credentials.txt
+credentials.txt
+seed_tickets.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project-specific ignores
+node_modules/
+.env
+.DS_Store
+*.log
