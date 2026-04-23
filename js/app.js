@@ -1,4 +1,4 @@
-// v1.0.1 - Last update: 2026-04-23
+// v1.0.4 - Last update: 2026-04-23
 import { initDB, cacheUsers, getCachedUsers, cacheTickets, getCachedTickets, cacheCounter, getCachedCounter } from './db.js';
 
 const WORKER_URL = "https://wticket-api.wisrovi-rodriguez.workers.dev";
