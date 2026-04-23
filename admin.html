@@ -9,6 +9,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="nav-overlay" id="nav-overlay" onclick="toggleMenu()"></div>
@@ -95,32 +96,13 @@
       </div>
     </div>
 
-    <div class="charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 32px;">
+    <div class="charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">📊 Por Prioridad</h3>
         </div>
-        <div class="card-body">
-          <div class="chart-bar">
-            <div class="chart-label">🔴 Urgente</div>
-            <div class="chart-track"><div class="chart-fill urgent" id="chart-urgent" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-urgent-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">🟠 Alta</div>
-            <div class="chart-track"><div class="chart-fill high" id="chart-high" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-high-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">🟡 Normal</div>
-            <div class="chart-track"><div class="chart-fill normal" id="chart-normal" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-normal-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">🟢 Baja</div>
-            <div class="chart-track"><div class="chart-fill low" id="chart-low" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-low-value">0</div>
-          </div>
+        <div class="card-body" style="height: 300px; position: relative;">
+          <canvas id="priorityChart"></canvas>
         </div>
       </div>
 
@@ -128,37 +110,8 @@
         <div class="card-header">
           <h3 class="card-title">🏷️ Por Categoría</h3>
         </div>
-        <div class="card-body">
-          <div class="chart-bar">
-            <div class="chart-label">📋 General</div>
-            <div class="chart-track"><div class="chart-fill general" id="chart-general" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-general-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">🔧 Técnico</div>
-            <div class="chart-track"><div class="chart-fill technical" id="chart-technical" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-technical-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">💰 Facturación</div>
-            <div class="chart-track"><div class="chart-fill billing" id="chart-billing" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-billing-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">💡 Sugerencia</div>
-            <div class="chart-track"><div class="chart-fill suggestion" id="chart-suggestion" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-suggestion-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">🐛 Bug</div>
-            <div class="chart-track"><div class="chart-fill bug" id="chart-bug" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-bug-value">0</div>
-          </div>
-          <div class="chart-bar">
-            <div class="chart-label">❓ Otro</div>
-            <div class="chart-track"><div class="chart-fill other" id="chart-other" style="width: 0%"></div></div>
-            <div class="chart-value" id="chart-other-value">0</div>
-          </div>
+        <div class="card-body" style="height: 300px; position: relative;">
+          <canvas id="categoryChart"></canvas>
         </div>
       </div>
     </div>
@@ -172,8 +125,26 @@
       </button>
     </div>
 
-    <div class="search-box" style="margin-bottom: 24px; max-width: 400px;">
-      <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-tickets" oninput="filterTickets()">
+    <div class="search-box" style="margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+      <input type="text" class="form-input" placeholder="Buscar por título o ID..." id="search-tickets" oninput="filterTickets()" style="max-width: 300px; flex: 1;">
+      
+      <select id="filter-priority" class="form-input" onchange="filterTickets()" style="max-width: 150px;">
+        <option value="">Todas las prioridades</option>
+        <option value="urgent">🔴 Urgente</option>
+        <option value="high">🟠 Alta</option>
+        <option value="normal">🟡 Normal</option>
+        <option value="low">🟢 Baja</option>
+      </select>
+
+      <select id="filter-category" class="form-input" onchange="filterTickets()" style="max-width: 150px;">
+        <option value="">Todas las categorías</option>
+        <option value="general">📋 General</option>
+        <option value="technical">🔧 Técnico</option>
+        <option value="billing">💰 Facturación</option>
+        <option value="suggestion">💡 Sugerencia</option>
+        <option value="bug">🐛 Bug</option>
+        <option value="other">❓ Otro</option>
+      </select>
     </div>
 
     <div id="tickets-container">
@@ -199,6 +170,8 @@
         <p class="empty-state-text">No hay tickets</p>
       </div>
     </div>
+
+    <div id="pagination-container" class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 32px; padding-bottom: 32px;"></div>
   </main>
 
   <div class="modal-overlay" id="detail-modal">
@@ -254,6 +227,14 @@
     let currentTab = 'open';
     let allOpenTickets = [];
     let allClosedTickets = [];
+    
+    // Pagination state
+    let currentPage = 1;
+    const itemsPerPage = 50;
+
+    // Charts instances
+    let priorityChart = null;
+    let categoryChart = null;
 
     let touchStartY = 0;
     let touchCurrentY = 0;
@@ -304,8 +285,59 @@
       const mobileUser = document.getElementById('nav-user-mobile');
       if (mobileUser) mobileUser.innerHTML = userHtml;
       
+      initCharts();
       await loadTickets();
       await updateStats();
+    }
+
+    function initCharts() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#e5e7eb' : '#374151';
+      
+      const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+      priorityChart = new Chart(priorityCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Urgente', 'Alta', 'Normal', 'Baja'],
+          datasets: [{
+            data: [0, 0, 0, 0],
+            backgroundColor: ['#ef4444', '#f97316', '#eab308', '#22c55e'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: textColor } }
+          }
+        }
+      });
+
+      const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+      categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+          labels: ['General', 'Técnico', 'Facturación', 'Sugerencia', 'Bug', 'Otro'],
+          datasets: [{
+            label: 'Tickets',
+            data: [0, 0, 0, 0, 0, 0],
+            backgroundColor: '#6366f1',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { display: false }, ticks: { color: textColor } },
+            x: { grid: { display: false }, ticks: { color: textColor } }
+          }
+        }
+      });
     }
 
     async function updateStats() {
@@ -327,25 +359,19 @@
           priorities[t.priority] = (priorities[t.priority] || 0) + 1;
           categories[t.category] = (categories[t.category] || 0) + 1;
         });
-        
-        const maxPriority = Math.max(...Object.values(priorities), 1);
-        const maxCategory = Math.max(...Object.values(categories), 1);
-        
-        Object.keys(priorities).forEach(p => {
-          const pct = (priorities[p] / maxPriority) * 100;
-          const el = document.getElementById(`chart-${p}`);
-          const val = document.getElementById(`chart-${p}-value`);
-          if (el) el.style.width = `${pct}%`;
-          if (val) val.textContent = priorities[p];
-        });
-        
-        Object.keys(categories).forEach(c => {
-          const pct = (categories[c] / maxCategory) * 100;
-          const el = document.getElementById(`chart-${c}`);
-          const val = document.getElementById(`chart-${c}-value`);
-          if (el) el.style.width = `${pct}%`;
-          if (val) val.textContent = categories[c];
-        });
+
+        if (priorityChart) {
+          priorityChart.data.datasets[0].data = [priorities.urgent, priorities.high, priorities.normal, priorities.low];
+          priorityChart.update();
+        }
+
+        if (categoryChart) {
+          categoryChart.data.datasets[0].data = [
+            categories.general, categories.technical, categories.billing, 
+            categories.suggestion, categories.bug, categories.other
+          ];
+          categoryChart.update();
+        }
       } catch (error) {
         console.error('Error loading stats:', error);
       }
@@ -397,6 +423,7 @@
 
     window.switchTab = (tab) => {
       currentTab = tab;
+      currentPage = 1; // Reset to first page
       document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
       document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
       renderTickets();
@@ -406,29 +433,50 @@
       const container = document.getElementById('tickets-container');
       const skeleton = document.getElementById('tickets-skeleton');
       const tickets = currentTab === 'open' ? allOpenTickets : allClosedTickets;
-      const query = document.getElementById('search-tickets').value.trim();
-      const filtered = API.searchTickets(tickets, query);
+      
+      const query = document.getElementById('search-tickets').value.trim().toLowerCase();
+      const priorityFilter = document.getElementById('filter-priority').value;
+      const categoryFilter = document.getElementById('filter-category').value;
+
+      // Apply all filters
+      let filtered = tickets.filter(t => {
+        const matchesQuery = !query || 
+          (t.title && t.title.toLowerCase().includes(query)) || 
+          (t.id && t.id.toString().includes(query));
+        const matchesPriority = !priorityFilter || t.priority === priorityFilter;
+        const matchesCategory = !categoryFilter || t.category === categoryFilter;
+        return matchesQuery && matchesPriority && matchesCategory;
+      });
 
       if (skeleton) skeleton.style.display = 'none';
 
-      if (filtered.length === 0) {
+      // Pagination logic
+      const totalItems = filtered.length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+      
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const paginated = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+      if (totalItems === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">${currentTab === 'open' ? '📭' : '📋'}</div>
             <p class="empty-state-text">
               ${tickets.length === 0 
                 ? `No hay tickets ${currentTab === 'open' ? 'abiertos' : 'atendidos'}`
-                : 'No hay tickets que coincidan con la búsqueda'}
+                : 'No hay tickets que coincidan con los filtros'}
             </p>
           </div>
         `;
+        document.getElementById('pagination-container').innerHTML = '';
         return;
       }
 
       const priorityIcons = { urgent: '🔴', high: '🟠', normal: '🟡', low: '🟢' };
       container.innerHTML = `
         <div class="ticket-list">
-          ${filtered.map(ticket => `
+          ${paginated.map(ticket => `
             <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
               <div class="ticket-header">
                 <span class="ticket-id">#${ticket.id}</span>
@@ -447,9 +495,36 @@
           `).join('')}
         </div>
       `;
+
+      renderPagination(totalPages);
     }
 
-    const debouncedFilter = debounce(() => renderTickets(), 300);
+    function renderPagination(totalPages) {
+      const container = document.getElementById('pagination-container');
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let html = `
+        <button class="btn btn-outline btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">Anterior</button>
+        <span style="align-self: center; font-size: 14px; font-weight: 600; margin: 0 12px;">Página ${currentPage} de ${totalPages}</span>
+        <button class="btn btn-outline btn-sm" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Siguiente</button>
+      `;
+      container.innerHTML = html;
+    }
+
+    window.changePage = (page) => {
+      currentPage = page;
+      renderTickets();
+      window.scrollTo({ top: document.getElementById('tickets-container').offsetTop - 100, behavior: 'smooth' });
+    };
+
+    const debouncedFilter = debounce(() => {
+      currentPage = 1;
+      renderTickets();
+    }, 300);
+
     window.filterTickets = () => debouncedFilter();
 
     window.openDetailModal = async (id) => {

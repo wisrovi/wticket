@@ -61,15 +61,48 @@
     </div>
 
     <div style="max-width: 600px; margin: 0 auto;">
+      <!-- Level Card -->
+      <div class="card" style="margin-bottom: 24px; text-align: center; padding: 24px;">
+        <div id="level-badge" style="font-size: 3.5rem; margin-bottom: 8px;">👑</div>
+        <h2 id="level-name" style="margin: 0; font-size: 1.8rem; font-weight: 700; color: var(--primary);">Nivel 1</h2>
+        <p id="total-points" style="color: var(--gray-500); margin-top: 4px; font-weight: 500;">0 puntos acumulados</p>
+        <div style="margin-top: 24px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px;">
+            <span>Progreso al siguiente nivel</span>
+            <span id="progress-pct">0%</span>
+          </div>
+          <div class="chart-track" style="height: 14px; background: var(--gray-200); border-radius: 7px; overflow: hidden; border: 1px solid var(--gray-300);">
+            <div id="level-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), #818cf8); transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);"></div>
+          </div>
+          <p id="points-needed" style="font-size: 11px; color: var(--gray-400); margin-top: 8px; text-align: right;">0 / 0 pts</p>
+        </div>
+      </div>
+
+      <!-- Achievements Card -->
       <div class="card" style="margin-bottom: 24px;">
         <div class="card-header">
           <h2 class="card-title">🏅 Mis Logros</h2>
         </div>
         <div class="card-body">
-          <div id="achievements-container" style="display: flex; flex-wrap: wrap; gap: 12px;"></div>
+          <div id="achievements-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;"></div>
         </div>
       </div>
 
+      <!-- Leaderboard Card -->
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+          <h2 class="card-title">🏆 Top Usuarios</h2>
+        </div>
+        <div class="card-body">
+          <div id="leaderboard-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name Card -->
       <div class="card" style="margin-bottom: 24px;">
         <div class="card-header">
           <h2 class="card-title">📝 Cambiar Nombre</h2>
@@ -85,6 +118,7 @@
         </div>
       </div>
 
+      <!-- Password Card -->
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">🔐 Cambiar Contraseña</h2>
@@ -111,7 +145,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>© 2026 Wisrovi Rodriguez. Todos los derechos reservados.</p>
+    <p>© 2026 Wisrovi Rodriguez. Todos los derechos reservados. <span style="font-size: 0.8rem; color: var(--gray-400); margin-left: 8px;">v1.0.4</span></p>
     <p>WTicket - Sistema de Gestión de Tickets</p>
     <p><a href="https://wticket.readthedocs.io/en/latest/" target="_blank" style="color: var(--primary);">📖 Documentación completa</a></p>
   </footer>
@@ -150,7 +184,7 @@
     let currentSession = null;
 
     async function init() {
-      const session = await API.requireAuth(['user'])();
+      const session = await API.requireAuth(['user', 'admin'])();
       if (!session) return;
       currentSession = session;
       
@@ -159,33 +193,88 @@
       const mobileUser = document.getElementById('nav-user-mobile');
       if (mobileUser) mobileUser.innerHTML = userHtml;
       document.getElementById('profile-name').value = session.name;
-      loadAchievements();
+      
+      await loadAchievements();
+      await loadLeaderboard();
     }
 
     async function loadAchievements() {
       try {
-        const { getAchievements } = await import('./js/achievements.js');
+        const { getAchievements, calculateLevel } = await import('./js/achievements.js');
         const userTickets = await API.getUserOpenTickets(currentSession.email);
         const userClosed = await API.getUserClosedTickets(currentSession.email);
         
-        const user = {
+        const userData = {
           ticketCount: userTickets.length + userClosed.length,
           resolvedCount: userClosed.length,
           createdAt: currentSession.createdAt,
           daysSinceCreated: Math.floor((Date.now() - currentSession.createdAt) / (1000 * 60 * 60 * 24))
         };
         
-        const achievements = getAchievements(user);
+        // Update Level UI
+        const levelData = calculateLevel(userData);
+        document.getElementById('level-name').textContent = `Nivel ${levelData.level}`;
+        document.getElementById('total-points').textContent = `${levelData.points} puntos acumulados`;
+        document.getElementById('progress-pct').textContent = `${Math.round(levelData.progress)}%`;
+        document.getElementById('level-progress').style.width = `${levelData.progress}%`;
+        document.getElementById('points-needed').textContent = `${levelData.points} / ${levelData.nextLevelPoints} pts`;
         
+        const badges = ['🌱', '🌿', '☘️', '🍀', '🌸', '🌻', '🌞', '🔥', '💎', '👑'];
+        document.getElementById('level-badge').textContent = badges[Math.min(levelData.level - 1, badges.length - 1)];
+
+        const achievements = getAchievements(userData);
         const container = document.getElementById('achievements-container');
         container.innerHTML = achievements.map(a => `
-          <div style="text-align: center; padding: 12px; border-radius: 8px; background: ${a.unlocked ? 'var(--primary)' : 'var(--gray-200)'}; color: ${a.unlocked ? 'white' : 'var(--gray-500)'}; opacity: ${a.unlocked ? 1 : 0.5}; min-width: 80px;">
+          <div style="text-align: center; padding: 12px; border-radius: 8px; background: ${a.unlocked ? 'var(--primary)' : 'var(--gray-200)'}; color: ${a.unlocked ? 'white' : 'var(--gray-500)'}; opacity: ${a.unlocked ? 1 : 0.4}; transition: all 0.3s ease;">
             <div style="font-size: 24px; margin-bottom: 4px;">${a.icon}</div>
-            <div style="font-size: 12px; font-weight: 600;">${a.name}</div>
+            <div style="font-size: 11px; font-weight: 700; line-height: 1.2;">${a.name}</div>
           </div>
         `).join('');
       } catch (error) {
         console.error('Error loading achievements:', error);
+      }
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const { calculateLevel } = await import('./js/achievements.js');
+        const stats = await API.getStats();
+        
+        // We simulate leaderboard from current local data (admins and current user)
+        // In a real app we would fetch top 5 from DB
+        // For Phase 1 we will just show the top categories to make it interesting
+        const container = document.getElementById('leaderboard-container');
+        
+        // Let's create a real logic: fetch all tickets and group by user
+        // Note: this might be slow with 1500 tickets, but it's client-side for now
+        const allOpen = await API.getOpenTickets();
+        const allClosed = await API.getClosedTickets();
+        const all = [...allOpen, ...allClosed];
+        
+        const userStats = {};
+        all.forEach(t => {
+          if (!userStats[t.userEmail]) userStats[t.userEmail] = { ticketCount: 0, resolvedCount: 0, email: t.userEmail };
+          userStats[t.userEmail].ticketCount++;
+          if (t.status === 'closed') userStats[t.userEmail].resolvedCount++;
+        });
+
+        const ranking = Object.values(userStats)
+          .map(u => ({ ...u, score: calculateLevel(u).points }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5);
+
+        container.innerHTML = ranking.map((u, i) => `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--gray-50); border-radius: 8px; border-left: 4px solid ${i === 0 ? 'gold' : (i === 1 ? 'silver' : (i === 2 ? '#cd7f32' : 'var(--primary)'))}">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-weight: 800; color: var(--gray-400); width: 20px;">#${i + 1}</span>
+              <div style="font-weight: 600; font-size: 14px;">${u.email.split('@')[0]} ${u.email === currentSession.email ? '<small>(Tú)</small>' : ''}</div>
+            </div>
+            <div style="font-weight: 700; color: var(--primary);">${u.score} pts</div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
       }
     }
 

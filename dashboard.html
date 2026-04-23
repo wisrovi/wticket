@@ -130,6 +130,7 @@
             <p class="empty-state-text">No tienes tickets atendidos</p>
           </div>
         </div>
+        <div id="pagination-closed" class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 24px;"></div>
       </div>
     </div>
   </main>
@@ -269,6 +270,10 @@
     let currentUser = null;
     let openTickets = [];
     let closedTickets = [];
+    
+    // Pagination state for closed tickets
+    let currentClosedPage = 1;
+    const closedPerPage = 20;
 
     async function init() {
       const session = await API.requireAuth(['user'])();
@@ -340,25 +345,34 @@
       `).join('');
     }
 
-    function renderClosedTickets(tickets = closedTickets) {
+    function renderClosedTickets(filteredTickets = null) {
       const container = document.getElementById('closed-tickets');
       const skeleton = document.getElementById('closed-skeleton');
+      const ticketsToRender = filteredTickets || closedTickets;
       
       if (skeleton) skeleton.style.display = 'none';
       
-      document.getElementById('closed-count').textContent = tickets.length;
+      document.getElementById('closed-count').textContent = ticketsToRender.length;
       
-      if (tickets.length === 0) {
+      if (ticketsToRender.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">📋</div>
             <p class="empty-state-text">No hay tickets${closedTickets.length > 0 ? ' que coincidan con la búsqueda' : ''}</p>
           </div>
         `;
+        document.getElementById('pagination-closed').innerHTML = '';
         return;
       }
 
-      container.innerHTML = tickets.map(ticket => `
+      // Pagination logic
+      const totalPages = Math.ceil(ticketsToRender.length / closedPerPage);
+      if (currentClosedPage > totalPages && totalPages > 0) currentClosedPage = totalPages;
+      
+      const startIndex = (currentClosedPage - 1) * closedPerPage;
+      const paginated = ticketsToRender.slice(startIndex, startIndex + closedPerPage);
+
+      container.innerHTML = paginated.map(ticket => `
         <div class="ticket-item fade-in" onclick="openDetailModal(${ticket.id})">
           <div class="ticket-header">
             <span class="ticket-id">#${ticket.id}</span>
@@ -368,7 +382,30 @@
           <div class="ticket-meta">Creado: ${API.formatDate(ticket.createdAt)} • Atendido: ${API.formatDate(ticket.responseAt)}</div>
         </div>
       `).join('');
+
+      renderPagination(totalPages);
     }
+
+    function renderPagination(totalPages) {
+      const container = document.getElementById('pagination-closed');
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = `
+        <button class="btn btn-outline btn-sm" ${currentClosedPage === 1 ? 'disabled' : ''} onclick="changeClosedPage(${currentClosedPage - 1})">←</button>
+        <span style="align-self: center; font-size: 13px; font-weight: 600;">${currentClosedPage}/${totalPages}</span>
+        <button class="btn btn-outline btn-sm" ${currentClosedPage === totalPages ? 'disabled' : ''} onclick="changeClosedPage(${currentClosedPage + 1})">→</button>
+      `;
+    }
+
+    window.changeClosedPage = (page) => {
+      currentClosedPage = page;
+      const query = document.getElementById('search-closed').value.trim();
+      const filtered = API.searchTickets(closedTickets, query);
+      renderClosedTickets(filtered);
+    };
 
     const debouncedFilterOpen = debounce(() => {
       const query = document.getElementById('search-open').value.trim();
@@ -377,6 +414,7 @@
     }, 300);
 
     const debouncedFilterClosed = debounce(() => {
+      currentClosedPage = 1;
       const query = document.getElementById('search-closed').value.trim();
       const filtered = API.searchTickets(closedTickets, query);
       renderClosedTickets(filtered);

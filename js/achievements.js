@@ -8,6 +8,17 @@ const ACHIEVEMENTS = [
   { id: 'early_bird', name: 'Early Bird', description: 'Usuario del primer mes', icon: '🐣', check: (user) => user.createdAt < 1735689600000 }
 ];
 
+export function calculateLevel(user) {
+  // 10 pts per ticket, 50 pts per resolved ticket
+  const points = (user.ticketCount * 10) + (user.resolvedCount * 50);
+  const level = Math.floor(Math.sqrt(points / 20)) + 1;
+  const nextLevelPoints = Math.pow(level, 2) * 20;
+  const currentLevelPoints = Math.pow(level - 1, 2) * 20;
+  const progress = ((points - currentLevelPoints) / (nextLevelPoints - currentLevelPoints)) * 100;
+  
+  return { level, points, progress, nextLevelPoints };
+}
+
 export function getAchievements(user) {
   return ACHIEVEMENTS.map(achievement => ({
     ...achievement,
