@@ -1,12 +1,7 @@
 // v1.0.1 - Last update: 2026-04-23
 import { initDB, cacheUsers, getCachedUsers, cacheTickets, getCachedTickets, cacheCounter, getCachedCounter } from './db.js';
 
-const ACCOUNT_ID = "e3a420c454b6c6ca891b31aea00ac53f";
-const DATABASE_ID = "d39fa1b3-2c4c-45cd-9e72-b896703bc48d";
-// Obfuscated token to bypass automatic secret scanners
-const _p1 = "cfut_fA3tg6qjNGfTulwKKatQd1eBZl34IrLJ";
-const _p2 = "wQe9noar34f3ed99";
-const API_TOKEN = _p1 + _p2;
+const WORKER_URL = "https://wticket-api.wisrovi-rodriguez.workers.dev";
 
 const ADMIN_EMAIL = 'wisrovi@wticket.com';
 const ADMIN_PASSWORD = 'wisrovi_wticket';
@@ -56,25 +51,28 @@ function formatDate(timestamp) {
 
 async function query(sql, params = []) {
   try {
-    const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DATABASE_ID}/query`, {
+    const res = await fetch(WORKER_URL, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${API_TOKEN}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ sql, params }),
     });
+    
     if (!res.ok) {
       const errorText = await res.text();
-      console.error('D1 Query HTTP error:', res.status, errorText);
-      throw new Error(`D1 HTTP error ${res.status}`);
+      console.error('Worker Query HTTP error:', res.status, errorText);
+      throw new Error(`Worker HTTP error ${res.status}`);
     }
+    
     const data = await res.json();
     if (!data.success) {
-      console.error('D1 Query success=false:', data.errors);
-      throw new Error(data.errors[0]?.message || 'D1 Query error');
+      console.error('Worker Query success=false:', data.error);
+      throw new Error(data.error || 'Worker Query error');
     }
-    // D1 returns result as an array of objects, each containing results array
+    
+    // The worker returns { success: true, result: [{ results: [...] }] } 
+    // to maintain compatibility with the previous D1 API response structure
     return data.result[0].results;
   } catch (e) {
     console.error('Query error:', e);
